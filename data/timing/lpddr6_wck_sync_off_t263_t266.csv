@@ -1,0 +1,10 @@
+source_table,rule_id,current_class,next_class,min_without_new_sync,max_without_new_sync,min_with_new_sync,unit,status,notes
+Table263,AUTO_OFF_WRITE_CLASS,write_class,write_or_meta_write,BLN,WL+BL/n_min+RD(tWCKPST/tCK),WL+BL/n_min+RD(tWCKPST/tCK)+1,nCK,seeded,Automatic WCK2CK sync-off delay from write class commands.
+Table263,AUTO_OFF_READ_CLASS,read_class,read_or_meta_read,BLN,RL+BL/n_min+RD(tWCKPST/tCK),RL+BL/n_min+RD(tWCKPST/tCK)+1,nCK,seeded,Automatic WCK2CK sync-off delay from read class commands.
+Table263,RD_TO_WR_NO_NEW_SYNC,read_class,write_class,tRTW,RL+BL/n_min+RD(tWCKPST/tCK),not_allowed,nCK,seeded,Another WCK2CK sync start cannot be executed while WCK2CK sync status is on.
+Table263,WR_TO_RD_REQUIRES_NEW_SYNC,write_class,read_class,not_allowed,not_allowed,WL+BL/n_by_bg+tWTR_by_bg,nCK,seeded,Normal WR to RD path requires new WCK2CK sync start.
+Table264,TRAINING_WFF_TO_WFF,wff,wff,6nCK,WL+BL/n_min+RD(tWCKPST/tCK),WL+BL/n_min+RD(tWCKPST/tCK)+1,nCK,seeded,Training command sync-off seed.
+Table264,TRAINING_RFF_TO_RFF,rff,rff,6nCK,RL+BL/n_min+RD(tWCKPST/tCK),RL+BL/n_min+RD(tWCKPST/tCK)+1,nCK,seeded,Training command sync-off seed.
+Table265,WSOE_DECODE,cas_ws0_wsoff0,next_ws0_command,2nCK,LT_WL_or_RL,not_applicable,nCK,seeded,CAS WS=0 and WS_OFF=0 extends WCK sync-off when MR26.OP[3]=1.
+Table266,WSOE_WRITE_ACCEPTABLE,write_or_wff,cas_ws0_wsoff0,2nCK,LT_WL,not_applicable,nCK,seeded,CAS WSOE command must be issued before WL from previous write class command.
+Table266,WSOE_READ_ACCEPTABLE,read_or_rff_or_rdc_or_mrr,cas_ws0_wsoff0,2nCK,LT_RL,not_applicable,nCK,seeded,CAS WSOE command must be issued before RL from previous read class command.

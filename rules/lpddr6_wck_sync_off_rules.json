@@ -1,0 +1,115 @@
+{
+  "rule_set": "lpddr6_wck_sync_off_rules",
+  "sources": ["Table263", "Table264", "Table265", "Table266", "Table398", "Table310"],
+  "normalized_matrix_csv": "data/timing/lpddr6_wck_sync_cmd_pair_matrix_t263_t264.csv",
+  "deadlines": [
+    {
+      "id": "SYNC_DEADLINE_AFTER_READ",
+      "current_cmd_class": ["RD", "META_RD", "MRR", "RFF", "RDC"],
+      "formula": "RL + BLN_MIN + RD(tWCKPST/tCK)",
+      "unit": "nCK",
+      "source": "Table263"
+    },
+    {
+      "id": "SYNC_DEADLINE_AFTER_WRITE",
+      "current_cmd_class": ["WR", "META_WR", "WFF"],
+      "formula": "WL + BLN_MIN + RD(tWCKPST/tCK)",
+      "unit": "nCK",
+      "source": "Table263"
+    }
+  ],
+  "normal_command_rules": [
+    {
+      "id": "RD_TO_WR_WITHOUT_NEW_SYNC",
+      "current_cmd": ["RD"],
+      "next_cmd": ["WR"],
+      "without_new_sync_min": "tRTW_FINAL",
+      "without_new_sync_max": "RL + BLN_MIN + RD(tWCKPST/tCK)",
+      "with_new_sync_min": "not_allowed_while_sync_on",
+      "decision": "WS=0 allowed only when min <= gap <= max; WS=1 is illegal inside this window",
+      "source": "Table263_and_Figure85_text"
+    },
+    {
+      "id": "WR_TO_RD_REQUIRES_NEW_SYNC",
+      "current_cmd": ["WR"],
+      "next_cmd": ["RD"],
+      "without_new_sync_min": "Not Allowed",
+      "without_new_sync_max": "Not Allowed",
+      "with_new_sync_min_same_bg": "WL + BLN_MAX + tWTR_L_nCK",
+      "with_new_sync_min_diff_bg": "WL + BLN_MIN + tWTR_S_nCK",
+      "decision": "normal RD after WR requires new WCK2CK sync start",
+      "source": "Table263"
+    },
+    {
+      "id": "RD_TO_RD_WITHOUT_NEW_SYNC",
+      "current_cmd": ["RD"],
+      "next_cmd": ["RD"],
+      "without_new_sync_min": "BLN",
+      "without_new_sync_max": "RL + BLN_MIN + RD(tWCKPST/tCK)",
+      "decision": "WS=0 allowed only when min <= gap <= max; new sync required after max",
+      "source": "Table263"
+    },
+    {
+      "id": "WR_TO_WR_WITHOUT_NEW_SYNC",
+      "current_cmd": ["WR"],
+      "next_cmd": ["WR"],
+      "without_new_sync_min": "BLN",
+      "without_new_sync_max": "WL + BLN_MIN + RD(tWCKPST/tCK)",
+      "with_new_sync_min": "WL + BLN_MIN + RD(tWCKPST/tCK) + 1",
+      "decision": "WS=0 allowed only when min <= gap <= max; new sync start after max",
+      "source": "Table263"
+    },
+    {
+      "id": "MRR_TO_WR_WITHOUT_NEW_SYNC",
+      "current_cmd": ["MRR"],
+      "next_cmd": ["WR"],
+      "without_new_sync_min": "tRTW_FINAL + 2",
+      "without_new_sync_max": "RL + BLN_MIN + RD(tWCKPST/tCK)",
+      "with_new_sync_min": "RL + BLN_MIN + RD(tWCKPST/tCK) + 1",
+      "source": "Table263"
+    },
+    {
+      "id": "RD_TO_MRR_REQUIRES_NEW_SYNC",
+      "current_cmd": ["RD", "META_RD"],
+      "next_cmd": ["MRR"],
+      "without_new_sync_min": "Not Allowed",
+      "without_new_sync_max": "Not Allowed",
+      "with_new_sync_min": "RL + BLN_MAX + RD(tWCKPST/tCK) + 1",
+      "source": "Table263"
+    },
+    {
+      "id": "WR_TO_MRR_REQUIRES_NEW_SYNC",
+      "current_cmd": ["WR", "META_WR"],
+      "next_cmd": ["MRR"],
+      "without_new_sync_min": "Not Allowed",
+      "without_new_sync_max": "Not Allowed",
+      "with_new_sync_min": "WL + BLN_MAX + tWTR_L_nCK",
+      "source": "Table263"
+    }
+  ],
+  "wsoe_rules": [
+    {
+      "id": "WSOE_ENABLE",
+      "conditions": {"MR26.OP[3]": 1, "wck_always_on_enabled": false},
+      "cas_decode": {"WS": 0, "WS_OFF": 0},
+      "function": "WCK Sync-Off Extension",
+      "source": "Table265"
+    },
+    {
+      "id": "WSOE_AFTER_WRITE_ACCEPTABLE_PERIOD",
+      "previous_cmd": ["WR", "WFF"],
+      "min": "2",
+      "max": "WL - epsilon",
+      "unit": "nCK",
+      "source": "Table266"
+    },
+    {
+      "id": "WSOE_AFTER_READ_ACCEPTABLE_PERIOD",
+      "previous_cmd": ["RD", "RFF", "RDC", "MRR"],
+      "min": "2",
+      "max": "RL - epsilon",
+      "unit": "nCK",
+      "source": "Table266"
+    }
+  ]
+}

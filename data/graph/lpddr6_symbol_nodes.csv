@@ -1,0 +1,85 @@
+symbol_id,kind,unit,domain,value_source,source_ref,status,description_ko
+spec,input,string,scenario,scenario,user,active,적용할 JEDEC family
+data_rate_mbps,input,Mbps,clock,scenario_or_fsp,user_or_FSP,active,현재 operating data rate
+ck_mhz,derived,MHz,clock,formula,LP6_clocking,active,LPDDR6 CK frequency
+wck_mhz,derived,MHz,clock,formula,LP6_clocking,active,LPDDR6 WCK frequency
+tCK_ns,derived,ns,clock,formula,LP6_clocking,active,CK 1 cycle 시간
+tWCK_ns,derived,ns,clock,formula,LP6_clocking,active,WCK 1 cycle 시간
+current_cmd,input,enum,command,scenario,user,active,앞 command
+next_cmd,input,enum,command,scenario,user,active,뒤 command
+bank_relation,input,enum,command,scenario,user,active,same/different bank and BG 관계
+same_bg,derived,bool,command,decode,bank_relation,active,같은 BG 여부
+same_bank,derived,bool,command,decode,bank_relation,active,같은 bank 여부
+burst_length,input,enum,command,scenario_or_CAS,user_or_CAS,active,BL24 또는 BL48
+requested_gap_nck,input,nCK,command,scenario,user,active,검증할 command 사이 gap
+ws_operand,input,bool,wck_sync,scenario_or_CAS,CAS_WS,active,다음 command가 새 WCK2CK sync start인지 여부
+ws_off_operand,input,bool,wck_sync,scenario_or_CAS,CAS_WS_OFF,active,명시적 sync off operand
+MR0.OP[2],mr_field,binary,mr,MR0,Table45_Table47,active,Static efficiency-only device 여부
+MR1.OP[4:0],mr_field,binary,mr,MR1,Table47,active,RL/WL/nWTP/nRTP/nACU 및 speed-bin selector
+MR1.OP[5],mr_field,binary,mr,MR1,Table47,active,Write Latency Set selector
+MR1.OP[6],mr_field,binary,mr,MR1,Table47,active,Dynamic Efficiency Mode control
+MR3.OP[0],mr_field,binary,mr,MR3,Table76,active,Read DBI enable
+MR10.OP[0],mr_field,binary,mr,MR10,Table90,active,RDQS pre-shift
+MR10.OP[1],mr_field,binary,mr,MR10,Table90,active,RDQS ratio 1:1 또는 2:1
+MR10.OP[4:2],mr_field,binary,mr,MR10,Table90,active,RDQS preamble length selector
+MR10.OP[5],mr_field,binary,mr,MR10,Table90,active,RDQS postamble static/toggle selector
+MR10.OP[7:6],mr_field,binary,mr,MR10,Table90,active,RDQS postamble length selector
+MR11.OP[2],mr_field,binary,mr,MR11,Table92,active,DVFSH enable
+MR11.OP[3],mr_field,binary,mr,MR11,Table92,active,DVFSB enable
+MR11.OP[4],mr_field,binary,mr,MR11,Table92,active,DVFSL enable
+MR11.OP[5],mr_field,binary,mr,MR11,Table92,active,DVFSQ enable
+MR11.OP[6],mr_field,binary,mr,MR11,Table92,active,WCK frequency mode LF/HF
+MR19.OP[2:0],mr_field,binary,mr,MR19,Table111,active,DQ ODT setting
+MR20.OP[2:0],mr_field,binary,mr,MR20,Table113,active,DQ NT-ODT read setting
+MR20.OP[5:3],mr_field,binary,mr,MR20,Table113,active,DQ NT-ODT write setting
+MR22.OP[1:0],mr_field,binary,mr,MR22,Table117,active,RDQS enable setting
+MR22.OP[5],mr_field,binary,mr,MR22,Table117,active,WCK always-on mode
+MR22.OP[7:6],mr_field,binary,mr,MR22,Table117,active,WCK postamble length selector
+MR23.OP[0],mr_field,binary,mr,MR23,Table119,active,WECC enable
+MR23.OP[1],mr_field,binary,mr,MR23,Table119,active,WEDC enable
+MR23.OP[2],mr_field,binary,mr,MR23,Table119,active,Read link protection enable
+MR26.OP[3],mr_field,binary,mr,MR26,Table127_Table265,active,WSOE enable
+MR41.OP[0],mr_field,binary,mr,MR41,Table154,active,Per-pin DFE enable
+read_dbi_enabled,condition,bool,latency,decode,MR3.OP[0],active,Read DBI effective condition
+efficiency_mode_enabled,condition,bool,latency,decode,MR0.OP[2]|MR1.OP[6],active,Static 또는 dynamic efficiency effective condition
+dvfsh_enabled,condition,bool,power,decode,MR11.OP[2],active,DVFSH condition
+dvfsb_enabled,condition,bool,power,decode,MR11.OP[3],active,DVFSB condition
+dvfsl_enabled,condition,bool,power,decode,MR11.OP[4],active,DVFSL condition
+dvfsq_enabled,condition,bool,power,decode,MR11.OP[5],active,DVFSQ condition
+write_link_protection_enabled,condition,bool,latency,decode,MR23.OP[0]|MR23.OP[1],active,Write link protection effective condition
+read_link_protection_enabled,condition,bool,latency,decode,MR23.OP[2],active,Read link protection effective condition
+dq_odt_effective_enabled,condition,bool,odt,decode,MR11.OP[5]|MR19.OP[2:0],active,DQ ODT가 실제 timing에 적용되는지 여부
+dq_nt_odt_effective_enabled,condition,bool,odt,decode,MR11.OP[5]|MR20.OP[2:0],active,DQ NT-ODT read effective 여부
+dq_wr_nt_odt_effective_enabled,condition,bool,odt,decode,MR11.OP[5]|MR20.OP[5:3],active,DQ NT-ODT write effective 여부
+wck_fm,condition,enum,wck,decode,MR11.OP[6],active,WCK LF/HF mode
+rdqs_enabled,condition,bool,rdqs,decode,MR22.OP[1:0],active,RDQS output enable 여부
+MR1_speed_bin,validation,bool,latency,lookup,lpddr6_mr1_speed_bins.csv,active,MR1.OP[4:0]와 data_rate_mbps 일치 여부
+latency_table_id,lookup,string,latency,selector,lpddr6_mr1_latency_table_selector.csv,active,조건에 따라 선택되는 Table49~72 ID
+rl_set,lookup,enum,latency,selector,lpddr6_mr1_latency_table_selector.csv,active,Read latency set selector result
+wl_set,lookup,enum,latency,selector,MR1.OP[5],active,Write latency set selector result
+RL,lookup,nCK,latency,lookup,Table49_72,active,Read Latency
+WL,lookup,nCK,latency,lookup,Table49_72,active,Write Latency
+nWTP,lookup,nCK,latency,lookup,Table49_72_Table273_281,active,Write AP timing parameter
+nRTP_BL24,lookup,nCK,latency,lookup,Table49_72_Table268_272,active,Read AP BL24 timing parameter
+nRTP_BL48,lookup,nCK,latency,lookup,Table49_72_Table268_272,active,Read AP BL48 timing parameter
+nACU,lookup,nCK,latency,lookup,Table49_72_Table415_420,active,Activation counter update timing
+BLN,lookup,nCK,burst,lookup,Table381_382,active,Effective BL/n command spacing
+BLN_MIN,lookup,nCK,burst,lookup,Table381,active,Minimum burst data transfer time
+BLN_MAX,lookup,nCK,burst,lookup,Table381,active,Column array cycle limit
+tWTR_S_nCK,lookup,nCK,core_ac,lookup_convert,Table414_423,active,Write-to-read different BG timing converted to nCK
+tWTR_L_nCK,lookup,nCK,core_ac,lookup_convert,Table414_423,active,Write-to-read same BG timing converted to nCK
+tWCK2DQO_EFFECTIVE_MAX_ps,lookup,ps,wck2dq,lookup,Table477,active,WCK to DQ output max offset
+tRPST_nCK,lookup,nCK,rdqs,lookup_convert,Table90,active,RDQS postamble converted to nCK
+tWCKPST_nCK_RD,lookup,nCK,wck_sync,lookup_convert,Table117,active,WCK postamble floor conversion to CK
+ODTLon,lookup,nCK,odt,lookup,Table319_329,active,ODT on latency
+tODTon_MIN_nCK_RD,lookup,nCK,odt,lookup_convert,Table320_330,active,ODT turn-on minimum converted to CK
+tRTW_BASE,formula,nCK,command_gap,formula,Table389_390,active,Read-to-write base command gap
+tRTW_FINAL,formula,nCK,command_gap,formula,Table389_390_notes,active,Read-to-write final command gap
+WR_TO_RD_SAME,formula,nCK,command_gap,formula,lpddr6_formula_registry.json,active,Write-to-read same BG min gap
+WR_TO_RD_DIFF,formula,nCK,command_gap,formula,lpddr6_formula_registry.json,active,Write-to-read different BG min gap
+R_DEADLINE,formula,nCK,wck_sync,formula,lpddr6_formula_registry.json,active,Read-class auto sync-off deadline
+W_DEADLINE,formula,nCK,wck_sync,formula,lpddr6_formula_registry.json,active,Write-class auto sync-off deadline
+command_pair_rule,lookup,string,wck_sync,lookup,Table263_264,active,선택된 current->next command pair rule
+command_min_gap,formula,nCK,wck_sync,formula,Table263_264,active,선택된 pair path의 minimum gap
+command_max_gap,formula,nCK,wck_sync,formula,Table263_264,active,선택된 pair path의 maximum gap
+result_state,decision,string,wck_sync,decision,evaluator,active,최종 allowed/not allowed/too early 결과

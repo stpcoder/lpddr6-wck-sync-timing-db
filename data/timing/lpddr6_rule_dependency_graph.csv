@@ -1,0 +1,43 @@
+target,stage,rule_or_lookup,conditions,inputs,outputs,trace_required,source,status
+ck_mhz,derive,CK_FREQ_FROM_DATA_RATE,spec==LPDDR6,data_rate_mbps,ck_mhz,yes,clocking,active
+wck_mhz,derive,WCK_FREQ_FROM_DATA_RATE,spec==LPDDR6,data_rate_mbps,wck_mhz,yes,clocking,active
+tCK_ns,derive,TCK_FROM_CK,always,ck_mhz,tCK_ns,yes,derived,active
+tWCK_ns,derive,TWCK_FROM_WCK,always,wck_mhz,tWCK_ns,yes,derived,active
+active_fsp,decode,MR13_FSP_OP,MR13.OP[7:6] not reserved,raw MR state,active_fsp,yes,Table97,active
+MR1_speed_bin,validation,MR1_SPEED_BIN_TABLE,MR1.OP[4:0] present,MR1.OP[4:0]|data_rate_mbps,mr1_speed_bin_valid,yes,Table49_72_common_speed_bin,active
+RL,lookup,MR1_LATENCY_TABLE,MR1 table selector resolved,MR1.OP[4:0]|read_dbi|efficiency|dvfsl|link protection,RL,yes,Table49_72,partial
+WL,lookup,MR1_LATENCY_TABLE,MR1 table selector resolved,MR1.OP[4:0]|MR1.OP[5],WL,yes,Table49_72,partial
+nWTP,lookup_and_validate,NWTP_TIMING_TABLE,dvfsl|write_link_protection|efficiency|MR1.OP[4:0]|data_rate,MR1 nWTP|Table273_281 nWTP,nWTP,yes,Table273_281,active
+nRTP,lookup_and_validate,NRTP_TIMING_TABLE,read_link_protection|dvfsl|MR1.OP[4:0]|data_rate|burst_length,MR1 nRTP|Table268_272 nRTP,nRTP,yes,Table268_272,active
+nACU,lookup_and_validate,NACU_TIMING_TABLE,dvfsl|data_rate,MR1 nACU|Table415_420 nACU,nACU,yes,Table415_Table420,active
+BLN,lookup,BLN_TABLE,same_bg|burst_length|wck_freq,bank_relation|burst_length|data_rate,BLN,yes,Table381_Table382,review
+BLN_MIN,lookup,BLN_TABLE,burst_length|wck_freq,bank_relation|burst_length|data_rate,BLN_MIN,yes,Table381,review
+BLN_MAX,lookup,BLN_TABLE,burst_length|wck_freq|same_bg,bank_relation|burst_length|data_rate,BLN_MAX,yes,Table381,review
+tWTR_S_nCK,lookup_and_convert,TWTR_TABLE,dvfsl|link_protection|efficiency,tWTR_S_ns_floor|tWTR_S_nck_floor|tCK_ns,tWTR_S_nCK,yes,Table414_423,active
+tWTR_L_nCK,lookup_and_convert,TWTR_TABLE,dvfsl|link_protection|efficiency,tWTR_L_ns_floor|tWTR_L_nck_floor|tCK_ns,tWTR_L_nCK,yes,Table414_423,active
+tWCK2DQO_MAX,lookup_and_convert,WCK2DQO_TABLE,wck_fm|dvfs_mode|data_rate,tWCK2DQO_MAX_ps|tCK_ns,tWCK2DQO_MAX_nCK,yes,Table477_Table478,active
+ODTLon,lookup,ODT_TABLE,dq_odt_effective_enabled|data_rate,WL|data_rate,ODTLon,yes,Table319_Table329,active
+tODTon_MIN,lookup_and_convert,ODT_ASYNC_TABLE,dq_odt_effective_enabled,tODTon_MIN_ns|tCK_ns,tODTon_MIN_nCK_RD,yes,Table320_Table330,active
+ODTLoff_RD_DQ,lookup,NT_ODT_READ_TABLE,target=DQ|read_nt_odt_enabled|data_rate,RL|data_rate,ODTLoff_RD_DQ,yes,Table331,active
+ODTLon_RD_DQ,lookup,NT_ODT_READ_TABLE,target=DQ|read_nt_odt_enabled|data_rate|burst_length,RL|BLN_MIN|data_rate,ODTLon_RD_DQ,yes,Table331,active
+ODTLoff_RD_RDQS,lookup,NT_ODT_READ_TABLE,target=RDQS|rdqs_enabled|rdqs_ps|rdqs_pre_group|data_rate,RL|MR10|data_rate,ODTLoff_RD_RDQS,yes,Table332_335,active
+ODTLon_RD_RDQS,lookup,NT_ODT_READ_TABLE,target=RDQS|rdqs_enabled|rdqs_ps|rdqs_pre_group|burst_length|data_rate,RL|BLN_MIN|MR10|data_rate,ODTLon_RD_RDQS,yes,Table332_335,active
+tRPRE,lookup_and_convert,RDQS_PRE_TABLE,rdqs_enabled|MR10 settings|speed limit,MR10|MR22|data_rate|tWCK_ns|tCK_ns,tRPRE_nCK,yes,Table90_Table455,active
+tRPST,lookup_and_convert,RDQS_PST_TABLE,rdqs_enabled|MR10 settings,MR10|MR22|tWCK_ns|tCK_ns,tRPST_nCK,yes,Table90_Table455,active
+tWCKPST,lookup_and_convert,WCK_PST_TABLE,MR22.OP[7:6],MR22|tWCK_ns|tCK_ns,tWCKPST_nCK,yes,Table117,active
+tWCKENL_RD,lookup,WCK_SYNC_AC_READ,current_cmd=read_class|read_link|dvfsl|MR1.OP[4:0]|rl_set,MR1|MR11|MR23|RL,tWCKENL_RD,yes,Table256_Table259,active
+tWCKENL_WR,lookup,WCK_SYNC_AC_WRITE,current_cmd=write_class|MR1.OP[4:0]|wl_set,MR1|WL,tWCKENL_WR,yes,Table260,active
+tWCKENL_FS,lookup,WCK_SYNC_AC_CAS,current_cmd=CAS|MR1.OP[4:0],MR1,tWCKENL_FS,yes,Table261,active
+tWCKPRE,lookup,WCK_SYNC_AC_PRE,current_cmd class|MR1.OP[4:0]|rl_set|wl_set|read_link|dvfsl,MR1|MR11|MR23,tWCKPRE_STATIC|tWCKPRE_TOGGLE|tWCKPRE_TOTAL,yes,Table256_Table261,active
+tRTW_BASE,formula,TRTW_RULES,same_bg|dq_odt_effective_enabled,RL|WL|BLN_MIN|BLN_MAX|tWCK2DQO_MAX|tRPST|ODTLon|tODTon_MIN,tRTW_BASE,yes,Table389_Table390,active
+tRTW_FINAL,formula,TRTW_NOTES,dfeq|per_pin_dfe|even_gap,tRTW_BASE|DFE adders,tRTW_FINAL,yes,Table389_Table390_notes,active
+WR_TO_RD_MIN,formula,TWTR_COMMAND_GAP,current=WR next=RD same_bg/diff_bg,WL|BLN_MIN|BLN_MAX|tWTR_S_nCK|tWTR_L_nCK,command_min_gap,yes,Table383_385_Table263,active
+RD_TO_WR_MIN,formula,TRTW_COMMAND_GAP,current=RD next=WR,tRTW_FINAL,command_min_gap,yes,Table383_390_Table263,active
+SYNC_DEADLINE_READ,formula,WCK_SYNC_DEADLINE,current command read class,RL|BLN_MIN|tWCKPST,wck_sync_deadline_read,yes,Table263,active
+SYNC_DEADLINE_WRITE,formula,WCK_SYNC_DEADLINE,current command write class,WL|BLN_MIN|tWCKPST,wck_sync_deadline_write,yes,Table263,active
+tWRWTR,formula,TRAINING_WRITE_TO_WFF,current write class to WFF,WL|BLN_MAX|tCK,tWRWTR,yes,Table398_Note1,active
+tRTRRD,formula,TRAINING_READ_TO_TRAINING,current read class to WFF/RD/RDC,RL|BLN_MAX|tCK,tRTRRD,yes,Table398_Note3,active
+tMRR,lookup,MRR_PERIOD,current MRR to MRR,constant 12nCK,tMRR,yes,Table310,active
+WFF_TO_RFF_MIN,formula,WFF_TO_RFF_NOTE4,NT_ODT state|previous=WFF next=RFF,WL|RL|BLN_MAX|tCK|tODToff_MAX,command_min_gap,yes,Table264_Note4_Table398,active_with_ntodt_unresolved
+CMD_PAIR_MATRIX,lookup,WCK_SYNC_CMD_PAIR_MATRIX,current_cmd|next_cmd|bank_scope|WS,without/with sync min/max expressions,selected_rule,yes,Table263_Table264,active
+LEGALITY,decision,COMMAND_LEGALITY_MATRIX,command pair|sync state|gap|WS,command_min_gap|command_max_gap|illegal rules,result_state,yes,Table263_Table264_Table398,active_for_seed_matrix

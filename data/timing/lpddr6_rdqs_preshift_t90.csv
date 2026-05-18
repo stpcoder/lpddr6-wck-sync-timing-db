@@ -1,0 +1,3 @@
+source_table,pre_shift_code,pre_shift_twck,data_rate_condition,status,notes
+Table90,0,0,all,seeded,Default RDQS pre-shift.
+Table90,1,2,data_rate_mbps>8533,seeded_high_speed_only,RDQS is driven early by 2*tWCK and this setting is allowed above 8533Mbps.

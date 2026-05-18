@@ -1,0 +1,18 @@
+source_table,mr1_op,data_rate_lower_mbps,data_rate_upper_mbps,ck_lower_mhz_exclusive,ck_upper_mhz_inclusive,twckenl_fs_nck,twckpre_static_nck,status,notes
+Table261,00000,80,1067,20,267,0,2,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00001,1067,1600,267,400,2,2,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00010,1600,2133,400,533,2,2,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00011,2133,2750,533,688,4,3,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00100,2750,3200,688,800,6,3,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00101,3200,3750,800,938,7,4,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00110,3750,4267,938,1067,7,4,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,00111,4267,4800,1067,1200,8,5,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01000,4800,5500,1200,1375,9,6,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01001,5500,6400,1375,1600,9,6,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01010,6400,7500,1600,1875,9,7,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01011,7500,8533,1875,2133,10,8,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01100,8533,9600,2133,2400,11,9,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01101,9600,10667,2400,2667,12,10,seeded,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01110,10667,11733,2667,2933,TBD,TBD,tbd,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,01111,11733,12800,2933,3200,TBD,TBD,tbd,tWCKPRE_toggle_FS depends on the command following CAS WS=1.
+Table261,10000,12800,14400,3200,3600,TBD,TBD,tbd,tWCKPRE_toggle_FS depends on the command following CAS WS=1.

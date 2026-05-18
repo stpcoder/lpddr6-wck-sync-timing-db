@@ -1,0 +1,14 @@
+rule_id,input_unit,output_unit,formula,rounding,domain,comment_ko,source,status
+CK_FREQ_FROM_DATA_RATE,Mbps,MHz,ck_mhz=data_rate_mbps/4,none,clock,"LPDDR6에서 CK는 data rate의 1/4로 두고 계산",derived_from_clocking,active
+WCK_FREQ_FROM_DATA_RATE,Mbps,MHz,wck_mhz=data_rate_mbps/2,none,clock,"LPDDR6에서 WCK는 data rate의 1/2로 두고 계산",derived_from_clocking,active
+TCK_FROM_CK,MHz,ns,tCK_ns=1000/ck_mhz,none,clock,"CK 1 cycle 시간",derived,active
+TWCK_FROM_WCK,MHz,ns,tWCK_ns=1000/wck_mhz,none,clock,"WCK 1 cycle 시간",derived,active
+NS_TO_NCK_RU,ns,nCK,RU(ns/tCK_ns),ceil,CK_domain,"ns min 값을 CK cycle min으로 변환",JEDEC_RU_usage,active
+PS_TO_NCK_RU,ps,nCK,RU((ps/1000)/tCK_ns),ceil,CK_domain,"ps max/min 값을 CK cycle로 올림 변환",JEDEC_RU_usage,active
+PS_TO_NCK_RD,ps,nCK,RD((ps/1000)/tCK_ns),floor,CK_domain,"spec formula가 RD를 요구할 때만 사용",JEDEC_RD_usage,active
+TWCK_EXPR_TO_NS,tWCK_expr,ns,coefficient*tWCK_ns,none,WCK_domain,"2.5*tWCK 같은 표현을 ns로 환산",MR10_MR22,active
+TWCK_EXPR_TO_NCK_RD,tWCK_expr,nCK,RD((coefficient*tWCK_ns)/tCK_ns),floor,CK_domain,"tWCKPST/tCK처럼 RD가 붙은 식에 사용",Table263_Table396,active
+TWCK_EXPR_TO_NCK_RU,tWCK_expr,nCK,RU((coefficient*tWCK_ns)/tCK_ns),ceil,CK_domain,"rank/meta 식의 RU((tWCKPST-0.5*tWCK)/tCK)에 사용",Table401_412,active
+MAX_NS_NCK_TO_NCK,mixed,nCK,max(RU(ns_floor/tCK_ns);nck_floor),ceil_then_max,CK_domain,"Max(6.25ns;6nCK) 형태를 계산",Table414_423,active
+EVEN_COMMAND_GAP,nCK,nCK,EVEN(raw_nck),round_up_even,command_domain,"LPDDR6 every-other nCK command protocol 때문에 command gap은 even nCK로 올림",Table263_Table383_Table389,active
+TBD_PROPAGATION,any,warning,if input is TBD then output is TBD_warning,none,validation,"TBD가 최종 경로에 있으면 계산값 대신 warning 필요",project_rule,active

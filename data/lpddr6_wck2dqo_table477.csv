@@ -1,0 +1,10 @@
+source,symbol,wck_fm,dvfs_mode,data_rate_lower_mbps_exclusive,data_rate_upper_mbps_inclusive,min_ps,max_ps,temp_coeff_ps_per_c,volt_coeff_ps_per_mv,status
+Table477,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,650,1600,1.5,3.0,seeded
+Table477,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,650,1600,1.5,3.0,seeded
+Table477,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,650,1600,1.4,2.5,seeded
+Table477,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,TBD,TBD,TBD,TBD,tbd
+Table477,tWCK2DQO_LF,LF,normal,0,1600,650,1900,1.8,5.0,seeded
+Table477,tWCK2DQO_LF,LF,normal,1600,4800,650,1900,1.8,5.0,seeded
+Table477,tWCK2DQO_LF,LF,normal,4800,99999,NA,NA,NA,NA,not_applicable
+Table477,tWCK2DQO_LF_L,LF,dvfsl,0,1600,650,1900,1.8,6.0,seeded
+Table477,tWCK2DQO_LF_L,LF,dvfsl,1600,99999,NA,NA,NA,NA,not_applicable

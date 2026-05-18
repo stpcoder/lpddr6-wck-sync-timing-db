@@ -1,0 +1,17 @@
+source_table,ratio_code,ratio,unit_twck,pre_code,pre_static_units,pre_toggle_units,pre_static_twck,pre_toggle_twck,pre_total_twck,data_rate_condition,status,notes
+Table90,0,1to1,1,000,4,0,4,0,4,all,seeded,Default RDQS preamble. Unit is tWCK when MR10.OP[1]=0.
+Table90,0,1to1,1,001,2,2,2,2,4,all,seeded,Supported over all frequency ranges.
+Table90,0,1to1,1,010,4,4,4,4,8,data_rate_mbps>8533,seeded_high_speed_only,Allowed only above 8533Mbps.
+Table90,0,1to1,1,011,2,6,2,6,8,data_rate_mbps>8533,seeded_high_speed_only,Allowed only above 8533Mbps.
+Table90,0,1to1,1,100,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,0,1to1,1,101,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,0,1to1,1,110,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,0,1to1,1,111,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,1,2to1,2,000,2,0,4,0,4,all,seeded,Default half-rate RDQS preamble. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,001,1,1,2,2,4,all,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,010,2,2,4,4,8,data_rate_mbps>8533,seeded_high_speed_only,Allowed only above 8533Mbps.
+Table90,1,2to1,2,011,1,3,2,6,8,data_rate_mbps>8533,seeded_high_speed_only,Allowed only above 8533Mbps.
+Table90,1,2to1,2,100,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,1,2to1,2,101,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,1,2to1,2,110,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.
+Table90,1,2to1,2,111,RFU,RFU,RFU,RFU,RFU,illegal,illegal,RFU preamble code.

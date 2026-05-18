@@ -1,0 +1,15 @@
+trace_field,type,required,description_ko,example
+trace_id,string,yes,계산 trace row 고유 ID,TR-0001
+scenario_id,string,yes,어떤 scenario 계산인지,sample_rd_to_wr_same_bg_auto_sync_off
+stage,string,yes,derive decode lookup formula note validation decision 중 하나,lookup
+target_symbol,string,yes,계산 또는 판정 대상 symbol,tRTW_BASE
+source,string,yes,근거 JEDEC table 또는 project rule,Table389
+condition_hit,string,yes,선택된 조건,same_bg=true AND dq_odt_effective_enabled=false
+inputs,string,yes,입력 symbol과 값,RL=40|BLN_MAX=12|tWCK2DQO_MAX_ps=1600|WL=20
+raw_formula,string,no,적용 전 formula,RL + BLN_MAX + RU(tWCK2DQO_MAX/tCK) - WL
+unit_conversion,string,no,단위 변환 내용,RU(1.6ns/0.4167ns)=4nCK
+raw_result,string,no,rounding 전 결과,36
+rounding,string,no,RU RD EVEN 등 적용 내용,EVEN(36)=36
+final_value,string,yes,최종 값,36nCK
+severity,string,yes,info warning illegal error,info
+message_ko,string,yes,사람이 읽는 설명,Table389 same BG ODT disabled tRTW 식 적용

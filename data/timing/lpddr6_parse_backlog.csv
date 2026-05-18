@@ -1,0 +1,25 @@
+priority,area,source,what_to_parse,why_needed,status
+P0,MR,Table73_Table74,MR2 detailed field and value map,"DBI and data mode controls likely affect latency/output timing",not_started
+P0,MR,Table75_Table76,MR3 detailed field and value map,"DBI-RD and EDBI-WR are Table400 output timing affecting MRs",partial
+P0,Latency,Table49_Table72,Complete MR1 OP[4:0] numeric latency rows,"RL/WL/nWTP/nRTP/nACU must resolve for all feature combinations",seeded_with_tbd_and_limited_rows
+P0,ODT,Table319_Table320,Data bus ODT ODTLon ODTLoff tODTon tODToff,"tRTW ODT enabled formula requires ODTLon and tODTon_min",seeded_odtlon_async_odtloff_tbd
+P0,ODT,Table329_Table330,NT-ODT write latency and async timing,"Write NT-ODT and rank/meta constraints require these values",seeded_with_tbd
+P0,ODT,Table331_Table336,NT-ODT read DQ/RDQS latency and async timing,"Read NT-ODT and rank-to-rank timing require these values",seeded_with_tbd
+P0,Command,Table383_Table388,Normal command timing matrix,"Base command_min_gap and illegal/not_allowed matrix",partial
+P0,Command,Table389_Table390,tRTW formulas and all note conditions,"Read-to-write command gap core",seeded
+P0,Command,Table263_Table264,WCK2CK sync-off normal and training command matrix,"Auto Sync Off pass/fail and WS=0/WS=1 legality",seeded_full_pair_matrix
+P1,Command,Table391_Table393,Auto Precharge command timing constraints,"AP command support and nWTP/nRTP dependency",not_started
+P1,Command,Table394_Table396,CAS WS_AON WS_OFF WS/WS_OFF constraints,"Explicit sync off and duplicated sync illegal checks",partial
+P1,Command,Table398_Table399_Table400,Training and MRR/MRW timing constraints plus output-affecting MR list,"tWRWTR tRTRRD tMRR and MR change timing guard",partial_seeded_training_symbols
+P1,Command,Table401_Table405,Rank-to-rank command timing constraints,"Different rank support with WCK AON on/off and ODT states",not_started
+P1,Command,Table406_Table412,Meta and efficiency/meta command constraints,"Meta command and efficiency mode support",not_started
+P1,WCK_sync,Table256_Table261_and_figures,WCK enable/pre-static/toggle/half-toggle timing,"Full WCK Sync Off and WCK Sync Start calculation",seeded_ac_tables_with_tbd
+P1,RDQS,Table90_Table282_Table283_and_Table455,tRPRE tRPST pattern and AC definitions,"tRTW ODT enabled and rank timing require exact pre/postamble conversion",seeded_mr10_patterns_ac_tbd
+P1,CoreAC,Table414_Table423,All core AC symbols beyond tWTR,"ACT/PRE/REF support and future full scheduler",partial
+P1,CoreAC,Table273_Table281,nWTP timing tables and start reference,"Auto-precharge and WRA timing need nWTP source trace",seeded
+P1,CoreAC,Table268_Table272,nRTP timing tables and start reference,"Read AP timing needs nRTP source trace and MR1 cross-check",seeded
+P1,CoreAC,Table415_Table420,nACU concrete value by DVFSL and data rate,"tRPab/tRPpb and MRR/MRW timing need nACU",seeded
+P2,MR,Table95_Table100_Table103,Full VREF code maps for MR12 MR14 MR15,"Voltage/VREF training and illegal test-only ranges",partial
+P2,MR,Table155_Table180,MR42 through MR54 detailed tables,"PPR DCA serial ID and related feature completeness",not_started
+P2,MR,Table193 onward,MR78 through MR126 detailed tables,"Pre-drive PRAC ECS fault and training completeness",not_started
+P2,LPDDR5,JESD209-5C matching tables,LPDDR5 comparison tables,"LP5/LP6 delta and backward comparison",started_odt_write_delta_seed

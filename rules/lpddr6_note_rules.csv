@@ -1,0 +1,10 @@
+note_rule_id,target,condition,action,source,status
+TRTW_DFEQ_ADD,tRTW_FINAL,dfeq_enabled==true,add 1 nCK,Table389_Note2_Table390_Note2,active
+TRTW_PER_PIN_DFE_ADD,tRTW_FINAL,per_pin_dfe_enabled==true,add 1 nCK,Table389_Note3_Table390_Note3,active
+TRTW_WCK_FM_SELECT,tWCK2DQO_MAX,wck_fm==LF,use tWCK2DQO_LF or LF_L depending DVFSL,Table389_Note1_Table477_Table478,active
+TRTW_WCK_FM_SELECT_HF,tWCK2DQO_MAX,wck_fm==HF,use tWCK2DQO_HF,Table389_Note1_Table477_Table478,active
+COMMAND_EVEN_GAP,command_min_gap,always,EVEN round-up,Table263_Note1_Table383_Note2_Table389_Note4,active
+RDQS_DISABLED_RPST,tRPST,rdqs_enabled==false,override to 0,Table401_Note4_Table403_Note5,review
+DVFSQ_ODT_FORCE_OFF,dq_odt_effective_enabled,dvfsq_enabled==true,force ODT and NT-ODT off,Table92_Note6,active
+MR_AFFECTS_OUTPUT_TIMING,MRW_to_data_timing,MRW changes Table400 MR,use Table400-specific MRR/MRW guard timing,Table400,active
+WCK_FM_CHANGE_REQUIRES_FSP,wck_fm_change,MR11.OP[6] changes,use FSP procedure,Table477_text,active

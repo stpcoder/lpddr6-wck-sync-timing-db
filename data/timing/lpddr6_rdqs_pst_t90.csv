@@ -1,0 +1,17 @@
+source_table,ratio_code,ratio,unit_twck,pst_mode_code,pst_mode,pst_code,pst_units,pst_twck,waveform,status,notes
+Table90,0,1to1,1,0,toggle,00,0.5,0.5,toggle,seeded,Default RDQS postamble in toggle mode.
+Table90,0,1to1,1,0,toggle,01,2.5,2.5,toggle,seeded,RDQS postamble in toggle mode.
+Table90,0,1to1,1,0,toggle,10,4.5,4.5,toggle,seeded,RDQS postamble in toggle mode.
+Table90,0,1to1,1,0,toggle,11,reserved,reserved,reserved,illegal,Reserved RDQS postamble code.
+Table90,0,1to1,1,1,static,00,0.5,0.5,static,seeded,Default RDQS postamble in static mode.
+Table90,0,1to1,1,1,static,01,2.5,2.5,static,seeded,RDQS postamble in static mode.
+Table90,0,1to1,1,1,static,10,4.5,4.5,static,seeded,RDQS postamble in static mode.
+Table90,0,1to1,1,1,static,11,reserved,reserved,reserved,illegal,Reserved RDQS postamble code.
+Table90,1,2to1,2,0,toggle,00,0.5,1.0,toggle,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,0,toggle,01,2.5,5.0,toggle,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,0,toggle,10,4.5,9.0,toggle,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,0,toggle,11,reserved,reserved,reserved,illegal,Reserved RDQS postamble code.
+Table90,1,2to1,2,1,static,00,0.5,1.0,static,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,1,static,01,2.5,5.0,static,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,1,static,10,4.5,9.0,static,seeded,Half-rate RDQS. One RDQS Unit is 2*tWCK.
+Table90,1,2to1,2,1,static,11,reserved,reserved,reserved,illegal,Reserved RDQS postamble code.

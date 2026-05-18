@@ -1,0 +1,129 @@
+mr,ma_hex,access,title,fsp_scoped,source,status,notes
+MR0,00H,R,Device type efficiency status sub-channel density,no,Table43_Table45,seeded,Read-only device identity and efficiency capability
+MR1,01H,R/W,RL WL nWTP nRTP nACU WLS Efficiency control,yes,Table43_Table47,seeded,Primary latency selector used by tRTW tWTR windows
+MR2,02H,R/W,DBI and related data mode fields,yes,Table43,not_seeded,Need detailed MR2 table extraction
+MR3,03H,R/W,PDDS EDBI-WR DBI-RD,yes,Table43,partial,DBI-RD affects RL selector
+MR4,04H,R,TUF ZQUF ZQ Initiator Refresh Multiplier,no,Table43,not_seeded,Refresh and ZQ status
+MR5,05H,R,LPDDR6 Manufacturer ID,no,Table43,not_seeded,Read-only vendor ID
+MR6,06H,R,Revision ID-1,no,Table43,not_seeded,Read-only revision
+MR7,07H,R,Revision ID-2,no,Table43,not_seeded,Read-only revision
+MR8,08H,R,Revision ID-3,no,Table85_Table86,partial,Vendor specific revision
+MR9,09H,W,Vendor Specific Test Register,no,Table87_Table88,seeded,Only 00H should be written
+MR10,0AH,W,RDQS pre-shift ratio preamble postamble,yes,Table89_Table90,seeded,Affects tRPST and read output timing
+MR11,0BH,W,DVFSH DVFSB DVFSL DVFSQ WCK FM WCK2DQ OSC FM,yes,Table91_Table92,seeded,Affects voltage mode ODT effective state and tWCK2DQ
+MR12,0CH,R/W,VREF(CA),yes,Table93_Table94,seeded,FSP-scoped VREF CA setting
+MR13,0DH,R/W,Thermal offset VRO VRCG FSP-WR FSP-OP,global,Table96_Table97,seeded,Selects active FSP and write target FSP
+MR14,0EH,R/W,VREF(DQ),yes,Table98_Table99,seeded,FSP-scoped VREF DQ setting
+MR15,0FH,R/W,VREF(CS) OCC,yes,Table101_Table102,seeded,FSP-scoped VREF CS setting
+MR16,10H,W,WCK2CK leveling RDC DQ mode CBT CST,global,Table104_Table105,seeded,Training entry and WCK2CK leveling control
+MR17,11H,R/W,SoC ODT CS ODT,yes,Table106_Table107,seeded,Command-side ODT values
+MR18,12H,R/W,CK ODT CA ODT,yes,Table108_Table109,seeded,Command and clock ODT values
+MR19,13H,R/W,DQ ODT WCK ODT,yes,Table110_Table111,seeded,DQ ODT directly changes tRTW formula
+MR20,14H,R/W,DQ NT-ODT DQ WR NT-ODT,yes,Table112_Table113,seeded,NT-ODT affects tRTW and power-down ODT behavior
+MR21,15H,R,DVFSH DVFSB DVFSL requirement,no,Table114_Table115,seeded,Read-only device DVFS capability and requirement
+MR22,16H,W,RDQS WCK mode CK mode WCK always on WCK PST,yes,Table116_Table117,seeded,Affects WCK sync off tWCKPST and RDQS state
+MR23,17H,W,WECC WEDC RECC REDC CS ODT PD,yes,Table118_Table119,seeded,Link protection affects latency and tWTR table
+MR24,18H,W,RFU,no,Table43,seeded,All RFU write bits should be zero
+MR25,19H,W,CK pair TERM CA inputs TERM PARC optimized refresh,no,Table120_Table121,seeded,Package refresh and shared bus termination hints
+MR26,1AH,W,DCM CA parity WSOE sPPR,no,Table122_Table123,seeded,WSOE and CA parity constraints with WCK AON
+MR27,1BH,W,PASR segment mask,no,Table124_Table125,seeded,Partial array refresh mask
+MR28,1CH,W,ZQ interval ZQ stop ZQ reset,no,Table127_Table128,seeded,ZQ stop and reset mutually exclusive
+MR29,1DH,N/A,RFU,no,Table43,seeded,Unavailable
+MR30,1EH,W,DQ11-DQ8 per-bit Read DQ calibration control,no,Table129_Table130,seeded,RDC pattern invert or low-fix
+MR31,1FH,W,DQ7-DQ0 per-bit Read DQ calibration control,no,Table132_Table133,seeded,RDC pattern invert or low-fix
+MR32,20H,W,DQ calibration pattern A,no,Table135_Table136,seeded,RDC pattern byte A default 5AH
+MR33,21H,W,DQ calibration pattern B,no,Table137_Table138,seeded,RDC pattern byte B default 3CH
+MR34,22H,W,DQ calibration pattern C,no,Table139_Table140,seeded,RDC pattern byte C default A0H
+MR35,23H,R,WCK2DQI oscillator count LSB,no,Table141_Table142,seeded,Read WCK2DQI oscillator count
+MR36,24H,R,WCK2DQI oscillator count MSB,no,Table143_Table144,seeded,Read WCK2DQI oscillator count
+MR37,25H,R/W,WCK2DQI interval timer runtime,no,Table145_Table146,seeded,Stop MPC legality depends on zero or nonzero value
+MR38,26H,R,WCK2DQO oscillator count LSB,no,Table147_Table148,seeded,Read WCK2DQO oscillator count
+MR39,27H,R,WCK2DQO oscillator count MSB,no,Table149_Table150,seeded,Read WCK2DQO oscillator count
+MR40,28H,R/W,WCK2DQO interval timer runtime,no,Table151_Table152,seeded,Stop MPC legality depends on zero or nonzero value
+MR41,29H,R/W,PDFEC MBIST availability selection PPRE MBIST status,yes,Table153_Table154,seeded,Per-pin DFE enable adds tRTW note delay
+MR42,2AH,W,PPR key protection,no,Table43,not_seeded,Need detailed PPR table extraction
+MR43,2BH,R,PPR resource BG1/BG0 banks,no,Table43,not_seeded,PPR resource status
+MR44,2CH,R,PPR resource BG3/BG2 banks,no,Table43,not_seeded,PPR resource status
+MR45,2DH,W,DCA,no,Table43,partial,DCA control
+MR46,2EH,W,Read DCA RDQS toggle Enhanced RDQS,no,Table43,partial,Read DCA and RDQS controls
+MR47,2FH,R,Serial ID-1,no,Table43,not_seeded,Read-only serial ID
+MR48,30H,R,Serial ID-2,no,Table43,not_seeded,Read-only serial ID
+MR49,31H,R,Serial ID-3,no,Table43,not_seeded,Read-only serial ID
+MR50,32H,R,Serial ID-4,no,Table43,not_seeded,Read-only serial ID
+MR51,33H,R,Serial ID-5,no,Table43,not_seeded,Read-only serial ID
+MR52,34H,R,Serial ID-6,no,Table43,not_seeded,Read-only serial ID
+MR53,35H,R,Serial ID-7,no,Table43,not_seeded,Read-only serial ID
+MR54,36H,R,Serial ID-8,no,Table43,not_seeded,Read-only serial ID
+MR55,37H,N/A,DNU,no,Table43,seeded,Do not use
+MR56,38H,W,Valid 0 or 1,no,Table43,not_seeded,Need detailed table
+MR57,39H,N/A,RFU,no,Table43,seeded,Unavailable
+MR58,3AH,N/A,RFU,no,Table43,seeded,Unavailable
+MR59,3BH,N/A,DNU,no,Table43,seeded,Do not use
+MR60,3CH,W,Valid 0 or 1,no,Table43,not_seeded,Need detailed table
+MR61,3DH,N/A,DNU,no,Table43,seeded,Do not use
+MR62,3EH,N/A,DNU,no,Table43,seeded,Do not use
+MR63,3FH,N/A,DNU,no,Table43,seeded,Do not use
+MR64,40H,N/A,RFU,no,Table43,seeded,Unavailable
+MR65,41H,N/A,RFU,no,Table43,seeded,Unavailable
+MR66,42H,N/A,RFU,no,Table43,seeded,Unavailable
+MR67,43H,N/A,RFU,no,Table43,seeded,Unavailable
+MR68,44H,N/A,RFU,no,Table43,seeded,Unavailable
+MR69,45H,W,RFU,no,Table43,seeded,All RFU
+MR70,46H,W,DFEDQ0 DFEDQ1,yes,Table181_Table182,seeded,Per-pin DFE quantity
+MR71,47H,W,DFEDQ2 DFEDQ3,yes,Table183_Table184,seeded,Per-pin DFE quantity
+MR72,48H,W,DFEDQ4 DFEDQ5,yes,Table185_Table186,seeded,Per-pin DFE quantity
+MR73,49H,W,DFEDQ6 DFEDQ7,yes,Table187_Table188,seeded,Per-pin DFE quantity
+MR74,4AH,W,DFEDQ8 DFEDQ9,yes,Table189_Table190,seeded,Per-pin DFE quantity
+MR75,4BH,W,DFEDQ10 DFEDQ11,yes,Table191_Table192,seeded,Per-pin DFE quantity
+MR76,4CH,W,RFU,no,Table43,seeded,All RFU
+MR77,4DH,W,RFU,no,Table43,seeded,All RFU
+MR78,4EH,W,Pre-PUDS DQ0-DQ3,no,Table43,not_seeded,Pre-drive pull-up strength
+MR79,4FH,W,Pre-PUDS DQ4-DQ7,no,Table43,not_seeded,Pre-drive pull-up strength
+MR80,50H,W,Pre-PUDS DQ8-DQ11,no,Table43,not_seeded,Pre-drive pull-up strength
+MR81,51H,W,Pre-PDDS DQ0-DQ3,no,Table43,not_seeded,Pre-drive pull-down strength
+MR82,52H,W,Pre-PDDS DQ4-DQ7,no,Table43,not_seeded,Pre-drive pull-down strength
+MR83,53H,W,Pre-PDDS DQ8-DQ11,no,Table43,not_seeded,Pre-drive pull-down strength
+MR84,54H,W,Pre-PDDS and Pre-PUDS RDQS,no,Table43,not_seeded,RDQS pre-drive strength
+MR85,55H,R/W,ALERT verification activation counter status,no,Table43,not_seeded,Alert and activation counter
+MR86,56H,R/W,PRAC test adaptive PRAC MRFMaACT,no,Table43,not_seeded,PRAC controls
+MR87,57H,R,PRAC row address byte0,no,Table43,not_seeded,PRAC row report
+MR88,58H,R,PRAC row address byte1,no,Table43,not_seeded,PRAC row report
+MR89,59H,R,PRAC BG bank row bit,no,Table43,not_seeded,PRAC address report
+MR90,5AH,W,DNU,no,Table43,seeded,Do not use
+MR91,5BH,W,DNU,no,Table43,seeded,Do not use
+MR92,5CH,W,System Meta Mode loopback,no,Table43,not_seeded,System meta and loopback controls
+MR93,5DH,W,Enhanced Write DBI Set 0,no,Table43,not_seeded,Enhanced Write DBI
+MR94,5EH,W,Enhanced Write DBI Set 1,no,Table43,not_seeded,Enhanced Write DBI
+MR95,5FH,W,PAMM Segment,no,Table43,not_seeded,PAMM segment
+MR96,60H,N/A,RFU,no,Table43,seeded,Unavailable
+MR97,61H,R,Fault status summary,no,Table43,partial,Fault bits for parity ECC PRAC limit
+MR98,62H,N/A,RFU,no,Table43,seeded,Unavailable
+MR99,63H,W,Fault status reset and alert state,no,Table43,partial,Fault reset/control mirror
+MR100,64H,N/A,RFU,no,Table43,seeded,Unavailable
+MR101,65H,N/A,DNU,no,Table43,seeded,Do not use
+MR102,66H,N/A,DNU,no,Table43,seeded,Do not use
+MR103,67H,N/A,DNU,no,Table43,seeded,Do not use
+MR104,68H,N/A,DNU,no,Table43,seeded,Do not use
+MR105,69H,N/A,DNU,no,Table43,seeded,Do not use
+MR106,6AH,N/A,DNU,no,Table43,seeded,Do not use
+MR107,6BH,N/A,DNU,no,Table43,seeded,Do not use
+MR108,6CH,N/A,DNU,no,Table43,seeded,Do not use
+MR109,6DH,R,TSRO,no,Table43,not_seeded,Temperature sensor readout
+MR110,6EH,R/W,RFU,no,Table43,seeded,RFU
+MR111,6FH,W,ECS control,no,Table43_Table370,partial,Auto and manual ECS control
+MR112,70H,R,ECS flags and address bit,no,Table43,partial,ECS CE UE flags
+MR113,71H,R,ECS max CE/UE bank address,no,Table43,partial,ECS bank address
+MR114,72H,R,ECS max CE row address high,no,Table43,partial,ECS row address
+MR115,73H,R,ECS max CE row address low,no,Table43,partial,ECS row address
+MR116,74H,R,ECS UE row address high,no,Table43,partial,ECS row address
+MR117,75H,R,ECS UE row address low,no,Table43,partial,ECS row address
+MR118,76H,W,RFU,no,Table43,seeded,All RFU
+MR119,77H,N/A,RFU,no,Table43,seeded,Unavailable
+MR120,78H,N/A,DNU,no,Table43,seeded,Do not use
+MR121,79H,N/A,DNU,no,Table43,seeded,Do not use
+MR122,7AH,N/A,DNU,no,Table43,seeded,Do not use
+MR123,7BH,N/A,DNU,no,Table43,seeded,Do not use
+MR124,7CH,N/A,RFU,no,Table43,seeded,Unavailable
+MR125,7DH,R,CA F1/R1 training result,no,Table43,partial,CA edge result register
+MR126,7EH,R,CA F2/R2 training result,no,Table43,partial,CA edge result register
+MR127,7FH,N/A,RFU,no,Table43,seeded,Unavailable

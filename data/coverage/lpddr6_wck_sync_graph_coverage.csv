@@ -1,0 +1,9 @@
+coverage_id,scope,artifact,covered_symbols_or_rules,status,notes
+COV_GRAPH_SYMBOLS,graph,data/graph/lpddr6_symbol_nodes.csv,clock|MR decode|MR1 latency|BLN|tWTR|tRTW|WCK Sync-Off,seeded,Timing-critical seed path is represented as symbol nodes.
+COV_GRAPH_EDGES,graph,data/graph/lpddr6_dependency_edges.csv,MR->condition|condition->lookup|lookup->formula|formula->decision,seeded,Edges cover current executable WCK Sync-Off path.
+COV_TABLE_KEYS,graph,data/graph/lpddr6_table_keys.csv,MR1|BLN|tWTR|WCK2DQ|RDQS|WCKPST|ODT|tRTW|CMD pair,seeded,Shared key catalog exists for major seeded timing CSVs.
+COV_FORMULAS,formula,data/formulas/lpddr6_formula_registry.json,Table263/264 expression ids,seeded,Command-pair matrix expressions resolve through AST or external resolver.
+COV_EVALUATOR,evaluator,tools/evaluate_lpddr6_timing_seed.py,formula_registry dispatch for pair min/max,active,Hardcoded pair arithmetic moved to formula registry for seeded expressions.
+COV_REMAINING_FULL_ENGINE,engine,target_symbol recursive resolver,all target symbols,not_started,Evaluator still runs fixed phase order; next step is generic target-symbol resolver over graph/table keys.
+COV_REMAINING_CONDITIONS,conditions,condition AST registry,all selector conditions,not_started,Selector conditions are still partly hardcoded in evaluator functions.
+COV_REMAINING_FULL_JEDEC,coverage,all LPDDR6 timing tables,all timing tables,not_started,Only timing-critical WCK Sync-Off path is graph-backed so far.

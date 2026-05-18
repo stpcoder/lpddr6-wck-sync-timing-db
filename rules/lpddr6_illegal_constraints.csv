@@ -1,0 +1,12 @@
+constraint_id,condition,result,source,status
+ILLEGAL_WS1_WHILE_SYNC_ON,wck_sync_state==on AND ws_operand==1,illegal,Table263_Note2,active
+REQUIRE_NEW_WS1_AFTER_SYNC_DEADLINE,requested_gap_nck > command_max_gap_without_new_sync,requires_new_ws1,Table263,active
+NO_VALID_WS0_WINDOW,command_min_gap > command_max_gap_without_new_sync,requires_new_ws1,Table263_Note4,active
+WR_TO_RD_WITHOUT_NEW_SYNC,current_cmd==WR AND next_cmd==RD AND ws_operand==0,not_allowed,Table263,active
+WR_TO_MRR_WITHOUT_NEW_SYNC,current_cmd==WR AND next_cmd==MRR AND ws_operand==0,not_allowed,Table263,active
+RD_TO_MRR_WITHOUT_NEW_SYNC,current_cmd==RD AND next_cmd==MRR AND ws_operand==0,not_allowed,Table263,active
+WSOE_WITH_WCK_AON,wsoe_enabled==true AND wck_always_on_enabled==true,illegal,Table265_text,active
+RESERVED_WCK_PST,MR22.OP[7:6]==11,illegal,Table117,active
+WECC_AND_WEDC_BOTH_ENABLED,MR23.OP[0]==1 AND MR23.OP[1]==1,illegal,Table119_Note3,active
+TBD_VALUE_USED,any_required_symbol==TBD,warning,project_rule,active
+REVIEW_VALUE_USED,any_required_symbol.status==review,warning,project_rule,active

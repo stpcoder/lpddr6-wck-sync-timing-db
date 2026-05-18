@@ -1,0 +1,55 @@
+source_table,parameter_group,symbol,wck_fm,dvfs_mode,data_rate_lower_mbps_exclusive,data_rate_upper_mbps_inclusive,min_value,max_value,unit,status,notes
+Table477,input_offset,tWCK2DQI_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,250,600,ps,seeded,DQ to WCK input offset for write.
+Table477,input_offset,tWCK2DQI_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,250,600,ps,seeded,DQ to WCK input offset for write.
+Table477,input_offset,tWCK2DQI_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,250,600,ps,seeded,DQ to WCK input offset for write.
+Table477,input_offset,tWCK2DQI_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,TBD,TBD,ps,tbd,DQ to WCK input offset for write.
+Table477,input_offset,tWCK2DQI_LF,LF,normal,0,1600,300,900,ps,seeded,DQ to WCK input offset for write.
+Table477,input_offset,tWCK2DQI_LF,LF,normal,1600,4800,300,900,ps,seeded,DQ to WCK input offset for write.
+Table477,input_offset,tWCK2DQI_LF,LF,normal,4800,99999,NA,NA,ps,not_applicable,LF normal mode is not applicable above 4800Mbps.
+Table477,input_offset,tWCK2DQI_LF_L,LF,dvfsl,0,1600,300,900,ps,seeded,DQ to WCK input offset for write in DVFSL.
+Table477,input_offset,tWCK2DQI_LF_L,LF,dvfsl,1600,99999,NA,NA,ps,not_applicable,LF_L applies only in DVFSL low speed range.
+Table477,input_temp_var,tWCK2DQI_temp_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,NA,0.6,ps_per_C,seeded,WCK to DQ input offset temperature variation.
+Table477,input_temp_var,tWCK2DQI_temp_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,NA,0.6,ps_per_C,seeded,WCK to DQ input offset temperature variation.
+Table477,input_temp_var,tWCK2DQI_temp_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,NA,0.5,ps_per_C,seeded,WCK to DQ input offset temperature variation.
+Table477,input_temp_var,tWCK2DQI_temp_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,NA,TBD,ps_per_C,tbd,WCK to DQ input offset temperature variation.
+Table477,input_temp_var,tWCK2DQI_temp_LF,LF,normal,0,1600,NA,0.7,ps_per_C,seeded,WCK to DQ input offset temperature variation.
+Table477,input_temp_var,tWCK2DQI_temp_LF,LF,normal,1600,4800,NA,0.7,ps_per_C,seeded,WCK to DQ input offset temperature variation.
+Table477,input_temp_var,tWCK2DQI_temp_LF,LF,normal,4800,99999,NA,NA,ps_per_C,not_applicable,LF normal mode is not applicable above 4800Mbps.
+Table477,input_temp_var,tWCK2DQI_temp_LF_L,LF,dvfsl,0,1600,NA,0.7,ps_per_C,seeded,WCK to DQ input offset temperature variation in DVFSL.
+Table477,input_temp_var,tWCK2DQI_temp_LF_L,LF,dvfsl,1600,99999,NA,NA,ps_per_C,not_applicable,LF_L applies only in DVFSL low speed range.
+Table477,input_volt_var,tWCK2DQI_volt_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,NA,25,ps_per_50mV,seeded,WCK to DQ input offset voltage variation.
+Table477,input_volt_var,tWCK2DQI_volt_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,NA,25,ps_per_50mV,seeded,WCK to DQ input offset voltage variation.
+Table477,input_volt_var,tWCK2DQI_volt_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,NA,25,ps_per_50mV,seeded,WCK to DQ input offset voltage variation.
+Table477,input_volt_var,tWCK2DQI_volt_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,NA,TBD,ps_per_50mV,tbd,WCK to DQ input offset voltage variation.
+Table477,input_volt_var,tWCK2DQI_volt_LF,LF,normal,0,1600,NA,50,ps_per_50mV,seeded,WCK to DQ input offset voltage variation.
+Table477,input_volt_var,tWCK2DQI_volt_LF,LF,normal,1600,4800,NA,50,ps_per_50mV,seeded,WCK to DQ input offset voltage variation.
+Table477,input_volt_var,tWCK2DQI_volt_LF,LF,normal,4800,99999,NA,NA,ps_per_50mV,not_applicable,LF normal mode is not applicable above 4800Mbps.
+Table477,input_volt_var,tWCK2DQI_volt_LF_L,LF,dvfsl,0,1600,NA,80,ps_per_50mV,seeded,WCK to DQ input offset voltage variation in DVFSL.
+Table477,input_volt_var,tWCK2DQI_volt_LF_L,LF,dvfsl,1600,99999,NA,NA,ps_per_50mV,not_applicable,LF_L applies only in DVFSL low speed range.
+Table477,output_offset,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,650,1600,ps,seeded,WCK to DQ output offset for read.
+Table477,output_offset,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,650,1600,ps,seeded,WCK to DQ output offset for read.
+Table477,output_offset,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,650,1600,ps,seeded,WCK to DQ output offset for read.
+Table477,output_offset,tWCK2DQO_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,TBD,TBD,ps,tbd,WCK to DQ output offset for read.
+Table477,output_offset,tWCK2DQO_LF,LF,normal,0,1600,650,1900,ps,seeded,WCK to DQ output offset for read.
+Table477,output_offset,tWCK2DQO_LF,LF,normal,1600,4800,650,1900,ps,seeded,WCK to DQ output offset for read.
+Table477,output_offset,tWCK2DQO_LF,LF,normal,4800,99999,NA,NA,ps,not_applicable,LF normal mode is not applicable above 4800Mbps.
+Table477,output_offset,tWCK2DQO_LF_L,LF,dvfsl,0,1600,650,1900,ps,seeded,WCK to DQ output offset for read in DVFSL.
+Table477,output_offset,tWCK2DQO_LF_L,LF,dvfsl,1600,99999,NA,NA,ps,not_applicable,LF_L applies only in DVFSL low speed range.
+Table477,output_temp_var,tWCK2DQO_temp_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,NA,1.5,ps_per_C,seeded,WCK to DQ output offset temperature variation.
+Table477,output_temp_var,tWCK2DQO_temp_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,NA,1.5,ps_per_C,seeded,WCK to DQ output offset temperature variation.
+Table477,output_temp_var,tWCK2DQO_temp_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,NA,1.4,ps_per_C,seeded,WCK to DQ output offset temperature variation.
+Table477,output_temp_var,tWCK2DQO_temp_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,NA,TBD,ps_per_C,tbd,WCK to DQ output offset temperature variation.
+Table477,output_temp_var,tWCK2DQO_temp_LF,LF,normal,0,1600,NA,1.8,ps_per_C,seeded,WCK to DQ output offset temperature variation.
+Table477,output_temp_var,tWCK2DQO_temp_LF,LF,normal,1600,4800,NA,1.8,ps_per_C,seeded,WCK to DQ output offset temperature variation.
+Table477,output_temp_var,tWCK2DQO_temp_LF,LF,normal,4800,99999,NA,NA,ps_per_C,not_applicable,LF normal mode is not applicable above 4800Mbps.
+Table477,output_temp_var,tWCK2DQO_temp_LF_L,LF,dvfsl,0,1600,NA,1.8,ps_per_C,seeded,WCK to DQ output offset temperature variation in DVFSL.
+Table477,output_temp_var,tWCK2DQO_temp_LF_L,LF,dvfsl,1600,99999,NA,NA,ps_per_C,not_applicable,LF_L applies only in DVFSL low speed range.
+Table477,output_volt_var,tWCK2DQO_volt_HF,HF,normal_or_dvfsh_or_dvfsb,0,1600,NA,3.0,ps_per_mV,seeded,WCK to DQ output offset voltage variation.
+Table477,output_volt_var,tWCK2DQO_volt_HF,HF,normal_or_dvfsh_or_dvfsb,1600,4800,NA,3.0,ps_per_mV,seeded,WCK to DQ output offset voltage variation.
+Table477,output_volt_var,tWCK2DQO_volt_HF,HF,normal_or_dvfsh_or_dvfsb,4800,10667,NA,2.5,ps_per_mV,seeded,WCK to DQ output offset voltage variation.
+Table477,output_volt_var,tWCK2DQO_volt_HF,HF,normal_or_dvfsh_or_dvfsb,10667,99999,NA,TBD,ps_per_mV,tbd,WCK to DQ output offset voltage variation.
+Table477,output_volt_var,tWCK2DQO_volt_LF,LF,normal,0,1600,NA,5.0,ps_per_mV,seeded,WCK to DQ output offset voltage variation.
+Table477,output_volt_var,tWCK2DQO_volt_LF,LF,normal,1600,4800,NA,5.0,ps_per_mV,seeded,WCK to DQ output offset voltage variation.
+Table477,output_volt_var,tWCK2DQO_volt_LF,LF,normal,4800,99999,NA,NA,ps_per_mV,not_applicable,LF normal mode is not applicable above 4800Mbps.
+Table477,output_volt_var,tWCK2DQO_volt_LF_L,LF,dvfsl,0,1600,NA,6.0,ps_per_mV,seeded,WCK to DQ output offset voltage variation in DVFSL.
+Table477,output_volt_var,tWCK2DQO_volt_LF_L,LF,dvfsl,1600,99999,NA,NA,ps_per_mV,not_applicable,LF_L applies only in DVFSL low speed range.

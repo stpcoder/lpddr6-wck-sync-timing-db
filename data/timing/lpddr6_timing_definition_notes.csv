@@ -1,0 +1,25 @@
+symbol,source,definition_ko,start_reference,end_reference,unit,condition_keys,status
+nWTP,Section7.4.2.3_Table273_281,Write AP 이후 internal precharge 시작점을 결정하는 CK cycle 수,Write AP command의 second rising CK edge 이후 WL+BL/n_max가 지난 CK_t rising edge,internal precharge start point,nCK,DVFSL|Write Link Protection|Efficiency|MR1.OP[4:0],seeded
+nRTP,Section7.4.2.2_Table268_272,Read with AP 이후 internal precharge 시작점을 결정하는 CK cycle 수,Read with AP command 이후 selected read latency and burst relation,internal precharge start point,nCK,DVFSL|Read Link Protection|Read DBI|Efficiency|MR1.OP[4:0]|BL,seeded
+nACU,Table415_Table420,Activation counter update cycle. tRPab/tRPpb와 AP/MRW timing 계산에 사용,data rate speed bin and DVFSL condition,selected nACU value,nCK,DVFSL|data_rate,seeded
+ODTLon,Table319_Table329,Write 또는 WFF command 기준 ODT turn-on reference까지의 synchronous latency,Write/WFF command second rising CK edge,tODTon reference,nCK,DQ ODT|NT ODT|data_rate|WL,seeded
+ODTLoff,Table319_Table329,Write 또는 WFF command 기준 ODT turn-off reference까지의 synchronous latency,Write/WFF command second rising CK edge,tODToff reference,nCK,DQ ODT|NT ODT|data_rate|WL|BL,seeded_with_tbd
+tODTon,Table320_Table330,ODTLon 이후 ODT 또는 NT-ODT가 Hi-Z를 벗어나 fully on으로 가는 asynchronous timing,ODTLon latency satisfied,ODT turn-on analog transition,ns,DQ ODT|NT ODT|all operation frequency,seeded
+tODToff,Table320_Table330,ODTLoff 이후 ODT 또는 NT-ODT가 off/high impedance로 가는 asynchronous timing,ODTLoff latency satisfied,ODT turn-off analog transition,ns,DQ ODT|NT ODT|all operation frequency,seeded
+ODTLoff_RD_DQ,Table331,Read command 기준 DQ NT-ODT turn-off reference까지의 synchronous latency,Read command second rising CK edge,tODT_RDoff reference,nCK,Read NT-ODT|data_rate|RL,seeded
+ODTLon_RD_DQ,Table331,Read command 기준 DQ NT-ODT turn-on reference까지의 synchronous latency,Read command second rising CK edge,tODT_RDon reference,nCK,Read NT-ODT|data_rate|RL|BL,seeded
+ODTLoff_RD_RDQS,Table332_335,Read command 기준 RDQS NT-ODT turn-off reference까지의 synchronous latency,Read command second rising CK edge,tODT_RDoff reference,nCK,RDQS enable|MR10.OP[0]|MR10.OP[4:2]|data_rate|RL,seeded
+ODTLon_RD_RDQS,Table332_335,Read command 기준 RDQS NT-ODT turn-on reference까지의 synchronous latency,Read command second rising CK edge,tODT_RDon reference,nCK,RDQS enable|MR10.OP[0]|MR10.OP[4:2]|data_rate|RL|BL,seeded
+tODT_RDon,Table336,ODTLon_RD 이후 NT-ODT가 Hi-Z를 벗어나 fully on으로 가는 asynchronous timing,ODTLon_RD latency satisfied,NT-ODT turn-on analog transition,ns,all operation frequency,seeded
+tODT_RDoff,Table336,ODTLoff_RD 이후 NT-ODT가 off/high impedance로 가는 asynchronous timing,ODTLoff_RD latency satisfied,NT-ODT turn-off analog transition,ns,all operation frequency,seeded
+tRPRE,Table90_Table455,RDQS read preamble 총 길이. static 구간과 toggle 구간으로 구성되며 MR10 OP[1]이 2:1이면 Unit=2*tWCK로 환산,Read data burst 전 RDQS preamble drive start,valid read data strobe window 앞 구간,tWCK_to_nCK,RDQS enable|MR10.OP[0]|MR10.OP[1]|MR10.OP[4:2]|data_rate,seeded_with_tbd_ac
+tRPST,Table90_Table455,RDQS read postamble 길이. tRTW DQ ODT enabled 식에서는 RD(tRPST/tCK)로 사용,Read data burst 종료 이후 RDQS postamble start,RDQS postamble end,tWCK_to_nCK,RDQS enable|MR10.OP[1]|MR10.OP[5]|MR10.OP[7:6],seeded_with_tbd_ac
+tWCKPST,Table117,WCK postamble 길이. Auto WCK2CK Sync Off deadline에서 RD(tWCKPST/tCK)로 사용,WCK sync-on read/write burst 종료 후 WCK postamble start,WCK postamble end,tWCK_to_nCK,MR22.OP[7:6]|tWCK|tCK,seeded
+tWCKENL_RD,Table256_Table259,Read 계열 command의 WCK enable latency. RL Set과 read link/DVFSL 조건으로 달라짐,WCK2CK sync start 관련 CAS/RD command timing 기준,read command WCK preamble alignment point,nCK,MR1.OP[4:0]|rl_set|read_link_protection|dvfsl,seeded_with_tbd
+tWCKENL_WR,Table260,Write 계열 command의 WCK enable latency. WL Set A/B 조건으로 달라짐,WCK2CK sync start 관련 CAS/WR command timing 기준,write command WCK preamble alignment point,nCK,MR1.OP[4:0]|wl_set,seeded_with_tbd
+tWCKPRE_Static,Table256_Table261,WCK preamble static portion. toggle 전 고정 level 구간,WCK preamble start,WCK toggle portion start,nCK,command class|MR1.OP[4:0]|rl_set|wl_set|read_link_protection|dvfsl,seeded_with_tbd
+tWCKPRE_Toggle,Table256_Table260,WCK preamble half-toggle/full-toggle portion. table은 half와 full toggle contribution을 분리 제공,static portion end,WCK preamble end,nCK,command class|MR1.OP[4:0]|rl_set|wl_set|read_link_protection|dvfsl,seeded_with_tbd
+tMRR,Table310,Mode Register Read command period. WCK Sync-Off MRR->MRR min에 사용,MRR command issue,next MRR or command guard end,nCK,current_cmd=MRR|next_cmd=MRR,seeded
+tWRWTR,Table398_Note1,Write class에서 Write FIFO로 넘어갈 때 필요한 training-related timing,previous write command,next WFF command,nCK,WL|BLN_MAX|tCK,seeded
+tRTRRD,Table398_Note3,Read/MRR/RFF/RDC 계열에서 training read/write calibration 계열로 넘어갈 때 쓰는 timing,previous read-like command,next WFF/RD/RDC related command,nCK,RL|BLN_MAX|tCK,seeded
+WFF_TO_RFF_MIN,Table264_Note4,WFF 이후 RFF min. NT-ODT disabled는 계산 가능하고 NT-ODT enabled는 tODToff_MAX lookup 필요,previous WFF,next RFF command,nCK,NT-ODT|WL|RL|BLN_MAX|tCK|tODToff_MAX,seeded_with_ntodt_unresolved

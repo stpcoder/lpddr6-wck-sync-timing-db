@@ -1,0 +1,20 @@
+source,function,mr_operand,impact_scope,status
+Table400,RL/WL/nWTP/nRTP/nACU,MR1 OP[4:0],data output condition and timing,seeded
+Table400,PDDS,MR3 OP[7:5],data output condition and timing,seeded
+Table400,DBI-RD,MR3 OP[0],data output condition and timing,seeded
+Table400,EDBI-WR,MR3 OP[1],data output condition and timing,seeded
+Table400,RDQS PST Mode,MR10 OP[5],data output condition and timing,seeded
+Table400,WCK PST,MR22 OP[7:6],data output condition and timing,seeded
+Table400,RDQS PRE,MR10 OP[4:2],data output condition and timing,seeded
+Table400,RDQS PST Length,MR10 OP[7:6],data output condition and timing,seeded
+Table400,RDQS PS,MR10 OP[0],data output condition and timing,seeded
+Table400,SoC ODT,MR17 OP[2:0],data output condition and timing,seeded
+Table400,WCK ODT,MR19 OP[5:3],data output condition and timing,seeded
+Table400,WCK FM,MR11 OP[6],data output condition and timing,seeded
+Table400,WCK ON,MR22 OP[5],data output condition and timing,seeded
+Table400,RDQS,MR22 OP[1:0],data output condition and timing,seeded
+Table400,WCK Mode,MR22 OP[3:2],data output condition and timing,seeded
+Table400,WECC,MR23 OP[0],data output condition and timing,seeded
+Table400,WEDC,MR23 OP[1],data output condition and timing,seeded
+Table400,RECC/REDC,MR23 OP[2],data output condition and timing,seeded
+Table400,DQ NT-ODT,MR20 OP[2:0],data output condition and timing,seeded

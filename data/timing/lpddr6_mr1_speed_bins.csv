@@ -1,0 +1,18 @@
+mr1_op,data_rate_lower_mbps_exclusive,data_rate_upper_mbps_inclusive,ck_lower_mhz_exclusive,ck_upper_mhz_inclusive,nominal_label,source,status,notes
+00000,80,1067,20,267,up_to_1067,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00001,1067,1600,267,400,1600,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00010,1600,2133,400,533,2133,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00011,2133,2750,533,688,2750,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00100,2750,3200,688,800,3200,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00101,3200,3750,800,938,3750,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00110,3750,4267,938,1067,4267,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+00111,4267,4800,1067,1200,4800,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01000,4800,5500,1200,1375,5500,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01001,5500,6400,1375,1600,6400,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01010,6400,7500,1600,1875,7500,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01011,7500,8533,1875,2133,8533,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01100,8533,9600,2133,2400,9600,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01101,9600,10667,2400,2667,10667,Table49_72_common_speed_bin,seeded,MR1 latency code speed bin used across latency and WCK sync AC tables.
+01110,10667,11733,2667,2933,11733,Table49_72_common_speed_bin,tbd_high_speed,Speed bin is known but many latency/timing values are JEDEC TBD in current seed.
+01111,11733,12800,2933,3200,12800,Table49_72_common_speed_bin,tbd_high_speed,Speed bin is known but many latency/timing values are JEDEC TBD in current seed.
+10000,12800,14400,3200,3600,14400,Table49_72_common_speed_bin,tbd_high_speed,Speed bin is known but many latency/timing values are JEDEC TBD in current seed.

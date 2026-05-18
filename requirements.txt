@@ -1,0 +1,4 @@
+# Core CLI and dependency-free browser UI use only the Python standard library.
+
+# Optional Streamlit UI:
+-r ui/requirements.txt

@@ -1,0 +1,9 @@
+source,wck_freq_condition,bank_scope,burst_length,bln_formula,bln_min_formula,bln_max_formula,notes,status
+Table381,le_3200_mhz,same_bg,BL24,6,6,6,Table shows common BL24 value 6 in CK domain,seeded
+Table381,le_3200_mhz,different_bg,BL24,6,6,6,Table shows common BL24 value 6 in CK domain,seeded
+Table381,le_3200_mhz,same_bg,BL48,12,12,12,Table shows common BL48 value 12 in CK domain,seeded
+Table381,le_3200_mhz,different_bg,BL48,12,12,12,Table shows common BL48 value 12 in CK domain,seeded
+Table381,gt_3200_mhz,same_bg,BL24,max(6;RU(tCCD_L/tCK)),6,12,Same BG high-speed BL/n depends on tCCD_L,seeded
+Table381,gt_3200_mhz,same_bg,BL48,12+RU(tCCD_L/tCK),18,24,Same BG high-speed BL48 depends on tCCD_L,seeded
+Table381,gt_3200_mhz,different_bg,BL24,6,6,12,BLN_MIN/MAX follow high-speed BL24 row; verify against PDF before signoff,review
+Table381,gt_3200_mhz,different_bg,BL48,6,18,24,BLN_MIN/MAX follow high-speed BL48 row; verify against PDF before signoff,review

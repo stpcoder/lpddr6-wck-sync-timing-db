@@ -1,0 +1,74 @@
+symbol,kind,unit,description,source,status
+spec,input,string,JEDEC spec family such as LPDDR6,user,active
+spec_rev,input,string,JEDEC revision tag,user,active
+active_fsp,input,index,Current active frequency set point from MR13 OP[7:6],MR13,active
+data_rate_mbps,input,Mbps,Operating data rate,user_or_fsp,active
+mr1_speed_bin_valid,derived,bool,Whether scenario data_rate_mbps is inside the selected MR1 OP[4:0] speed bin,Table49_72_common_speed_bin,active
+ck_mhz,derived,MHz,CK frequency normally data_rate_mbps/4 for LPDDR6,evaluator,active
+wck_mhz,derived,MHz,WCK frequency normally data_rate_mbps/2 for LPDDR6,evaluator,active
+tCK_ns,derived,ns,1000/ck_mhz,evaluator,active
+tWCK_ns,derived,ns,1000/wck_mhz,evaluator,active
+current_cmd,input,enum,Current command such as RD WR MRR META_RD META_WR,user,active
+next_cmd,input,enum,Next command such as RD WR MRR META_RD META_WR,user,active
+burst_length,input,enum,BL24 or BL48,CAS operand,active
+bank_relation,input,enum,same_bank_same_bg different_bank_same_bg different_bank_different_bg,user,active
+same_bg,derived,bool,true for same_bank_same_bg or different_bank_same_bg,evaluator,active
+same_bank,derived,bool,true for same_bank_same_bg,evaluator,active
+requested_gap_nck,input,nCK,Command gap to test,user,active
+ws_operand,input,bool,CAS WS operand for next command if applicable,CAS,active
+ws_off_operand,input,bool,CAS WS_OFF operand if applicable,CAS,active
+wck_sync_state,input,enum,WCK2CK sync state on/off/unknown,user,active
+read_dbi_enabled,derived,bool,Read DBI state from MR3 OP[0],MR3,active
+efficiency_mode_enabled,derived,bool,MR1 OP[6] dynamic efficiency or static efficiency effective state,MR0_MR1,active
+dvfsl_enabled,derived,bool,MR11 OP[4],MR11,active
+dvfsh_enabled,derived,bool,MR11 OP[2],MR11,active
+dvfsb_enabled,derived,bool,MR11 OP[3],MR11,active
+dvfsq_enabled,derived,bool,MR11 OP[5],MR11,active
+write_link_protection_enabled,derived,bool,MR23 OP[0] WECC or MR23 OP[1] WEDC,MR23,active
+read_link_protection_enabled,derived,bool,MR23 OP[2] RECC/REDC,MR23,active
+dq_odt_mr_enabled,derived,bool,MR19 OP[2:0] != 000,MR19,active
+dq_odt_effective_enabled,derived,bool,dq_odt_mr_enabled and not dvfsq_enabled,MR11_MR19,active
+dq_nt_odt_mr_enabled,derived,bool,MR20 OP[2:0] != 000,MR20,active
+dq_nt_odt_effective_enabled,derived,bool,dq_nt_odt_mr_enabled and not dvfsq_enabled,MR11_MR20,active
+dq_wr_nt_odt_mr_enabled,derived,bool,MR20 OP[5:3] != 000,MR20,active
+wck_fm,derived,enum,LF or HF from MR11 OP[6],MR11,active
+wck2dq_osc_fm,derived,enum,LF_OSC or HF_OSC from MR11 OP[7],MR11,active
+rdqs_enabled,derived,bool,MR22 OP[1:0] != 00,MR22,active
+wck_always_on_enabled,derived,bool,MR22 OP[5],MR22,active
+wsoe_enabled,derived,bool,MR26 OP[3],MR26,active
+dfeq_enabled,derived,bool,any DFE quantity field nonzero,MR70_75,active
+per_pin_dfe_enabled,derived,bool,MR41 OP[0] == 1,MR41,active
+mr1_op_4_0,input,binary,MR1 latency code,MR1,active
+mr1_wls_op5,input,binary,MR1 OP[5] write latency set select,MR1,active
+rl_set,derived,enum,SET0 SET1 SET2,MR1_note3,active
+wl_set,derived,enum,SET_A SET_B,MR1_note5,active
+RL,derived,nCK,Read latency from selected MR1 latency table,Table49_72,active
+WL,derived,nCK,Write latency from selected MR1 latency table,Table49_72,active
+BLN,derived,nCK,Minimum column to column cycle time,Table381_382,active
+BLN_MIN,derived,nCK,Minimum burst data transfer time on DQ bus,Table381,active
+BLN_MAX,derived,nCK,Required column array cycle time to allow next column array cycle,Table381,active
+tWTR_S_ns,lookup,ns,WRITE to READ delay different BG,Table414_423,active
+tWTR_L_ns,lookup,ns,WRITE to READ delay same BG,Table414_423,active
+tWTR_S_nck_floor,lookup,nCK,nCK floor for tWTR_S,Table414_423,active
+tWTR_L_nck_floor,lookup,nCK,nCK floor for tWTR_L,Table414_423,active
+tWCK2DQO_MAX_ps,lookup,ps,WCK to DQ output offset max selected by WCK FM and data rate,Table477,active
+tWCK2DQO_EFFECTIVE_MAX_ps,derived,ps,Base plus optional temp/voltage corner adjustment,Table477_notes,active
+tWCK2DQI_MAX_ps,lookup,ps,DQ to WCK input offset max selected by WCK FM and data rate,Table477,active
+tRPRE,lookup,tWCK_to_nCK,RDQS preamble static/toggle length selected from MR10 or zero when RDQS disabled,MR10_Table455,active
+tRPST,lookup,tWCK_to_nCK,RDQS postamble selected from MR10 or overridden to zero when RDQS disabled,MR10_Table455,active
+tWCKPST,derived,tWCK_to_nCK,WCK postamble length selected by MR22 OP[7:6],MR22_Table117,active
+tWCKENL_CURRENT_nCK,lookup,nCK,WCK enable latency selected from Table256-261 for current command class,WCK_sync_AC,active
+tWCKPRE_TOTAL_CURRENT_nCK,lookup,nCK,WCK preamble total selected from Table256-261 for current command class,WCK_sync_AC,active
+ODTLon,lookup,nCK,DQ ODT on latency,ODT_timing_tables,needed
+tODTon_MIN_ps,lookup,ps,DQ ODT turn-on minimum,ODT_timing_tables,needed
+tRTW_BASE,derived,nCK,Base READ to WRITE command gap before note adders,Table389_390,active
+tRTW_FINAL,derived,nCK,Final READ to WRITE command gap after adders and even rounding,Table389_390_notes,active
+wck_sync_deadline_read,derived,nCK,RL + BLN_MIN + RD(tWCKPST/tCK),Table263,active
+wck_sync_deadline_write,derived,nCK,WL + BLN_MIN + RD(tWCKPST/tCK),Table263,active
+command_min_gap,derived,nCK,Minimum command gap for selected current->next pair,rules,active
+command_max_gap_without_new_sync,derived,nCK,Maximum gap while WS=0 remains legal in auto sync-off mode,Table263,active
+tMRR,lookup,nCK,Mode Register Read command period used in MRR to MRR sync-off rule,Table310,active
+tWRWTR,derived,nCK,Write class to Write FIFO training transition delay,Table398_Note1,active
+tRTRRD,derived,nCK,Read-like class to training/read calibration transition delay,Table398_Note3,active
+WFF_TO_RFF_MIN,derived,nCK_or_unresolved,Write FIFO to Read FIFO min delay with NT-ODT conditional path,Table264_Note4,active
+result_state,derived,enum,allowed illegal not_allowed requires_new_ws1,rules,active

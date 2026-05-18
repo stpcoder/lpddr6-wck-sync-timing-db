@@ -1,0 +1,17 @@
+source,data_rate_lower_mbps_exclusive,data_rate_upper_mbps_inclusive,ck_lower_mhz_exclusive,ck_upper_mhz_inclusive,bl24_same_bg_bln_nck,bl48_same_bg_bln_nck,status
+Table382,80,1067,20,267,6,12,seeded
+Table382,1067,1600,267,400,6,12,seeded
+Table382,1600,2133,400,533,6,12,seeded
+Table382,2133,2750,533,688,6,12,seeded
+Table382,2750,3200,688,800,6,12,seeded
+Table382,3200,3750,800,938,6,12,seeded
+Table382,3750,4267,938,1067,6,12,seeded
+Table382,4267,4800,1067,1200,6,12,seeded
+Table382,4800,5500,1200,1375,6,12,seeded
+Table382,5500,6400,1375,1600,6,12,seeded
+Table382,6400,7500,1600,1875,8,20,seeded
+Table382,7500,8533,1875,2133,8,20,seeded
+Table382,8533,9600,2133,2400,10,22,seeded
+Table382,9600,10667,2400,2667,10,22,seeded
+Table382,10667,11733,2667,2933,12,24,seeded
+Table382,11733,12800,2933,3200,12,24,seeded

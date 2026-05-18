@@ -1,0 +1,6 @@
+symbol,unit,condition,source,status,notes
+ODTLon,nCK,dq_odt_effective_enabled=true,ODT_timing_tables,needed,tRTW ODT enabled formula depends on this value
+tODTon_MIN_ps,ps,dq_odt_effective_enabled=true,ODT_timing_tables,needed,tRTW ODT enabled formula depends on this value
+ODTLoff,nCK,rank_to_rank_or_odt_turnoff_cases,ODT_timing_tables,needed,Needed for extended rank-to-rank and training command rules
+tODToff_MAX_ps,ps,rank_to_rank_or_training_cases,ODT_timing_tables,needed,Needed for extended rank-to-rank and training command rules
+ODT_RDon_MAX_ps,ps,MRR_to_MRW_when_NT_ODT_enabled,MRR_MRW_timing_tables,needed,Referenced by MRR/MRW timing note and Table400 guard

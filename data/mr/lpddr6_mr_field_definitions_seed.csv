@@ -1,0 +1,87 @@
+field_id,mr,bits,access,function,default_or_reset,fsp_scoped,timing_relevance,comment_ko,source,status
+MR0_TYPE,MR0,OP[1:0],R,Supported data rate,00B,no,data_rate,"지원 data rate 범위 표시. 00B는 최대 10667Mbps 지원",Table45,seeded
+MR0_EFF_STATUS,MR0,OP[2],R,Efficiency mode status,device,no,efficiency,"0이면 Normal/DEFF 전환 가능. 1이면 Static Efficiency only",Table45,seeded
+MR0_SUB_CH,MR0,OP[3],R,Sub-channel indicator,device,no,sub_channel,"0은 Primary SC0. 1은 Secondary SC1",Table45,seeded
+MR0_DENSITY,MR0,OP[7:4],R,Density per die,device,no,addressing,"Die density 표시. 미정의 코드는 Reserved",Table45,seeded
+MR1_LATENCY_CODE,MR1,OP[4:0],R/W,RL WL nWTP nRTP nACU selector,00000B,yes,latency,"속도와 기능 조건별 latency table에서 RL/WL 등을 고르는 핵심 code",Table47,seeded
+MR1_WLS,MR1,OP[5],R/W,Write Latency Set,0B,yes,latency,"0이면 WL Set A. 1이면 WL Set B",Table47,seeded
+MR1_EFF_CNTL,MR1,OP[6],R/W,Dynamic Efficiency mode control,0B,yes,efficiency,"0은 Normal. 1은 Dynamic Efficiency mode. Static-only device에서는 무시",Table47,seeded
+MR1_EFF_LATENCY,MR1,OP[7],R,Efficiency Mode Latency,device,yes,latency,"MR1 OP[6]와 package 구성에 의해 자동 업데이트되는 read-only latency 상태",Table47,seeded
+MR3_DBI_RD,MR3,OP[0],R/W,Read DBI,0B,yes,latency,"Read DBI enable 여부가 RL Set 선택에 들어감",Table43_Table47,partial
+MR3_EDBI_WR,MR3,OP[1],R/W,Enhanced Write DBI,0B,yes,write_data,"Write DBI 관련 기능. 상세 table 추출 필요",Table43,partial
+MR3_PDDS,MR3,OP[7:5],R/W,Pull-down driver strength,device,yes,io,"DQ driver strength 계열로 Table400 output timing 영향 MR에 포함",Table43_Table400,partial
+MR9_VENDOR_TEST,MR9,OP[7:0],W,Vendor specific test register,00H,no,test,"스펙상 00H만 write해야 하는 vendor test register",Table88,seeded
+MR10_RDQS_PS,MR10,OP[0],W,RDQS pre-shift,0B,yes,rdqs,"0은 0*tWCK. 1은 2*tWCK이며 8533Mbps 초과에서만 허용",Table90,seeded
+MR10_RDQS_RT,MR10,OP[1],W,RDQS to WCK ratio,0B,yes,rdqs,"0은 WCK:RDQS 1:1. 1은 2:1",Table90,seeded
+MR10_RDQS_PRE,MR10,OP[4:2],W,RDQS preamble length,000B,yes,rdqs,"RDQS static/toggle preamble 길이 선택. 010/011은 8533Mbps 초과에서만 허용",Table90,seeded
+MR10_RDQS_PST_MODE,MR10,OP[5],W,RDQS postamble mode,0B,yes,tRPST,"0은 Toggle. 1은 Static",Table90,seeded
+MR10_RDQS_PST_LEN,MR10,OP[7:6],W,RDQS postamble length,00B,yes,tRPST,"tRTW ODT enabled 식의 tRPST와 연결. 11B는 Reserved",Table90,seeded
+MR11_DVFSH,MR11,OP[2],W,VDD2C high data rate step-up,0B,yes,voltage_timing,"1이면 VDD2C 1.025V step-up range. MR21 요구와 연동",Table92,seeded
+MR11_DVFSB,MR11,OP[3],W,VDD2D high data rate step-up,0B,yes,voltage_timing,"1이면 VDD2D 0.90V step-up range. MR21 요구와 연동",Table92,seeded
+MR11_DVFSL,MR11,OP[4],W,VDD2D low data rate step-down,0B,yes,tWTR,"1이면 VDD2D 0.85V. tWTR core AC table 선택 조건",Table92,seeded
+MR11_DVFSQ,MR11,OP[5],W,VDDQ dynamic voltage scaling,0B,yes,odt,"1이면 VDDQ 0.3V이고 모든 ODT/NT-ODT가 MR 설정과 무관하게 off",Table92,seeded
+MR11_WCK_FM,MR11,OP[6],W,WCK frequency mode,0B,yes,tWCK2DQ,"0은 LF. 1은 HF. tWCK2DQ AC parameter 선택",Table92,seeded
+MR11_WCK2DQ_OSC_FM,MR11,OP[7],W,WCK2DQ oscillator frequency mode,0B,yes,training,"WCK2DQ oscillator의 LF/HF 선택. 실제 운용 WCK FM과 독립 가능",Table92,seeded
+MR12_VREF_CA,MR12,OP[6:0],R/W,VREF CA setting,1010000B,yes,vref,"FSP별 CA VREF. 0000000B~0001001B는 test only",Table94_Table95,seeded
+MR13_THERMAL_OFFSET,MR13,OP[1:0],R/W,Thermal offset,00B,global,thermal,"SC0/SC1 사이 동일 값 권장/필요",Table97,seeded
+MR13_VRO,MR13,OP[2],R/W,VREF output,0B,global,test,"1이면 active FSP의 VREF 값을 DQ pin으로 출력",Table97,seeded
+MR13_VRCG,MR13,OP[3],R/W,VREF current generator,0B,global,vref,"1이면 VREF fast response high-current mode",Table97,seeded
+MR13_FSP_WR,MR13,OP[5:4],R/W,FSP write target,00B,global,fsp,"MRW가 접근할 FSP register slot 선택. 11B Reserved",Table97,seeded
+MR13_FSP_OP,MR13,OP[7:6],R/W,Active FSP operation mode,00B,global,fsp,"실제 동작에 사용되는 active FSP slot 선택. 11B Reserved",Table97,seeded
+MR14_VREF_DQ,MR14,OP[6:0],R/W,VREF DQ setting,1010000B,yes,vref,"FSP별 DQ VREF. DQ input margin과 관련",Table99_Table100,seeded
+MR15_VREF_CS,MR15,OP[6:0],R/W,VREF CS setting,1010000B,yes,vref,"FSP별 CS VREF. 0000000B~0001001B는 test only",Table102_Table103,seeded
+MR15_OCC,MR15,OP[7],W,Offset calibration control,0B,yes,calibration,"1이면 offset calibration enable",Table102,seeded
+MR16_WCK2CK_LEVELING,MR16,OP[2],W,WCK2CK leveling mode,0B,global,training,"1이면 WCK2CK leveling mode enable",Table105,seeded
+MR16_RDC_DQ_MODE,MR16,OP[3],W,RDC DQ mode,0B,global,training,"0은 MR30/31 invert. 1은 MR30/31 low-fix",Table105,seeded
+MR16_CBT_CST_ENABLE,MR16,OP[5:4],W,CBT/CST enable for FSP,00B,global,training,"01/10/11은 각각 FSP0/1/2 CBT 또는 CST 진입",Table105,seeded
+MR16_CBT_CST_SELECT,MR16,OP[6],W,CBT or CST select,0B,global,training,"0은 CBT. 1은 CST",Table105,seeded
+MR17_SOC_ODT,MR17,OP[2:0],R/W,SoC ODT value,000B,yes,odt,"Controller ODT/VOH calibration related. 111B RFU",Table107,seeded
+MR17_CS_ODT,MR17,OP[5:3],R/W,CS ODT value,000B,yes,odt,"CS termination. 111B RFU",Table107,seeded
+MR18_CK_ODT,MR18,OP[2:0],R/W,CK ODT value,000B,yes,odt,"CK receiver ODT. 111B RFU",Table109,seeded
+MR18_CA_ODT,MR18,OP[5:3],R/W,CA ODT value,000B,yes,odt,"CA receiver ODT. 111B RFU",Table109,seeded
+MR19_DQ_ODT,MR19,OP[2:0],R/W,DQ ODT value,000B,yes,tRTW,"DQ ODT enabled 여부가 tRTW 식을 바꿈. 111B RFU",Table111,seeded
+MR19_WCK_ODT,MR19,OP[5:3],R/W,WCK ODT value,000B,yes,wck,"WCK termination. enable 시 모든 state에서 WCK terminate 지속",Table111,seeded
+MR20_DQ_NT_ODT,MR20,OP[2:0],R/W,DQ NT-ODT value,000B,yes,tRTW,"Non-target die DQ ODT. 111B RFU",Table113,seeded
+MR20_DQ_WR_NT_ODT,MR20,OP[5:3],R/W,DQ WR NT-ODT value,000B,yes,odt,"Write non-target die DQ ODT. 111B RFU",Table113,seeded
+MR21_DVFSH_REQ,MR21,OP[1:0],R,DVFSH requirement,device,no,voltage_timing,"VDD2C step-up이 필요한 data rate threshold 표시",Table115,seeded
+MR21_DVFSB_REQ,MR21,OP[3:2],R,DVFSB requirement,device,no,voltage_timing,"VDD2D step-up이 필요한 data rate threshold 표시",Table115,seeded
+MR21_DVFSL_SUPPORT,MR21,OP[5:4],R,DVFSL support,device,no,voltage_timing,"VDD2D step-down 지원 low data rate threshold 표시",Table115,seeded
+MR22_RDQS,MR22,OP[1:0],W,RDQS enable mode,01B,yes,tRTW,"RDQS enable/disable와 polarity 선택. RDQS off면 일부 tRPST/tRPRE는 0 처리 필요",Table117,seeded
+MR22_WCK_MODE,MR22,OP[3:2],W,WCK mode,00B,yes,wck,"00 differential. 01 WCK_t single-ended. 10 WCK_c single-ended. 11 reserved",Table117,seeded
+MR22_CK_MODE,MR22,OP[4],W,CK mode,0B,yes,ck,"0 differential. 1 single-ended CK_t",Table117,seeded
+MR22_WCK_ON,MR22,OP[5],W,WCK always on,0B,yes,wck_sync,"1이면 WCK Always On mode. WSOE와 mutual exclusive",Table117_Table265,seeded
+MR22_WCK_PST,MR22,OP[7:6],W,WCK postamble length,00B,yes,wck_sync,"WCK sync-off deadline의 RD(tWCKPST/tCK)에 직접 사용. 11B reserved",Table117,seeded
+MR23_WECC,MR23,OP[0],W,Write Link ECC,0B,yes,tWTR,"Write link protection enabled 조건",Table119,seeded
+MR23_WEDC,MR23,OP[1],W,Write Link EDC,0B,yes,tWTR,"Write link protection enabled 조건. WECC와 동시 enable 금지",Table119,seeded
+MR23_RECC_REDC,MR23,OP[2],W,Read Link ECC/EDC,0B,yes,latency,"Read link protection enabled 조건",Table119,seeded
+MR23_CS_ODT_PD,MR23,OP[4],W,CS ODT Power Down behavior,0B,yes,power_odt,"Power Down에서 CS ODT 유지 여부. Dynamic WR NT-ODT enabled면 OP4와 무관하게 follows MR",Table119,seeded
+MR25_CK_PAIR_TERM,MR25,OP[4],W,Other shared dies CK ODT info,0B,no,odt,"공유 CK pair의 다른 rank/die termination 정보",Table121,seeded
+MR25_CA_INPUTS_TERM,MR25,OP[5],W,Other shared dies CA ODT info,0B,no,odt,"공유 CA input의 다른 rank/die termination 정보",Table121,seeded
+MR25_PARC,MR25,OP[6],W,Partial Array Refresh Control,0B,no,refresh,"PARC enable 시 MR27 PASR mask가 적용",Table121,seeded
+MR25_OPT_REFRESH,MR25,OP[7],W,Optimized Refresh mode,1B,no,refresh,"0이면 일반 refresh requirement를 따름. 1 default optimized refresh",Table121,seeded
+MR26_DCM_START_STOP,MR26,OP[0],W,DCM start stop,0B,no,calibration,"0 stop. 1 start",Table123,seeded
+MR26_DCM_FLIP,MR26,OP[1],W,DCM flip,0B,no,calibration,"Offset cancel용 input flip",Table123,seeded
+MR26_CA_PARITY,MR26,OP[2],W,CA parity check control,0B,no,ca_parity,"1이면 CA parity enable. WCK Always On이 먼저 필요",Table123,seeded
+MR26_WSOE,MR26,OP[3],W,WCK Sync-Off Extension,0B,no,wck_sync,"1이면 WSOE enable. WCK Always On과 mutual exclusive",Table123_Table265,seeded
+MR26_SPPR,MR26,OP[5:4],W,Soft PPR control,00B,no,repair,"00 normal. 01 sPPR enable. 10 undo. 11 lock",Table123,seeded
+MR27_PASR_MASK,MR27,OP[7:0],W,PASR segment mask,00H,no,refresh,"0은 segment refresh enable. 1은 disable",Table125,seeded
+MR28_ZQ_RESET,MR28,OP[0],W,ZQ reset,0B,no,zq,"1이면 calibration value default reset",Table128,seeded
+MR28_ZQ_STOP,MR28,OP[1],W,ZQ stop,0B,no,zq,"1이면 background ZQ calibration halt after tZQSTOP",Table128,seeded
+MR28_ZQ_INTERVAL,MR28,OP[3:2],W,ZQ background calibration interval,01B,no,zq,"ZQ initiator die에서만 의미",Table128,seeded
+MR41_PDFEC,MR41,OP[0],W,Per-pin DFE control,0B,yes,tRTW,"1이면 per-pin DFE enable. tRTW +1 note 조건",Table154,seeded
+MR41_MBIST_AVAIL,MR41,OP[1],R,MBIST availability,device,no,mbist,"0 no MBIST. 1 optional support",Table154,seeded
+MR41_MBIST_SELECTION,MR41,OP[3:2],W,MBIST selection,00B,no,mbist,"01 RFU. 10 MBIST-Test. 11 MBIST-mPPR",Table154,seeded
+MR41_PPRE,MR41,OP[4],W,PPR enable,0B,no,repair,"1이면 PPR enable. MBIST/PPR 동시 enable 제한 주의",Table154,seeded
+MR41_MBIST_STATUS,MR41,OP[6:5],R,MBIST status,00B,no,mbist,"MBIST result status",Table154,seeded
+MR70_DFEDQ0,MR70,OP[2:0],W,Per-pin DFE quantity DQ0,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table182,seeded
+MR70_DFEDQ1,MR70,OP[6:4],W,Per-pin DFE quantity DQ1,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table182,seeded
+MR71_DFEDQ2,MR71,OP[2:0],W,Per-pin DFE quantity DQ2,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table184,seeded
+MR71_DFEDQ3,MR71,OP[6:4],W,Per-pin DFE quantity DQ3,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table184,seeded
+MR72_DFEDQ4,MR72,OP[2:0],W,Per-pin DFE quantity DQ4,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table186,seeded
+MR72_DFEDQ5,MR72,OP[6:4],W,Per-pin DFE quantity DQ5,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table186,seeded
+MR73_DFEDQ6,MR73,OP[2:0],W,Per-pin DFE quantity DQ6,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table188,seeded
+MR73_DFEDQ7,MR73,OP[6:4],W,Per-pin DFE quantity DQ7,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table188,seeded
+MR74_DFEDQ8,MR74,OP[2:0],W,Per-pin DFE quantity DQ8,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table190,seeded
+MR74_DFEDQ9,MR74,OP[6:4],W,Per-pin DFE quantity DQ9,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table190,seeded
+MR75_DFEDQ10,MR75,OP[2:0],W,Per-pin DFE quantity DQ10,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table192,seeded
+MR75_DFEDQ11,MR75,OP[6:4],W,Per-pin DFE quantity DQ11,000B,yes,tRTW,"000 disable. 001~111 negative feedback quantity",Table192,seeded

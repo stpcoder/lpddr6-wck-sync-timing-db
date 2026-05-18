@@ -1,0 +1,9 @@
+source,wck_fm,mr11_op6,vdd2cd_mode,dvfsh_mr11_op2,dvfsb_mr11_op3,dvfsl_mr11_op4,result,selected_wck2dqo_family,notes,status
+Table478,LF,0,Normal,0,0,0,allowed,LF,Normal VDD2C/D with low frequency mode,seeded
+Table478,LF,0,DVFSH,1,any,0,prohibited,NA,DVFSH prohibited with LF mode,seeded
+Table478,LF,0,DVFSB,any,1,0,prohibited,NA,DVFSB prohibited with LF mode,seeded
+Table478,LF,0,DVFSL,0,0,1,allowed,LF_L,LF_L applies when DVFSL mode,seeded
+Table478,HF,1,Normal,0,0,0,allowed,HF,Normal VDD2C/D with high frequency mode,seeded
+Table478,HF,1,DVFSH,1,any,0,allowed,HF,DVFSH allowed with HF mode,seeded
+Table478,HF,1,DVFSB,any,1,0,allowed,HF,DVFSB allowed with HF mode,seeded
+Table478,HF,1,DVFSL,0,0,1,prohibited,NA,DVFSL prohibited with HF mode,seeded

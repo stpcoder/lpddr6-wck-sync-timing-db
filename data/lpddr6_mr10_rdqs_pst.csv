@@ -1,0 +1,17 @@
+source,mr10_op1_rdqs_ratio,mr10_op5_pst_mode,mr10_op76,rdqs_pst_formula,status,notes
+Table90,0,0,00,0.5*tWCK,seeded,Toggle mode default when WCK:RDQS ratio is 1:1
+Table90,0,0,01,2.5*tWCK,seeded,Toggle mode when WCK:RDQS ratio is 1:1
+Table90,0,0,10,4.5*tWCK,seeded,Toggle mode when WCK:RDQS ratio is 1:1
+Table90,0,0,11,reserved,illegal,Reserved
+Table90,0,1,00,0.5*tWCK,seeded,Static mode uses same length operand; verify final waveform interpretation
+Table90,0,1,01,2.5*tWCK,seeded,Static mode uses same length operand; verify final waveform interpretation
+Table90,0,1,10,4.5*tWCK,seeded,Static mode uses same length operand; verify final waveform interpretation
+Table90,0,1,11,reserved,illegal,Reserved
+Table90,1,0,00,0.5*Unit_toggle,review,When WCK:RDQS ratio is 2:1 spec uses Unit toggle
+Table90,1,0,01,2.5*Unit_toggle,review,When WCK:RDQS ratio is 2:1 spec uses Unit toggle
+Table90,1,0,10,4.5*Unit_toggle,review,When WCK:RDQS ratio is 2:1 spec uses Unit toggle
+Table90,1,0,11,reserved,illegal,Reserved
+Table90,1,1,00,0.5*Unit_toggle,review,When WCK:RDQS ratio is 2:1 spec uses Unit toggle
+Table90,1,1,01,2.5*Unit_toggle,review,When WCK:RDQS ratio is 2:1 spec uses Unit toggle
+Table90,1,1,10,4.5*Unit_toggle,review,When WCK:RDQS ratio is 2:1 spec uses Unit toggle
+Table90,1,1,11,reserved,illegal,Reserved

@@ -1,0 +1,52 @@
+condition_key,kind,value_type,allowed_values_or_rule,source,affects,description_ko,status
+spec,scenario,string,LPDDR6,user,all,적용할 JEDEC family,active
+spec_rev,scenario,string,JESD209-6,user,all,적용할 JEDEC revision,active
+active_fsp,scenario_or_mr,enum,FSP0|FSP1|FSP2,MR13_Table97,MR decode|latency,현재 실제 적용 중인 FSP slot,active
+data_rate_mbps,scenario_or_fsp,number,80..14400,user_or_FSP,clock|latency|ODT|AC,동작 data rate. CK/WCK와 speed bin lookup의 기준이며 MR1.OP[4:0] bin과 일치해야 함,active
+mr1_speed_bin_valid,derived,bool,MR1.OP[4:0] speed bin contains data_rate_mbps,Table49_72_common_speed_bin,validation|timing,MR1 latency code와 실제 operating data rate가 같은 speed bin인지 여부,active
+ck_mhz,derived,number,data_rate_mbps/4,clocking,unit conversion,LPDDR6 command clock frequency,active
+wck_mhz,derived,number,data_rate_mbps/2,clocking,WCK timing|DQ timing,LPDDR6 write clock frequency,active
+tCK_ns,derived,number,1000/ck_mhz,derived,unit conversion,CK 1 cycle 시간,active
+tWCK_ns,derived,number,1000/wck_mhz,derived,unit conversion,WCK 1 cycle 시간,active
+current_cmd,scenario,enum,RD|WR|MRR|MRW|RFF|WFF|RDC|META_RD|META_WR|CAS|MPC,user,command matrix|sync off,앞 command 종류,active
+next_cmd,scenario,enum,RD|WR|MRR|MRW|RFF|WFF|RDC|META_RD|META_WR|CAS|MPC,user,command matrix|sync off,뒤 command 종류,active
+current_cmd_class,derived,enum,read_class|write_class|mode_class|training_class,rules,command matrix|sync off,동일 timing 식을 공유하는 command class,active
+next_cmd_class,derived,enum,read_class|write_class|mode_class|training_class,rules,command matrix|sync off,뒤 command의 timing class,active
+rank_relation,scenario,enum,same_rank|different_rank,user,rank-to-rank timing,rank-to-rank table 적용 여부,needed
+bank_relation,scenario,enum,same_bank_same_bg|different_bank_same_bg|different_bank_different_bg,user,BLN|tWTR|tRTW|command matrix,BG와 bank 관계,active
+same_bg,derived,bool,bank_relation in same_bank_same_bg|different_bank_same_bg,derived,tWTR|tRTW|BLN,Same BG 여부,active
+same_bank,derived,bool,bank_relation==same_bank_same_bg,derived,illegal|AP|PRE,Same bank 여부,active
+burst_length,scenario_or_cmd,enum,BL24|BL48,CAS command,BLN|nRTP|ODT,burst 길이,active
+requested_gap_nck,scenario,number,integer nCK,user,decision,실제로 넣으려는 command 간격,active
+wck_sync_state,scenario,enum,on|off|unknown,user,WCK sync decision,현재 WCK2CK sync 상태,active
+ws_operand,scenario_or_cmd,bool,0|1,CAS WS operand,WCK sync start,다음 CAS command에서 WS operand가 1인지 여부,active
+ws_off_operand,scenario_or_cmd,bool,0|1,CAS WS_OFF operand,WCK sync off,명시적 sync off operand 여부,active
+wsoe_enabled,mr,bool,MR26.OP[3],Table265,WCK sync off extension,WSOE 기능 enable 여부,active
+wck_always_on_enabled,mr,bool,MR22.OP[5],Table117,WCK sync off legality,WCK always on mode 여부,active
+read_dbi_enabled,mr,bool,MR3.OP[0],Table76_Table400,RL table selection|output timing,Read DBI enable 여부,active
+efficiency_mode_enabled,mr,bool,MR0.OP[2] or MR1.OP[6],Table45_Table47,RL table|tWTR table|meta efficiency,Static 또는 Dynamic efficiency effective state,active
+dvfsh_enabled,mr,bool,MR11.OP[2],Table92_Table478,VDD2C/D|WCK2DQO,High-voltage DVFS mode,active
+dvfsb_enabled,mr,bool,MR11.OP[3],Table92_Table478,VDD2C/D|WCK2DQO,Burst DVFS mode,active
+dvfsl_enabled,mr,bool,MR11.OP[4],Table92_Table478,RL table|tWTR table|WCK2DQO,Low-voltage DVFS mode,active
+dvfsq_enabled,mr,bool,MR11.OP[5],Table92,ODT effective|power,ODT를 disable시키는 quiet DVFS mode,active
+wck_fm,mr,enum,LF|HF,MR11.OP[6]_Table92_Table477_Table478,WCK2DQO family|VDD mode,LPDDR6 WCK frequency mode,active
+wck2dq_osc_fm,mr,enum,LF_OSC|HF_OSC,MR11.OP[7]_Table92,WCK2DQ calibration,oscillator FM 선택,active
+write_link_protection_enabled,mr,bool,MR23.OP[0] or MR23.OP[1],Table119,WL/RL table|tWTR table,WECC/WEDC write link protection 여부,active
+read_link_protection_enabled,mr,bool,MR23.OP[2],Table119,RL table selection,read link protection 여부,active
+dq_odt_mr_enabled,mr,bool,MR19.OP[2:0]!=000,Table111,tRTW|ODT timing,DQ ODT MR 설정상 enable 여부,active
+dq_odt_effective_enabled,derived,bool,dq_odt_mr_enabled and not dvfsq_enabled,MR11_Table92_Note6,tRTW,실제 tRTW에서 ODT enabled 식을 타는지 여부,active
+dq_nt_odt_mr_enabled,mr,bool,MR20.OP[2:0]!=000,Table113,rank-to-rank|ODT,NT DQ ODT MR 설정상 enable 여부,active
+dq_nt_odt_effective_enabled,derived,bool,dq_nt_odt_mr_enabled and not dvfsq_enabled,MR11_Table92_Note6,rank-to-rank|ODT,실제 NT ODT effective 여부,active
+dq_wr_nt_odt_mr_enabled,mr,bool,MR20.OP[5:3]!=000,Table113,write NT ODT,write direction NT ODT 여부,active
+rdqs_enabled,mr,bool,MR22.OP[1:0]!=00,Table117,tRPST|rank timing,RDQS output enable 여부,active
+rdqs_ratio,mr,enum,1to1|2to1,MR10.OP[1]_Table90,tRPRE|tRPST,RDQS와 WCK의 ratio,review
+rdqs_pre_code,mr,binary,MR10.OP[4:2],Table90,tRPRE,RDQS preamble operand,needed
+rdqs_pst_code,mr,binary,MR10.OP[7:6],Table90,tRPST,RDQS postamble operand,active
+rdqs_pst_static_mode,mr,bool,MR10.OP[5],Table90,tRPST waveform,postamble static/toggle mode,review
+wck_pst_code,mr,binary,MR22.OP[7:6],Table117,tWCKPST|sync deadline,WCK postamble operand,active
+dfeq_enabled,mr_or_derived,bool,any MR70..MR75 DFEQ != 000,Table182_Table192,tRTW note adder,DFE equalization이 켜져 tRTW +1 조건인지 여부,active
+per_pin_dfe_enabled,mr,bool,MR41.OP[0],Table154,tRTW note adder,per-pin DFE control enable 여부,active
+temperature_bin,scenario,enum,normal|derated|high_temp,Table424,AC timing derating,온도 derating 적용 구간,needed
+voltage_mode,derived,enum,normal|DVFSH|DVFSL|DVFSB|DVFSQ,MR11_Table478,WCK2DQO|VDD transition,현재 DVFS 전압 모드,active
+has_tbd_path,derived,bool,any selected value == TBD,project_rule,validation,TBD가 계산 경로에 포함되었는지 여부,active
+has_review_path,derived,bool,any selected status == review,project_rule,validation,검증 필요 값이 계산 경로에 포함되었는지 여부,active

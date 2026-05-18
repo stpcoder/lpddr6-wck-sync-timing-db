@@ -1,0 +1,91 @@
+{
+  "rule_set": "lpddr6_trtw_rules",
+  "sources": ["Table389", "Table390"],
+  "rounding": {
+    "RU": "ceil",
+    "RD": "floor",
+    "EVEN": "round up to next even integer"
+  },
+  "base_rules": [
+    {
+      "id": "TRTW_SAME_BG_ODT_DISABLED",
+      "target": "tRTW_BASE",
+      "conditions": {
+        "same_bg": true,
+        "dq_odt_effective_enabled": false,
+        "dq_nt_odt_effective_enabled": "any"
+      },
+      "formula": "RL + BLN_MAX + RU(tWCK2DQO_EFFECTIVE_MAX_ps/1000/tCK_ns) - WL",
+      "unit": "nCK",
+      "source": "Table389"
+    },
+    {
+      "id": "TRTW_DIFF_BG_ODT_DISABLED",
+      "target": "tRTW_BASE",
+      "conditions": {
+        "same_bg": false,
+        "dq_odt_effective_enabled": false,
+        "dq_nt_odt_effective_enabled": "any"
+      },
+      "formula": "RL + BLN_MIN + RU(tWCK2DQO_EFFECTIVE_MAX_ps/1000/tCK_ns) - WL",
+      "unit": "nCK",
+      "source": "Table390"
+    },
+    {
+      "id": "TRTW_SAME_BG_ODT_ENABLED",
+      "target": "tRTW_BASE",
+      "conditions": {
+        "same_bg": true,
+        "dq_odt_effective_enabled": true,
+        "dq_nt_odt_effective_enabled": "any"
+      },
+      "formula": "RL + BLN_MAX + RU(tWCK2DQO_EFFECTIVE_MAX_ps/1000/tCK_ns) + RD(tRPST/tCK) - ODTLon - RD(tODTon_MIN_ps/1000/tCK_ns) + 1",
+      "unit": "nCK",
+      "source": "Table389"
+    },
+    {
+      "id": "TRTW_DIFF_BG_ODT_ENABLED",
+      "target": "tRTW_BASE",
+      "conditions": {
+        "same_bg": false,
+        "dq_odt_effective_enabled": true,
+        "dq_nt_odt_effective_enabled": "any"
+      },
+      "formula": "RL + BLN_MIN + RU(tWCK2DQO_EFFECTIVE_MAX_ps/1000/tCK_ns) + RD(tRPST/tCK) - ODTLon - RD(tODTon_MIN_ps/1000/tCK_ns) + 1",
+      "unit": "nCK",
+      "source": "Table390"
+    }
+  ],
+  "note_adders": [
+    {
+      "id": "TRTW_DFEQ_ADD_1",
+      "target": "tRTW_ADD",
+      "conditions": {"dfeq_enabled": true},
+      "formula": "1",
+      "unit": "nCK",
+      "source": "Table389_Note2_Table390_Note2"
+    },
+    {
+      "id": "TRTW_PER_PIN_DFE_ADD_1",
+      "target": "tRTW_ADD",
+      "conditions": {"per_pin_dfe_enabled": true},
+      "formula": "1",
+      "unit": "nCK",
+      "source": "Table389_Note3_Table390_Note3"
+    }
+  ],
+  "overrides": [
+    {
+      "id": "TRTW_RDQS_DISABLED_RPST_ZERO",
+      "target": "tRPST",
+      "conditions": {"rdqs_enabled": false},
+      "formula": "0",
+      "source": "rank_to_rank_notes_for_RDQS_disabled_apply_as_guard"
+    }
+  ],
+  "final_formula": {
+    "id": "TRTW_FINAL",
+    "formula": "EVEN(tRTW_BASE + SUM(tRTW_ADD))",
+    "source": "Table389_Note4_Table390_Note4"
+  }
+}

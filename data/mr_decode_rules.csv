@@ -1,0 +1,55 @@
+derived_symbol,condition,value,source,rule_type,priority,status
+active_fsp,MR13.OP[7:6]==00,FSP0,MR13,decode,10,active
+active_fsp,MR13.OP[7:6]==01,FSP1,MR13,decode,10,active
+active_fsp,MR13.OP[7:6]==10,FSP2,MR13,decode,10,active
+read_dbi_enabled,MR3.OP[0]==1,true,Table400_MR3,decode,10,active
+read_dbi_enabled,MR3.OP[0]==0,false,Table400_MR3,decode,10,active
+efficiency_mode_enabled,MR0.OP[2]==1,true,Table45_static_efficiency,decode,10,active
+efficiency_mode_enabled,MR0.OP[2]==0 AND MR1.OP[6]==1,true,Table47_dynamic_efficiency,decode,10,active
+efficiency_mode_enabled,MR0.OP[2]==0 AND MR1.OP[6]==0,false,Table47_dynamic_efficiency,decode,10,active
+rl_set,read_dbi_enabled=false AND efficiency_mode_enabled=false,SET0,Table47_Note3,selector,10,active
+rl_set,read_dbi_enabled=true AND efficiency_mode_enabled=false,SET1,Table47_Note3,selector,10,active
+rl_set,read_dbi_enabled=false AND efficiency_mode_enabled=true,SET1,Table47_Note3,selector,10,active
+rl_set,read_dbi_enabled=true AND efficiency_mode_enabled=true,SET2,Table47_Note3,selector,10,active
+wl_set,MR1.OP[5]==0,SET_A,Table47_Note5,selector,10,active
+wl_set,MR1.OP[5]==1,SET_B,Table47_Note5,selector,10,active
+dvfsh_enabled,MR11.OP[2]==1,true,Table92,decode,10,active
+dvfsh_enabled,MR11.OP[2]==0,false,Table92,decode,10,active
+dvfsb_enabled,MR11.OP[3]==1,true,Table92,decode,10,active
+dvfsb_enabled,MR11.OP[3]==0,false,Table92,decode,10,active
+dvfsl_enabled,MR11.OP[4]==1,true,Table92,decode,10,active
+dvfsl_enabled,MR11.OP[4]==0,false,Table92,decode,10,active
+dvfsq_enabled,MR11.OP[5]==1,true,Table92,decode,10,active
+dvfsq_enabled,MR11.OP[5]==0,false,Table92,decode,10,active
+wck_fm,MR11.OP[6]==0,LF,Table92,decode,10,active
+wck_fm,MR11.OP[6]==1,HF,Table92,decode,10,active
+wck2dq_osc_fm,MR11.OP[7]==0,LF_OSC,Table92,decode,10,active
+wck2dq_osc_fm,MR11.OP[7]==1,HF_OSC,Table92,decode,10,active
+dq_odt_mr_enabled,MR19.OP[2:0]!=000,true,Table111,decode,10,active
+dq_odt_mr_enabled,MR19.OP[2:0]==000,false,Table111,decode,10,active
+dq_odt_effective_enabled,dq_odt_mr_enabled=true AND dvfsq_enabled=false,true,Table92_Note6,override,20,active
+dq_odt_effective_enabled,dvfsq_enabled=true,false,Table92_Note6,override,30,active
+dq_nt_odt_mr_enabled,MR20.OP[2:0]!=000,true,Table113,decode,10,active
+dq_nt_odt_mr_enabled,MR20.OP[2:0]==000,false,Table113,decode,10,active
+dq_nt_odt_effective_enabled,dq_nt_odt_mr_enabled=true AND dvfsq_enabled=false,true,Table92_Note6,override,20,active
+dq_nt_odt_effective_enabled,dvfsq_enabled=true,false,Table92_Note6,override,30,active
+dq_wr_nt_odt_mr_enabled,MR20.OP[5:3]!=000,true,Table113,decode,10,active
+dq_wr_nt_odt_mr_enabled,MR20.OP[5:3]==000,false,Table113,decode,10,active
+rdqs_enabled,MR22.OP[1:0]!=00,true,Table117,decode,10,active
+rdqs_enabled,MR22.OP[1:0]==00,false,Table117,decode,10,active
+wck_always_on_enabled,MR22.OP[5]==1,true,Table117,decode,10,active
+wck_always_on_enabled,MR22.OP[5]==0,false,Table117,decode,10,active
+tWCKPST,MR22.OP[7:6]==00,2.5*tWCK,Table117,decode,10,active
+tWCKPST,MR22.OP[7:6]==01,4.5*tWCK,Table117,decode,10,active
+tWCKPST,MR22.OP[7:6]==10,6.5*tWCK,Table117,decode,10,active
+tWCKPST,MR22.OP[7:6]==11,illegal_reserved,Table117,illegal,10,active
+write_link_protection_enabled,MR23.OP[0]==1 OR MR23.OP[1]==1,true,Table119,decode,10,active
+write_link_protection_enabled,MR23.OP[0]==0 AND MR23.OP[1]==0,false,Table119,decode,10,active
+read_link_protection_enabled,MR23.OP[2]==1,true,Table119,decode,10,active
+read_link_protection_enabled,MR23.OP[2]==0,false,Table119,decode,10,active
+wsoe_enabled,MR26.OP[3]==1,true,Table265,decode,10,active
+wsoe_enabled,MR26.OP[3]==0,false,Table265,decode,10,active
+per_pin_dfe_enabled,MR41.OP[0]==1,true,Table154,decode,10,active
+per_pin_dfe_enabled,MR41.OP[0]==0,false,Table154,decode,10,active
+dfeq_enabled,any(MR70..MR75 DFE quantity field != 000),true,Table182_192,decode,10,active
+dfeq_enabled,all(MR70..MR75 DFE quantity field == 000),false,Table182_192,decode,10,active

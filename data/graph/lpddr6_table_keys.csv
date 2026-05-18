@@ -1,0 +1,18 @@
+table_id,file_path,table_kind,key_symbols,output_symbols,source_ref,status,description_ko
+MR_DECODE,data/mr_decode_rules.csv,decode,MR fields,condition symbols,MR_decode_rules,active,MR raw field를 timing condition으로 변환
+MR1_SPEED_BIN,data/timing/lpddr6_mr1_speed_bins.csv,validation,MR1.OP[4:0]|data_rate_mbps,mr1_speed_bin_valid|speed_bin_range,Table49_72_common_speed_bin,active,MR1 code와 operating data rate 일치성 검증
+MR1_LATENCY_SELECTOR,data/lpddr6_mr1_latency_table_selector.csv,selector,read_dbi_enabled|efficiency_mode_enabled|dvfsl_enabled|write_link_protection_enabled|read_link_protection_enabled,latency_table_id|rl_set,Table47_Table48,active,Feature condition으로 Table49~72 선택
+MR1_LATENCY_VALUES,data/lpddr6_mr1_latency_values_seed.csv,lookup,latency_table_id|MR1.OP[4:0]|MR1.OP[5],RL|WL|nWTP|nRTP_BL24|nRTP_BL48|nACU,Table49_72,active,MR1 latency code row에서 latency 값 선택
+BLN_TABLE,data/lpddr6_bln_t381_t382.csv,lookup,data_rate_mbps|bank_relation|burst_length,BLN|BLN_MIN|BLN_MAX,Table381_Table382,review,BL/n family lookup
+TWTR_TABLE,data/lpddr6_twtr_core_ac.csv,lookup_convert,dvfsl_enabled|write_link_protection_enabled|efficiency_mode_enabled|tCK_ns,tWTR_S_nCK|tWTR_L_nCK,Table414_423,active,tWTR ns/nCK floor를 실제 nCK로 변환
+WCK2DQ_TABLE,data/timing/lpddr6_wck2dq_t477_full.csv,lookup,wck_fm|dvfsl_enabled|data_rate_mbps,tWCK2DQI/O min/max and variation,Table477,active,WCK2DQ AC parameter lookup
+RDQS_PRE_TABLE,data/timing/lpddr6_rdqs_pre_t90.csv,lookup_convert,rdqs_enabled|MR10.OP[1]|MR10.OP[4:2]|data_rate_mbps|tWCK_ns|tCK_ns,tRPRE,Table90,active,RDQS preamble lookup
+RDQS_PST_TABLE,data/timing/lpddr6_rdqs_pst_t90.csv,lookup_convert,rdqs_enabled|MR10.OP[1]|MR10.OP[5]|MR10.OP[7:6]|tWCK_ns|tCK_ns,tRPST,Table90,active,RDQS postamble lookup
+WCK_PST_TABLE,data/timing/lpddr6_wck_pst_mr22_t117.csv,lookup_convert,MR22.OP[7:6]|tWCK_ns|tCK_ns,tWCKPST,Table117,active,WCK postamble lookup
+WCK_SYNC_AC_READ,data/timing/lpddr6_wck_sync_ac_read_t256_t259.csv,lookup,current_cmd|read_link_protection_enabled|dvfsl_enabled|MR1.OP[4:0]|rl_set,tWCKENL_CURRENT|tWCKPRE_CURRENT,Table256_259,active,Read-class WCK Sync AC lookup
+WCK_SYNC_AC_WRITE,data/timing/lpddr6_wck_sync_ac_write_t260.csv,lookup,current_cmd|MR1.OP[4:0]|wl_set,tWCKENL_CURRENT|tWCKPRE_CURRENT,Table260,active,Write-class WCK Sync AC lookup
+WCK_SYNC_AC_CAS,data/timing/lpddr6_wck_sync_ac_cas_t261.csv,lookup,current_cmd|MR1.OP[4:0],tWCKENL_FS|tWCKPRE_STATIC,Table261,active,CAS WCK Sync AC lookup
+ODT_WRITE_TABLE,data/timing/lpddr6_write_odt_t319_t320_t329_t330.csv,lookup_convert,dq_odt_effective_enabled|data_rate_mbps|WL|tCK_ns,ODTLon|tODTon_MIN_nCK_RD,Table319_320_329_330,active,DQ ODT timing lookup
+TRTW_RULES,rules/lpddr6_trtw_rules.json,formula,same_bg|dq_odt_effective_enabled|RL|WL|BLN_MIN|BLN_MAX|tWCK2DQO|tRPST|ODTLon|tODTon,tRTW_BASE|tRTW_FINAL,Table389_390,active,tRTW base/final formula
+PAIR_FORMULAS,data/formulas/lpddr6_formula_registry.json,formula,formula_id|resolved_symbols,command_min_gap|command_max_gap,Table263_264_Table398,active,Command pair expression formula registry
+CMD_PAIR_MATRIX,data/timing/lpddr6_wck_sync_cmd_pair_matrix_t263_t264.csv,decision,current_cmd|next_cmd|bank_scope|ws_operand,min_expr|max_expr,Table263_264,active,WCK Sync-Off pair matrix

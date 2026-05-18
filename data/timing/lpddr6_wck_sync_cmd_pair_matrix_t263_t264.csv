@@ -1,0 +1,73 @@
+source_table,rule_id,current_cmd,next_cmd,bank_scope,without_min_expr,without_max_expr,with_min_expr,with_max_expr,status,notes
+Table263,T263_WR_TO_WR,WR,WR,any,BLN,W_DEADLINE,W_DEADLINE_PLUS1,open,seeded,Normal write to write while WCK sync state is on.
+Table263,T263_WR_TO_META_WR,WR,META_WR,any,BLN,open,open,open,seeded_meta,Meta write can be issued with or without new sync start per notes 6 and 7.
+Table263,T263_WR_TO_RD_SAME,WR,RD,same_bg,NOT_ALLOWED,NOT_ALLOWED,WR_TO_RD_SAME,open,seeded,Normal write to read same BG requires new WCK2CK sync start.
+Table263,T263_WR_TO_RD_DIFF,WR,RD,diff_bg,NOT_ALLOWED,NOT_ALLOWED,WR_TO_RD_DIFF,open,seeded,Normal write to read different BG requires new WCK2CK sync start.
+Table263,T263_WR_TO_META_RD_SAME,WR,META_RD,same_bg,WR_TO_RD_SAME,open,WR_TO_RD_SAME,open,seeded_meta,Meta read can be issued with or without new sync start per notes 6 and 7.
+Table263,T263_WR_TO_META_RD_DIFF,WR,META_RD,diff_bg,WR_TO_RD_DIFF,open,WR_TO_RD_DIFF,open,seeded_meta,Meta read can be issued with or without new sync start per notes 6 and 7.
+Table263,T263_WR_TO_MRR,WR,MRR,any,NOT_ALLOWED,NOT_ALLOWED,WR_TO_MRR,open,seeded,Write to MRR requires new WCK2CK sync start.
+Table263,T263_META_WR_TO_WR,META_WR,WR,any,BLN,W_DEADLINE,W_DEADLINE_PLUS1,open,seeded_meta,Meta write behaves like normal write for sync off extension.
+Table263,T263_META_WR_TO_META_WR,META_WR,META_WR,any,BLN,open,open,open,seeded_meta,Meta write to meta write.
+Table263,T263_META_WR_TO_RD_SAME,META_WR,RD,same_bg,NOT_ALLOWED,NOT_ALLOWED,WR_TO_RD_SAME,open,seeded_meta,Meta write to read same BG requires new sync start.
+Table263,T263_META_WR_TO_RD_DIFF,META_WR,RD,diff_bg,NOT_ALLOWED,NOT_ALLOWED,WR_TO_RD_DIFF,open,seeded_meta,Meta write to read different BG requires new sync start.
+Table263,T263_META_WR_TO_META_RD_SAME,META_WR,META_RD,same_bg,WR_TO_RD_SAME,open,WR_TO_RD_SAME,open,seeded_meta,Meta write to meta read same BG.
+Table263,T263_META_WR_TO_META_RD_DIFF,META_WR,META_RD,diff_bg,WR_TO_RD_DIFF,open,WR_TO_RD_DIFF,open,seeded_meta,Meta write to meta read different BG.
+Table263,T263_META_WR_TO_MRR,META_WR,MRR,any,NOT_ALLOWED,NOT_ALLOWED,WR_TO_MRR,open,seeded_meta,Meta write to MRR requires new sync start.
+Table263,T263_RD_TO_WR_SAME,RD,WR,same_bg,tRTW_FINAL,R_DEADLINE,NOT_ALLOWED,NOT_ALLOWED,seeded,Read to write same BG can use WS0 only until read sync deadline.
+Table263,T263_RD_TO_WR_DIFF,RD,WR,diff_bg,tRTW_FINAL,R_DEADLINE,NOT_ALLOWED,NOT_ALLOWED,seeded,Read to write different BG can use WS0 only until read sync deadline.
+Table263,T263_RD_TO_META_WR_SAME,RD,META_WR,same_bg,RD_TO_META_WR_SAME,open,R_DEADLINE_PLUS1,open,seeded_meta,Read to meta write same BG.
+Table263,T263_RD_TO_META_WR_DIFF,RD,META_WR,diff_bg,RD_TO_META_WR_DIFF,open,R_DEADLINE_PLUS1,open,seeded_meta,Read to meta write different BG.
+Table263,T263_RD_TO_RD,RD,RD,any,BLN,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded,Read to read while WCK sync state is on.
+Table263,T263_RD_TO_META_RD,RD,META_RD,any,BLN,open,open,open,seeded_meta,Read to meta read per notes 6 and 7.
+Table263,T263_RD_TO_MRR,RD,MRR,any,NOT_ALLOWED,NOT_ALLOWED,RD_TO_MRR,open,seeded,Read to MRR requires new WCK2CK sync start.
+Table263,T263_META_RD_TO_WR_SAME,META_RD,WR,same_bg,RD_TO_META_WR_SAME,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded_meta,Meta read to write same BG.
+Table263,T263_META_RD_TO_WR_DIFF,META_RD,WR,diff_bg,RD_TO_META_WR_DIFF,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded_meta,Meta read to write different BG.
+Table263,T263_META_RD_TO_META_WR_SAME,META_RD,META_WR,same_bg,RD_TO_META_WR_SAME,open,R_DEADLINE_PLUS1,open,seeded_meta,Meta read to meta write same BG.
+Table263,T263_META_RD_TO_META_WR_DIFF,META_RD,META_WR,diff_bg,RD_TO_META_WR_DIFF,open,R_DEADLINE_PLUS1,open,seeded_meta,Meta read to meta write different BG.
+Table263,T263_META_RD_TO_RD,META_RD,RD,any,BLN,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded_meta,Meta read to read.
+Table263,T263_META_RD_TO_META_RD,META_RD,META_RD,any,BLN,open,open,open,seeded_meta,Meta read to meta read.
+Table263,T263_META_RD_TO_MRR,META_RD,MRR,any,NOT_ALLOWED,NOT_ALLOWED,RD_TO_MRR,open,seeded_meta,Meta read to MRR requires new sync start.
+Table263,T263_MRR_TO_WR,MRR,WR,any,MRR_TO_WR_MIN,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded,MRR to write has tRTW+2 or DQ ODT enabled note 5 override.
+Table263,T263_MRR_TO_META_WR,MRR,META_WR,any,MRR_TO_WR_MIN,open,R_DEADLINE_PLUS1,open,seeded_meta,MRR to meta write.
+Table263,T263_MRR_TO_RD,MRR,RD,any,NOT_ALLOWED,NOT_ALLOWED,RD_TO_MRR,open,seeded,MRR to read requires new sync start.
+Table263,T263_MRR_TO_META_RD,MRR,META_RD,any,NOT_ALLOWED,NOT_ALLOWED,RD_TO_MRR,open,seeded_meta,MRR to meta read requires new sync start.
+Table263,T263_MRR_TO_MRR,MRR,MRR,any,tMRR,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded,MRR to MRR uses tMRR period.
+Table264,T264_WFF_TO_WFF,WFF,WFF,any,CONST_6,W_DEADLINE,W_DEADLINE_PLUS1,open,seeded,Write FIFO to Write FIFO.
+Table264,T264_WFF_TO_RFF,WFF,RFF,any,WFF_TO_RFF_MIN,W_DEADLINE,W_DEADLINE_PLUS1,open,seeded_with_ntodt_gap,Write FIFO to Read FIFO uses Table264 note 4.
+Table264,T264_WFF_TO_WR,WFF,WR,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write FIFO to normal write is not allowed in this matrix.
+Table264,T264_WFF_TO_META_WR,WFF,META_WR,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write FIFO to meta write is not allowed in this matrix.
+Table264,T264_WFF_TO_RD,WFF,RD,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write FIFO to read is not allowed in this matrix.
+Table264,T264_WFF_TO_META_RD,WFF,META_RD,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write FIFO to meta read is not allowed in this matrix.
+Table264,T264_WFF_TO_MRR,WFF,MRR,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write FIFO to MRR is not allowed in this matrix.
+Table264,T264_WFF_TO_RDC,WFF,RDC,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write FIFO to RDC is not allowed in this matrix.
+Table264,T264_RFF_TO_WFF,RFF,WFF,any,tRTW_DIFF_BG,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded,Read FIFO to Write FIFO uses tRTW different BG per Table398 note 5.
+Table264,T264_RFF_TO_RFF,RFF,RFF,any,CONST_6,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded,Read FIFO to Read FIFO.
+Table264,T264_RFF_TO_WR,RFF,WR,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read FIFO to write requires new sync start with tRTRRD.
+Table264,T264_RFF_TO_META_WR,RFF,META_WR,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read FIFO to meta write requires new sync start with tRTRRD.
+Table264,T264_RFF_TO_RD,RFF,RD,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read FIFO to read requires new sync start with tRTRRD.
+Table264,T264_RFF_TO_META_RD,RFF,META_RD,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read FIFO to meta read requires new sync start with tRTRRD.
+Table264,T264_RFF_TO_MRR,RFF,MRR,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read FIFO to MRR requires new sync start with tRTRRD.
+Table264,T264_RFF_TO_RDC,RFF,RDC,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read FIFO to RDC requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_WFF,RDC,WFF,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,RDC to WFF requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_RFF,RDC,RFF,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,RDC to RFF is not allowed in Table398 and Table264.
+Table264,T264_RDC_TO_WR,RDC,WR,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,RDC to write requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_META_WR,RDC,META_WR,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,RDC to meta write requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_RD,RDC,RD,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,RDC to read requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_META_RD,RDC,META_RD,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,RDC to meta read requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_MRR,RDC,MRR,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,RDC to MRR requires new sync start with tRTRRD.
+Table264,T264_RDC_TO_RDC,RDC,RDC,any,CONST_6,R_DEADLINE,R_DEADLINE_PLUS1,open,seeded,RDC to RDC.
+Table264,T264_WR_TO_WFF,WR,WFF,any,NOT_ALLOWED,NOT_ALLOWED,tWRWTR,open,seeded,Write to Write FIFO requires new sync start with tWRWTR.
+Table264,T264_WR_TO_RFF,WR,RFF,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Write to Read FIFO is not allowed in Table398 and Table264.
+Table264,T264_WR_TO_RDC,WR,RDC,any,NOT_ALLOWED,NOT_ALLOWED,WR_TO_RD_SAME,open,seeded,Write to RDC uses same-BG tWTR_L expression.
+Table264,T264_META_WR_TO_WFF,META_WR,WFF,any,NOT_ALLOWED,NOT_ALLOWED,tWRWTR,open,seeded,Meta write to Write FIFO.
+Table264,T264_META_WR_TO_RFF,META_WR,RFF,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Meta write to Read FIFO is not allowed in this matrix.
+Table264,T264_META_WR_TO_RDC,META_WR,RDC,any,NOT_ALLOWED,NOT_ALLOWED,WR_TO_RD_SAME,open,seeded,Meta write to RDC uses same-BG tWTR_L expression.
+Table264,T264_RD_TO_WFF,RD,WFF,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read to Write FIFO requires new sync start with tRTRRD.
+Table264,T264_RD_TO_RFF,RD,RFF,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Read to Read FIFO is not allowed in Table398 and Table264.
+Table264,T264_RD_TO_RDC,RD,RDC,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Read to RDC requires new sync start with tRTRRD.
+Table264,T264_META_RD_TO_WFF,META_RD,WFF,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Meta read to Write FIFO.
+Table264,T264_META_RD_TO_RFF,META_RD,RFF,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,Meta read to Read FIFO is not allowed in this matrix.
+Table264,T264_META_RD_TO_RDC,META_RD,RDC,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,Meta read to RDC.
+Table264,T264_MRR_TO_WFF,MRR,WFF,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,MRR to Write FIFO.
+Table264,T264_MRR_TO_RFF,MRR,RFF,any,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,NOT_ALLOWED,seeded_not_allowed,MRR to Read FIFO is not allowed in this matrix.
+Table264,T264_MRR_TO_RDC,MRR,RDC,any,NOT_ALLOWED,NOT_ALLOWED,tRTRRD,open,seeded,MRR to RDC.

@@ -1,0 +1,5 @@
+source_table,wck_pst_code,wck_pst_twck,status,notes
+Table117,00,2.5,seeded,Default WCK postamble length.
+Table117,01,4.5,seeded,WCK postamble length.
+Table117,10,6.5,seeded,WCK postamble length.
+Table117,11,reserved,illegal,Reserved WCK postamble code.

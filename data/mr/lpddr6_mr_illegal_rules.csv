@@ -1,0 +1,51 @@
+rule_id,severity,condition,reason_ko,source,status
+MR_GLOBAL_RFU_WRITE_NONZERO,illegal,any_field_marked_RFU_written_nonzero,RFU bit는 write 시 0이어야 함,Table43_Note1,seeded
+MR_GLOBAL_WRITE_TO_READ_ONLY,warning,MRW_to_read_only_register,Read-only register write는 기능 영향 없음,Table43_Note4,seeded
+MR_GLOBAL_DNU_ACCESS,illegal,access_to_DNU_or_NA_register,DNU 또는 N/A register는 사용 금지,Table43,seeded
+MR9_ONLY_00H,illegal,MR9.OP[7:0] != 00H,Vendor Specific Test Register에는 00H만 write 가능,Table88_Note1,seeded
+MR10_PS_HIGH_SPEED_ONLY,illegal,MR10.OP[0]==1 AND data_rate_mbps<=8533,RDQS pre-shift 2*tWCK는 8533Mbps 초과에서만 허용,Table90_Note5,seeded
+MR10_PRE_010_011_HIGH_SPEED_ONLY,illegal,MR10.OP[4:2] in {010B|011B} AND data_rate_mbps<=8533,해당 RDQS preamble code는 8533Mbps 초과에서만 허용,Table90_Note7,seeded
+MR10_PRE_RFU,illegal,MR10.OP[4:2] in {100B|101B|110B|111B},RDQS PRE RFU code 사용 금지,Table90,seeded
+MR10_PST_RESERVED,illegal,MR10.OP[7:6]==11B,RDQS PST Length 11B는 Reserved,Table90,seeded
+MR11_DVFSH_REQUIRED_MISSING,illegal,MR21.OP[1:0]==01B AND data_rate_mbps>8533 AND MR11.OP[2]==0,DVFSH requirement상 VDD2C step-up 필요,Table92_Note3_Table115,seeded
+MR11_DVFSH_REQUIRED_MISSING_9600,illegal,MR21.OP[1:0]==10B AND data_rate_mbps>9600 AND MR11.OP[2]==0,DVFSH requirement상 VDD2C step-up 필요,Table92_Note3_Table115,seeded
+MR11_DVFSB_REQUIRED_MISSING,illegal,MR21.OP[3:2]==01B AND data_rate_mbps>8533 AND MR11.OP[3]==0,DVFSB requirement상 VDD2D step-up 필요,Table92_Note4_Table115,seeded
+MR11_DVFSB_REQUIRED_MISSING_9600,illegal,MR21.OP[3:2]==10B AND data_rate_mbps>9600 AND MR11.OP[3]==0,DVFSB requirement상 VDD2D step-up 필요,Table92_Note4_Table115,seeded
+MR11_DVFSL_UNSUPPORTED,illegal,MR11.OP[4]==1 AND MR21.OP[5:4]==00B,DVFSL step-down 미지원 device에서 DVFSL enable 금지,Table92_Note5_Table115,seeded
+MR11_DVFSL_RANGE_1600,warning,MR11.OP[4]==1 AND MR21.OP[5:4]==01B AND data_rate_mbps>1600,DVFSL 지원 범위 초과 가능성,Table92_Note5_Table115,seeded
+MR11_DVFSL_RANGE_3200,warning,MR11.OP[4]==1 AND MR21.OP[5:4]==10B AND data_rate_mbps>3200,DVFSL 지원 범위 초과 가능성,Table92_Note5_Table115,seeded
+MR11_DVFSQ_FORCES_ODT_OFF,warning,MR11.OP[5]==1,MR 설정과 무관하게 DQ CS CA CK WCK 및 NT-ODT가 off로 동작,Table92_Note6,seeded
+MR11_WCK_FM_LF_WITH_DVFSH,illegal,MR11.OP[6]==0 AND MR11.OP[2]==1,LF WCK FM에서 DVFSH 조합은 prohibited,Table478,seeded
+MR11_WCK_FM_LF_WITH_DVFSB,illegal,MR11.OP[6]==0 AND MR11.OP[3]==1,LF WCK FM에서 DVFSB 조합은 prohibited,Table478,seeded
+MR11_WCK_FM_HF_WITH_DVFSL,illegal,MR11.OP[6]==1 AND MR11.OP[4]==1,HF WCK FM에서 DVFSL 조합은 prohibited,Table478,seeded
+MR13_THERMAL_OFFSET_SC_MISMATCH,warning,SC0.MR13.OP[1:0] != SC1.MR13.OP[1:0],Thermal offset은 SC0과 SC1 사이 같은 값이어야 함,Table97_Note5,seeded
+MR13_FSP_WR_RESERVED,illegal,MR13.OP[5:4]==11B,FSP-WR 11B Reserved,Table97,seeded
+MR13_FSP_OP_RESERVED,illegal,MR13.OP[7:6]==11B,FSP-OP 11B Reserved,Table97,seeded
+MR13_THERMAL_RESERVED,illegal,MR13.OP[1:0]==11B,Thermal Offset 11B Reserved,Table97,seeded
+MR17_SOC_ODT_RFU,illegal,MR17.OP[2:0]==111B,SoC ODT 111B RFU,Table107,seeded
+MR17_CS_ODT_RFU,illegal,MR17.OP[5:3]==111B,CS ODT 111B RFU,Table107,seeded
+MR18_CK_ODT_RFU,illegal,MR18.OP[2:0]==111B,CK ODT 111B RFU,Table109,seeded
+MR18_CA_ODT_RFU,illegal,MR18.OP[5:3]==111B,CA ODT 111B RFU,Table109,seeded
+MR19_DQ_ODT_RFU,illegal,MR19.OP[2:0]==111B,DQ ODT 111B RFU,Table111,seeded
+MR19_WCK_ODT_RFU,illegal,MR19.OP[5:3]==111B,WCK ODT 111B RFU,Table111,seeded
+MR20_DQ_NT_ODT_RFU,illegal,MR20.OP[2:0]==111B,DQ NT-ODT 111B RFU,Table113,seeded
+MR20_DQ_WR_NT_ODT_RFU,illegal,MR20.OP[5:3]==111B,DQ WR NT-ODT 111B RFU,Table113,seeded
+MR21_DVFSH_RFU,illegal,MR21.OP[1:0]==11B,DVFSH requirement 11B RFU read value,Table115,seeded
+MR21_DVFSB_RFU,illegal,MR21.OP[3:2]==11B,DVFSB requirement 11B RFU read value,Table115,seeded
+MR21_DVFSL_RFU,illegal,MR21.OP[5:4]==11B,DVFSL support 11B RFU read value,Table115,seeded
+MR22_WCK_MODE_RESERVED,illegal,MR22.OP[3:2]==11B,WCK mode 11B Reserved,Table117,seeded
+MR22_WCK_SINGLE_ENDED_ONLY_LF,illegal,MR22.OP[3:2] in {01B|10B} AND MR11.OP[6]==1,WCK single-ended mode는 Low frequency mode에서만 허용,Table92_Note7_Table117,seeded
+MR22_WCK_PST_RESERVED,illegal,MR22.OP[7:6]==11B,WCK PST 11B Reserved,Table117,seeded
+MR22_WCKPST_NOT_GT_RPST,illegal,tWCKPST <= tRPST,tWCKPST length는 tRPST보다 커야 함,Table117_Note11,seeded
+MR23_WECC_WEDC_BOTH_ENABLED,illegal,MR23.OP[0]==1 AND MR23.OP[1]==1,Write Link ECC와 EDC는 mutual exclusive,Table119_Note3,seeded
+MR26_CA_PARITY_REQUIRES_WCK_AON,illegal,MR26.OP[2]==1 AND MR22.OP[5]==0,CA parity enable 전 WCK Always On mode가 필요,Table123_Note1_Note2,seeded
+MR26_WSOE_WITH_WCK_AON,illegal,MR26.OP[3]==1 AND MR22.OP[5]==1,WSOE와 WCK Always On은 mutual exclusive,Table265_Text,seeded
+MR27_PASR_DENSITY_RESTRICTION,illegal,device_density in {3Gb|6Gb|12Gb|24Gb} AND MR27.OP[7:6]!=00B,해당 density에서는 PASR OP7:6이 항상 00B여야 함,Table126_Note2,seeded
+MR28_ZQ_RESET_AND_STOP,illegal,MR28.OP[0]==1 AND MR28.OP[1]==1,ZQ Reset과 ZQ Stop은 mutual exclusive,Table128_Note5,seeded
+MR37_STOP_MPC_NONZERO_ILLEGAL,illegal,MPC==Stop_WCK2DQI_Interval_Oscillator AND MR37.OP[7:0]!=00000000B,MR37 nonzero에서는 Stop WCK2DQI Interval Oscillator MPC illegal,Table146_Note2,seeded
+MR40_STOP_MPC_NONZERO_ILLEGAL,illegal,MPC==Stop_WCK2DQO_Interval_Oscillator AND MR40.OP[7:0]!=00000000B,MR40 nonzero에서는 Stop WCK2DQO Interval Oscillator MPC illegal,Table152_Note2,seeded
+MR41_MBIST_SELECTION_RFU,illegal,MR41.OP[3:2]==01B,MBIST Selection 01B RFU,Table154,seeded
+MR41_MBIST_PPR_MUTEX,illegal,MR41.OP[3:2] in {10B|11B} AND MR41.OP[4]==1,MBIST-Test MBIST-mPPR 또는 PPR은 동시에 enable될 수 없음,Table154_Note3,seeded
+MR41_MBIST_MPPR_WITHOUT_TEST,warning,MR41.OP[3:2]==11B AND previous_MBIST_Test_done!=true,MBIST-mPPR 전 MBIST-Test 수행 필요,Table154_Note3,seeded
+MR70_75_RFU_BITS_NONZERO,illegal,any(MR70..MR75.OP[3]==1 OR MR70..MR75.OP[7]==1),MR70~MR75의 OP3 OP7은 RFU,Table182_192,seeded
+MR70_75_IGNORED_WHEN_PDFEC_OFF,warning,MR41.OP[0]==0 AND any(MR71.OP[7:4]!=000B OR MR72..MR75 nonzero),PDFEC off이면 DFEDQ0 broadcast로 MR71 OP7:4와 MR72~MR75는 ignored,Table182_Note3,seeded

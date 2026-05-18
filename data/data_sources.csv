@@ -1,0 +1,41 @@
+source_id,spec,rev,section,table_or_clause,title,scope,status
+LP6_T381,JESD209-6,base,8.1,Table 381,Effective Burst Length BL/n Definition,BL/n BL/n_min BL/n_max,seeded
+LP6_T382,JESD209-6,base,8.2,Table 382,Same BG tCCD Timing Definition,tCCD_L derived BL/n by data rate,seeded
+LP6_T389,JESD209-6,base,8.3.1,Table 389,READ to WRITE tRTW Same/Different Banks in Same BG,tRTW same BG formulas,seeded
+LP6_T390,JESD209-6,base,8.3.1,Table 390,READ to WRITE tRTW Different Banks in Different BG,tRTW different BG formulas,seeded
+LP6_T263,JESD209-6,base,7.3.5,Table 263,WCK2CK SYNC Off Timing Definition for WR RD MRR,auto sync off windows,seeded
+LP6_T264,JESD209-6,base,7.3.5,Table 264,WCK2CK SYNC Off Timing Definition for Training Commands,training command sync off windows,seeded
+LP6_T265,JESD209-6,base,7.3.6,Table 265,CAS Command Decoding Table,WSOE command decode,seeded
+LP6_T266,JESD209-6,base,7.3.6,Table 266,Acceptable Period of WCK Sync-Off Extension,WSOE acceptable period,seeded
+LP6_T263_264_MATRIX,JESD209-6,base,7.3.5,Table 263-264,Normalized WCK Sync-Off CMD pair matrix,all WR RD MRR WFF RFF RDC meta pair rows for evaluator dispatch,seeded_with_unresolved_guards
+LP6_T398,JESD209-6,base,8.7,Table 398,Training-Related Timing Constraints,tWRWTR tRTRRD WFF to RFF note 4 formulas,seeded_with_ntodt_gap
+LP6_T310,JESD209-6,base,7.8.1.2,Table 310,Mode Register Read Write AC Timing,tMRR 12nCK,seeded
+LP6_T256_259,JESD209-6,base,7.3.2,Table 256-259,WCK2CK Sync AC Parameters for Read,read tWCKENL and WCK preamble static half/full toggle,seeded_with_tbd
+LP6_T260,JESD209-6,base,7.3.2,Table 260,WCK2CK Sync AC Parameters for Write,write tWCKENL and WCK preamble static half/full toggle,seeded_with_tbd
+LP6_T261,JESD209-6,base,7.3.2,Table 261,WCK2CK Sync AC Parameters for CAS,CAS tWCKENL_FS and static preamble,seeded_with_tbd
+LP6_T414,JESD209-6,base,9.1,Table 414,Core AC Timing DVFSL off Link Protection off Efficiency off,tWTR base case,seeded
+LP6_T416,JESD209-6,base,9.1,Table 416,Core AC Timing DVFSL off Link Protection off Efficiency on,tWTR,seeded
+LP6_T417,JESD209-6,base,9.1,Table 417,Core AC Timing DVFSL off Link Protection on Efficiency off,tWTR,seeded
+LP6_T418,JESD209-6,base,9.1,Table 418,Core AC Timing DVFSL off Link Protection on Efficiency on,tWTR,seeded
+LP6_T419,JESD209-6,base,9.1,Table 419,Core AC Timing DVFSL on Link Protection off Efficiency off,tWTR,seeded
+LP6_T421,JESD209-6,base,9.1,Table 421,Core AC Timing DVFSL on Link Protection off Efficiency on,tWTR,seeded
+LP6_T422,JESD209-6,base,9.1,Table 422,Core AC Timing DVFSL on Link Protection on Efficiency off,tWTR,seeded
+LP6_T423,JESD209-6,base,9.1,Table 423,Core AC Timing DVFSL on Link Protection on Efficiency on,tWTR,seeded
+LP6_T477,JESD209-6,base,15.3,Table 477,tWCK2DQ AC Parameters,tWCK2DQI/tWCK2DQO lookup and temp/voltage variation,seeded_with_tbd
+LP6_T478,JESD209-6,base,15.3,Table 478,Relationship between WCK FM and VDD2C/D Setting,WCK FM legal mode relation,seeded
+LP6_T49_72,JESD209-6,base,6.2,Table 49-72,RL WL nWTP nRTP nACU by MR1 OP and feature set,latency table selection,selector_seeded_values_partial
+LP6_MR1_SPEED_BIN,JESD209-6,base,6.2,Table 49-72 common speed bins,MR1 OP[4:0] data-rate bin validation,central bin map for MR1 code and operating data rate consistency,seeded
+LP6_T400,JESD209-6,base,8.8,Table 400,Mode Register which Affects Data Output Condition and/or Timing,MRW/MRR timing impact list,seeded
+LP6_T90,JESD209-6,base,6.2,Table 90,MR10 RDQS postamble and preamble definition,tRPRE tRPST pre-shift ratio Unit dependency,seeded
+LP6_T117,JESD209-6,base,6.2,Table 117,MR22 RDQS and WCK postamble definition,RDQS enable and tWCKPST dependency,seeded
+LP6_ODT,JESD209-6,base,ODT,Table 319/320/329/330/331-336,ODT timing tables,ODTLon and tODTon timing values for tRTW and rank timing,partial_seeded
+LP6_T319_320,JESD209-6,base,7.8.4.2.2,Table 319-320,Asynchronous ODT for Data Bus,DQ ODT write latency and async timing,seeded_odtlon_async_odtloff_tbd
+LP6_T329_330,JESD209-6,base,7.8.5.3.1,Table 329-330,NT-ODT Behavior for Write Operation,Write NT-ODT latency and async timing,seeded_with_tbd
+LP6_T273_281,JESD209-6,base,7.4.2.3,Table 273-281,nWTP timing tables,Write AP to internal precharge timing seed,seeded
+LP6_T268_272,JESD209-6,base,7.4.2.2,Table 268-272,Read latency and nRTP timing tables,Read AP to internal precharge timing seed,seeded
+LP6_T331_336,JESD209-6,base,7.8.5.3.2,Table 331-336,NT ODT read latency tables,DQ/RDQS read ODT on/off latencies and async timing,seeded_with_tbd
+LP6_T415_420,JESD209-6,base,9.1,Table 415 and Table 420,nACU timing tables,Activation counter update values by DVFSL and data rate,seeded_with_tbd
+LP5_LP6_ODT_WRITE_COMPARE,JESD209-5C_vs_JESD209-6,compare,7.6.4_7.6.6_vs_7.8.4_7.8.5,LP5 Table 262/263/292/293 vs LP6 Table 319/320/329/330,ODT write timing comparison,LPDDR5 to LPDDR6 delta seed for ODT write behavior,seeded
+LP6_SYMBOL_GRAPH,JESD209-6,derived,project,data/graph/lpddr6_symbol_nodes.csv and dependency_edges.csv,Symbol dependency graph,node edge model for MR condition lookup formula decision flow,seeded
+LP6_TABLE_KEYS,JESD209-6,derived,project,data/graph/lpddr6_table_keys.csv,Shared table key catalog,declares common key/output symbols across JEDEC-derived CSV tables,seeded
+LP6_FORMULA_REGISTRY,JESD209-6,derived,project,data/formulas/lpddr6_formula_registry.json,Structured formula registry,AST formulas for WCK Sync-Off command-pair expressions,seeded

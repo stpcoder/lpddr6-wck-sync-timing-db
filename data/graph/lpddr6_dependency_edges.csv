@@ -1,0 +1,102 @@
+from_symbol,to_symbol,edge_type,rule_id,key_role,source_ref,status,description_ko
+data_rate_mbps,ck_mhz,derive,CK_FREQ_FROM_DATA_RATE,input,clocking,active,Data rate에서 CK frequency 유도
+data_rate_mbps,wck_mhz,derive,WCK_FREQ_FROM_DATA_RATE,input,clocking,active,Data rate에서 WCK frequency 유도
+ck_mhz,tCK_ns,derive,TCK_FROM_CK,input,clocking,active,CK frequency에서 tCK 유도
+wck_mhz,tWCK_ns,derive,TWCK_FROM_WCK,input,clocking,active,WCK frequency에서 tWCK 유도
+bank_relation,same_bg,decode,BANK_RELATION_DECODE,input,scenario,active,BG 관계 decode
+bank_relation,same_bank,decode,BANK_RELATION_DECODE,input,scenario,active,Bank 관계 decode
+MR0.OP[2],efficiency_mode_enabled,decode,EFFICIENCY_EFFECTIVE,input,Table45_Table47,active,Static efficiency-only device이면 effective efficiency true
+MR1.OP[6],efficiency_mode_enabled,decode,EFFICIENCY_EFFECTIVE,input,Table47,active,Dynamic Efficiency control
+MR3.OP[0],read_dbi_enabled,decode,READ_DBI_DECODE,input,Table76,active,Read DBI condition decode
+MR11.OP[2],dvfsh_enabled,decode,DVFSH_DECODE,input,Table92,active,DVFSH condition decode
+MR11.OP[3],dvfsb_enabled,decode,DVFSB_DECODE,input,Table92,active,DVFSB condition decode
+MR11.OP[4],dvfsl_enabled,decode,DVFSL_DECODE,input,Table92,active,DVFSL condition decode
+MR11.OP[5],dvfsq_enabled,decode,DVFSQ_DECODE,input,Table92,active,DVFSQ condition decode
+MR11.OP[6],wck_fm,decode,WCK_FM_DECODE,input,Table92,active,WCK LF/HF condition decode
+MR19.OP[2:0],dq_odt_effective_enabled,decode,DQ_ODT_EFFECTIVE,input,Table111,active,DQ ODT MR setting
+MR11.OP[5],dq_odt_effective_enabled,guard,DVFSQ_FORCES_ODT_OFF,disable_guard,Table92_Note6,active,DVFSQ가 DQ ODT effective state를 off로 강제
+MR20.OP[2:0],dq_nt_odt_effective_enabled,decode,DQ_NT_ODT_EFFECTIVE,input,Table113,active,DQ NT-ODT read MR setting
+MR20.OP[5:3],dq_wr_nt_odt_effective_enabled,decode,DQ_WR_NT_ODT_EFFECTIVE,input,Table113,active,DQ NT-ODT write MR setting
+MR11.OP[5],dq_nt_odt_effective_enabled,guard,DVFSQ_FORCES_NT_ODT_OFF,disable_guard,Table92_Note6,active,DVFSQ가 NT-ODT effective state를 off로 강제
+MR11.OP[5],dq_wr_nt_odt_effective_enabled,guard,DVFSQ_FORCES_WR_NT_ODT_OFF,disable_guard,Table92_Note6,active,DVFSQ가 write NT-ODT effective state를 off로 강제
+MR22.OP[1:0],rdqs_enabled,decode,RDQS_ENABLE_DECODE,input,Table117,active,RDQS enable decode
+MR23.OP[0],write_link_protection_enabled,decode,WRITE_LINK_PROTECTION_DECODE,input,Table119,active,WECC condition decode
+MR23.OP[1],write_link_protection_enabled,decode,WRITE_LINK_PROTECTION_DECODE,input,Table119,active,WEDC condition decode
+MR23.OP[2],read_link_protection_enabled,decode,READ_LINK_PROTECTION_DECODE,input,Table119,active,Read link protection decode
+MR1.OP[4:0],MR1_speed_bin,validation,MR1_SPEED_BIN_TABLE,key,lpddr6_mr1_speed_bins.csv,active,MR1 code speed bin 선택
+data_rate_mbps,MR1_speed_bin,validation,MR1_SPEED_BIN_TABLE,input,lpddr6_mr1_speed_bins.csv,active,실제 data rate가 MR1 speed bin 안에 있는지 검증
+MR1.OP[4:0],latency_table_id,lookup,MR1_LATENCY_TABLE,value_key,Table49_72,active,Latency value row key
+read_dbi_enabled,latency_table_id,selector,MR1_LATENCY_TABLE,selector_key,Table47_Table48,active,Latency table selector key
+efficiency_mode_enabled,latency_table_id,selector,MR1_LATENCY_TABLE,selector_key,Table47_Table48,active,Latency table selector key
+dvfsl_enabled,latency_table_id,selector,MR1_LATENCY_TABLE,selector_key,Table47_Table48,active,Latency table selector key
+write_link_protection_enabled,latency_table_id,selector,MR1_LATENCY_TABLE,selector_key,Table47_Table48,active,Latency table selector key
+read_link_protection_enabled,latency_table_id,selector,MR1_LATENCY_TABLE,selector_key,Table47_Table48,active,Latency table selector key
+latency_table_id,RL,lookup,MR1_LATENCY_VALUES,table_id,Table49_72,active,Selected latency table에서 RL 선택
+MR1.OP[4:0],RL,lookup,MR1_LATENCY_VALUES,row_key,Table49_72,active,MR1 row에서 RL 선택
+latency_table_id,WL,lookup,MR1_LATENCY_VALUES,table_id,Table49_72,active,Selected latency table에서 WL 선택
+MR1.OP[4:0],WL,lookup,MR1_LATENCY_VALUES,row_key,Table49_72,active,MR1 row에서 WL 선택
+MR1.OP[5],WL,selector,WL_SET_SELECTOR,column_key,Table47_Note5,active,WL Set A/B column 선택
+latency_table_id,nWTP,lookup,MR1_LATENCY_VALUES,table_id,Table49_72,active,nWTP MR1 value 선택
+latency_table_id,nRTP_BL24,lookup,MR1_LATENCY_VALUES,table_id,Table49_72,active,nRTP BL24 MR1 value 선택
+latency_table_id,nRTP_BL48,lookup,MR1_LATENCY_VALUES,table_id,Table49_72,active,nRTP BL48 MR1 value 선택
+latency_table_id,nACU,lookup,MR1_LATENCY_VALUES,table_id,Table49_72,active,nACU MR1 value 선택
+data_rate_mbps,BLN,lookup,BLN_TABLE,speed_key,Table381_382,active,Speed에 따른 BL/n 선택
+bank_relation,BLN,lookup,BLN_TABLE,bank_scope,Table381_382,active,Bank/BG 관계에 따른 BL/n 선택
+burst_length,BLN,lookup,BLN_TABLE,burst_length,Table381_382,active,Burst length에 따른 BL/n 선택
+data_rate_mbps,BLN_MIN,lookup,BLN_TABLE,speed_key,Table381,active,Speed에 따른 BL/n_min 선택
+burst_length,BLN_MIN,lookup,BLN_TABLE,burst_length,Table381,active,Burst length에 따른 BL/n_min 선택
+data_rate_mbps,BLN_MAX,lookup,BLN_TABLE,speed_key,Table381,active,Speed에 따른 BL/n_max 선택
+same_bg,BLN_MAX,lookup,BLN_TABLE,bank_scope,Table381_382,active,Same BG 여부가 BL/n_max에 영향
+dvfsl_enabled,tWTR_S_nCK,selector,TWTR_TABLE,selector_key,Table414_423,active,tWTR table selector
+write_link_protection_enabled,tWTR_S_nCK,selector,TWTR_TABLE,selector_key,Table414_423,active,tWTR table selector
+efficiency_mode_enabled,tWTR_S_nCK,selector,TWTR_TABLE,selector_key,Table414_423,active,tWTR table selector
+tCK_ns,tWTR_S_nCK,convert,TWTR_NS_TO_NCK,unit_conversion,Table414_423,active,ns floor를 nCK로 변환
+dvfsl_enabled,tWTR_L_nCK,selector,TWTR_TABLE,selector_key,Table414_423,active,tWTR table selector
+write_link_protection_enabled,tWTR_L_nCK,selector,TWTR_TABLE,selector_key,Table414_423,active,tWTR table selector
+efficiency_mode_enabled,tWTR_L_nCK,selector,TWTR_TABLE,selector_key,Table414_423,active,tWTR table selector
+tCK_ns,tWTR_L_nCK,convert,TWTR_NS_TO_NCK,unit_conversion,Table414_423,active,ns floor를 nCK로 변환
+wck_fm,tWCK2DQO_EFFECTIVE_MAX_ps,selector,WCK2DQ_TABLE,selector_key,Table477,active,LF/HF family 선택
+dvfsl_enabled,tWCK2DQO_EFFECTIVE_MAX_ps,selector,WCK2DQ_TABLE,selector_key,Table477_Table478,active,LF_L/DVFSL family 선택
+data_rate_mbps,tWCK2DQO_EFFECTIVE_MAX_ps,lookup,WCK2DQ_TABLE,speed_key,Table477,active,Speed bin에 따른 tWCK2DQO 선택
+MR10.OP[1],tRPST_nCK,selector,RDQS_PST_TABLE,selector_key,Table90,active,RDQS ratio가 Unit에 영향
+MR10.OP[5],tRPST_nCK,selector,RDQS_PST_TABLE,selector_key,Table90,active,RDQS postamble mode selector
+MR10.OP[7:6],tRPST_nCK,selector,RDQS_PST_TABLE,selector_key,Table90,active,RDQS postamble length selector
+tWCK_ns,tRPST_nCK,convert,TWCK_TO_NCK,unit_conversion,Table90,active,tWCK 단위를 nCK로 변환
+tCK_ns,tRPST_nCK,convert,TWCK_TO_NCK,unit_conversion,Table90,active,tWCK 단위를 nCK로 변환
+MR22.OP[7:6],tWCKPST_nCK_RD,selector,WCK_PST_TABLE,selector_key,Table117,active,WCK postamble selector
+tWCK_ns,tWCKPST_nCK_RD,convert,TWCKPST_TO_NCK,unit_conversion,Table117,active,tWCKPST ns 변환
+tCK_ns,tWCKPST_nCK_RD,convert,TWCKPST_TO_NCK,unit_conversion,Table117,active,tWCKPST nCK 변환
+WL,ODTLon,formula,ODT_LATENCY_FORMULA,input,Table319_329,active,ODTLon formula에 WL 사용
+dq_odt_effective_enabled,ODTLon,guard,ODT_LATENCY_FORMULA,condition,Table319_329,active,DQ ODT enabled path에서만 ODTLon 사용
+tCK_ns,tODTon_MIN_nCK_RD,convert,ODT_ASYNC_TO_NCK,unit_conversion,Table320_330,active,tODTon min ns를 nCK로 변환
+RL,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,tRTW base 구성 요소
+WL,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,tRTW base 구성 요소
+BLN_MIN,tRTW_BASE,formula,TRTW_BASE,input,Table390,active,Different BG tRTW 구성 요소
+BLN_MAX,tRTW_BASE,formula,TRTW_BASE,input,Table389,active,Same BG tRTW 구성 요소
+tWCK2DQO_EFFECTIVE_MAX_ps,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,tRTW ODT off/on 구성 요소
+tRPST_nCK,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,ODT enabled tRTW 구성 요소
+ODTLon,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,ODT enabled tRTW 구성 요소
+tODTon_MIN_nCK_RD,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,ODT enabled tRTW 구성 요소
+tRTW_BASE,tRTW_FINAL,formula,TRTW_FINAL,input,Table389_390_notes,active,Note adder와 even rounding 전 기본값
+MR41.OP[0],tRTW_FINAL,formula,TRTW_FINAL,note_adder,Table389_390_notes,active,Per-pin DFE +1 조건
+WL,WR_TO_RD_SAME,formula,WR_TO_RD_SAME,input,lpddr6_formula_registry.json,active,WR->RD same BG min gap 구성
+BLN_MAX,WR_TO_RD_SAME,formula,WR_TO_RD_SAME,input,lpddr6_formula_registry.json,active,WR->RD same BG min gap 구성
+tWTR_L_nCK,WR_TO_RD_SAME,formula,WR_TO_RD_SAME,input,lpddr6_formula_registry.json,active,WR->RD same BG min gap 구성
+WL,WR_TO_RD_DIFF,formula,WR_TO_RD_DIFF,input,lpddr6_formula_registry.json,active,WR->RD different BG min gap 구성
+BLN_MIN,WR_TO_RD_DIFF,formula,WR_TO_RD_DIFF,input,lpddr6_formula_registry.json,active,WR->RD different BG min gap 구성
+tWTR_S_nCK,WR_TO_RD_DIFF,formula,WR_TO_RD_DIFF,input,lpddr6_formula_registry.json,active,WR->RD different BG min gap 구성
+RL,R_DEADLINE,formula,R_DEADLINE,input,lpddr6_formula_registry.json,active,Read-class WCK sync deadline 구성
+BLN_MIN,R_DEADLINE,formula,R_DEADLINE,input,lpddr6_formula_registry.json,active,Read-class WCK sync deadline 구성
+tWCKPST_nCK_RD,R_DEADLINE,formula,R_DEADLINE,input,lpddr6_formula_registry.json,active,Read-class WCK sync deadline 구성
+WL,W_DEADLINE,formula,W_DEADLINE,input,lpddr6_formula_registry.json,active,Write-class WCK sync deadline 구성
+BLN_MIN,W_DEADLINE,formula,W_DEADLINE,input,lpddr6_formula_registry.json,active,Write-class WCK sync deadline 구성
+tWCKPST_nCK_RD,W_DEADLINE,formula,W_DEADLINE,input,lpddr6_formula_registry.json,active,Write-class WCK sync deadline 구성
+current_cmd,command_pair_rule,lookup,CMD_PAIR_MATRIX,key,Table263_264,active,current command key
+next_cmd,command_pair_rule,lookup,CMD_PAIR_MATRIX,key,Table263_264,active,next command key
+same_bg,command_pair_rule,lookup,CMD_PAIR_MATRIX,bank_scope_key,Table263_264,active,bank scope key
+ws_operand,command_min_gap,selector,CMD_PAIR_PATH,path_selector,Table263_264,active,with/without new sync path selector
+command_pair_rule,command_min_gap,lookup,CMD_PAIR_MATRIX,expr_selector,Table263_264,active,선택된 min expression
+command_pair_rule,command_max_gap,lookup,CMD_PAIR_MATRIX,expr_selector,Table263_264,active,선택된 max expression
+command_min_gap,result_state,decision,COMMAND_WINDOW_DECISION,input,evaluator,active,min gap 판정
+command_max_gap,result_state,decision,COMMAND_WINDOW_DECISION,input,evaluator,active,max gap 판정
+requested_gap_nck,result_state,decision,COMMAND_WINDOW_DECISION,input,evaluator,active,실제 gap 판정

@@ -1,0 +1,98 @@
+field_id,value,meaning,effect,illegal_or_warning,condition,comment_ko,source,status
+MR0_TYPE,00B,Up to 10667Mbps,device data-rate capability,ok,always,"기본 지원 data rate type",Table45,seeded
+MR0_TYPE,01B,RFU,do not use,illegal,always,"RFU 값",Table45,seeded
+MR0_TYPE,10B,RFU,do not use,illegal,always,"RFU 값",Table45,seeded
+MR0_TYPE,11B,RFU,do not use,illegal,always,"RFU 값",Table45,seeded
+MR0_EFF_STATUS,0B,Switchable Normal and Dynamic Efficiency,DEFF switchable,ok,always,"Normal과 DEFF 전환 가능",Table45,seeded
+MR0_EFF_STATUS,1B,Static Efficiency only,SEFF only,ok,always,"Static Efficiency mode only device",Table45,seeded
+MR1_WLS,0B,WL Set A,select WL Set A,ok,always,"Write latency Set A 사용",Table47,seeded
+MR1_WLS,1B,WL Set B,select WL Set B,ok,always,"Write latency Set B 사용",Table47,seeded
+MR1_EFF_CNTL,0B,Normal,efficiency disabled,ok,MR0.OP[2]==0,"Normal mode",Table47,seeded
+MR1_EFF_CNTL,1B,Dynamic Efficiency mode,efficiency enabled,ok,MR0.OP[2]==0,"DEFF 진입",Table47,seeded
+MR1_EFF_CNTL,X,Ignored,ignored,warning,MR0.OP[2]==1,"Static Efficiency only device에서는 MR1 OP6 read/write 의미 없음",Table47_Note7,seeded
+MR9_VENDOR_TEST,00H,Allowed write value,normal,ok,always,"Vendor specific test register에는 00H만 write",Table88,seeded
+MR9_VENDOR_TEST,not_00H,Prohibited write value,vendor test misuse,illegal,always,"00H 외 write 금지",Table88_Note1,seeded
+MR10_RDQS_PS,0B,0*tWCK,no pre-shift,ok,always,"모든 frequency에서 지원",Table90,seeded
+MR10_RDQS_PS,1B,2*tWCK,pre-shift by 2*tWCK,ok,data_rate_mbps>8533,"8533Mbps 초과에서만 허용",Table90_Note5,seeded
+MR10_RDQS_PS,1B,2*tWCK,pre-shift by 2*tWCK,illegal,data_rate_mbps<=8533,"저속 영역에서는 금지",Table90_Note5,seeded
+MR10_RDQS_PRE,000B,4*tWCK static and 0*tWCK toggle or 2*Unit static,default preamble,ok,always,"기본 preamble",Table90,seeded
+MR10_RDQS_PRE,001B,2*tWCK static and 2*tWCK toggle or 1*Unit static and 1*Unit toggle,preamble option,ok,always,"모든 frequency 지원",Table90_Note6,seeded
+MR10_RDQS_PRE,010B,4*tWCK static and 4*tWCK toggle or 2*Unit static and 2*Unit toggle,preamble option,ok,data_rate_mbps>8533,"8533Mbps 초과에서만 허용",Table90_Note7,seeded
+MR10_RDQS_PRE,011B,2*tWCK static and 6*tWCK toggle or 1*Unit static and 3*Unit toggle,preamble option,ok,data_rate_mbps>8533,"8533Mbps 초과에서만 허용",Table90_Note7,seeded
+MR10_RDQS_PRE,100B_111B,RFU,do not use,illegal,always,"RFU preamble code",Table90,seeded
+MR10_RDQS_PST_LEN,00B,0.5*tWCK or 0.5*Unit toggle,default postamble,ok,always,"기본 RDQS postamble",Table90,seeded
+MR10_RDQS_PST_LEN,01B,2.5*tWCK or 2.5*Unit toggle,postamble length,ok,always,"tRTW ODT enabled 식에서 tRPST 후보",Table90,seeded
+MR10_RDQS_PST_LEN,10B,4.5*tWCK or 4.5*Unit toggle,postamble length,ok,always,"tRTW ODT enabled 식에서 tRPST 후보",Table90,seeded
+MR10_RDQS_PST_LEN,11B,Reserved,do not use,illegal,always,"Reserved",Table90,seeded
+MR11_DVFSH,0B,VDD2C 1.00V,normal VDD2C,ok,when not required by MR21,"DVFSH 미사용",Table92,seeded
+MR11_DVFSH,1B,VDD2C 1.025V,VDD2C step-up,ok,required high data rate or allowed transition,"고속에서 VDD2C step-up",Table92,seeded
+MR11_DVFSB,0B,VDD2D 0.875V,normal VDD2D,ok,when not required by MR21,"DVFSB 미사용",Table92,seeded
+MR11_DVFSB,1B,VDD2D 0.90V,VDD2D step-up,ok,required high data rate or allowed transition,"고속에서 VDD2D step-up",Table92,seeded
+MR11_DVFSL,0B,VDD2D 0.875V,normal VDD2D,ok,always,"DVFSL 미사용",Table92,seeded
+MR11_DVFSL,1B,VDD2D 0.85V,VDD2D step-down,ok,low data rate supported by MR21,"저속에서 VDD2D step-down",Table92,seeded
+MR11_DVFSQ,0B,VDDQ 0.5V,normal VDDQ,ok,always,"정상 VDDQ",Table92,seeded
+MR11_DVFSQ,1B,VDDQ 0.3V,turn off all ODT effective states,warning,always,"모든 ODT/NT-ODT가 MR 설정과 무관하게 off 처리됨",Table92_Note6,seeded
+MR11_WCK_FM,0B,Low frequency mode,select tWCK2DQ LF or LF_L,ok,normal_or_dvfsl,"LF mode",Table92_Table478,seeded
+MR11_WCK_FM,1B,High frequency mode,select tWCK2DQ HF,ok,normal_or_dvfsh_or_dvfsb,"HF mode",Table92_Table478,seeded
+MR13_THERMAL_OFFSET,00B,No offset 0-5C gradient,thermal setting,ok,always,"기본 thermal offset",Table97,seeded
+MR13_THERMAL_OFFSET,01B,5C offset 5-10C gradient,thermal setting,ok,always,"SC0/SC1 동일 설정 필요",Table97,seeded
+MR13_THERMAL_OFFSET,10B,10C offset 10-15C gradient,thermal setting,ok,always,"SC0/SC1 동일 설정 필요",Table97,seeded
+MR13_THERMAL_OFFSET,11B,Reserved,do not use,illegal,always,"Reserved",Table97,seeded
+MR13_FSP_WR,00B,FSP0,MRW target FSP0,ok,always,"MRW가 FSP0 physical register에 write",Table97,seeded
+MR13_FSP_WR,01B,FSP1,MRW target FSP1,ok,always,"MRW가 FSP1 physical register에 write",Table97,seeded
+MR13_FSP_WR,10B,FSP2,MRW target FSP2,ok,always,"MRW가 FSP2 physical register에 write",Table97,seeded
+MR13_FSP_WR,11B,Reserved,do not use,illegal,always,"Reserved",Table97,seeded
+MR13_FSP_OP,00B,FSP0,active FSP0,ok,always,"동작에 FSP0 값 사용",Table97,seeded
+MR13_FSP_OP,01B,FSP1,active FSP1,ok,always,"동작에 FSP1 값 사용",Table97,seeded
+MR13_FSP_OP,10B,FSP2,active FSP2,ok,always,"동작에 FSP2 값 사용",Table97,seeded
+MR13_FSP_OP,11B,Reserved,do not use,illegal,always,"Reserved",Table97,seeded
+MR16_CBT_CST_ENABLE,00B,Normal operation,no training entry,ok,always,"CBT/CST 진입 안 함",Table105,seeded
+MR16_CBT_CST_ENABLE,01B,Enable for FSP0,enter CBT or CST for FSP0,ok,always,"OP6에 따라 CBT 또는 CST 진입",Table105,seeded
+MR16_CBT_CST_ENABLE,10B,Enable for FSP1,enter CBT or CST for FSP1,ok,always,"OP6에 따라 CBT 또는 CST 진입",Table105,seeded
+MR16_CBT_CST_ENABLE,11B,Enable for FSP2,enter CBT or CST for FSP2,ok,always,"OP6에 따라 CBT 또는 CST 진입",Table105,seeded
+MR17_SOC_ODT,000B,Disabled,no SoC ODT,ok,always,"기본 off",Table107,seeded
+MR17_SOC_ODT,001B_110B,RZQ divided value,enable SoC ODT,ok,always,"RZQ/1~RZQ/6",Table107,seeded
+MR17_SOC_ODT,111B,RFU,do not use,illegal,always,"RFU",Table107,seeded
+MR18_CK_ODT,111B,RFU,do not use,illegal,always,"CK ODT RFU",Table109,seeded
+MR18_CA_ODT,111B,RFU,do not use,illegal,always,"CA ODT RFU",Table109,seeded
+MR19_DQ_ODT,000B,Disabled,tRTW ODT disabled formula,ok,always,"DQ ODT disabled",Table111,seeded
+MR19_DQ_ODT,001B_110B,RZQ divided value,tRTW ODT enabled formula,ok,always,"DQ ODT enabled",Table111,seeded
+MR19_DQ_ODT,111B,RFU,do not use,illegal,always,"DQ ODT RFU",Table111,seeded
+MR19_WCK_ODT,000B,Disabled,no WCK ODT,ok,always,"WCK ODT disabled",Table111,seeded
+MR19_WCK_ODT,001B_110B,RZQ divided value,enable WCK ODT,ok,always,"WCK ODT enabled and continues in all states",Table111_Note4,seeded
+MR19_WCK_ODT,111B,RFU,do not use,illegal,always,"WCK ODT RFU",Table111,seeded
+MR20_DQ_NT_ODT,000B,Disabled,NT-ODT disabled,ok,always,"Non-target DQ ODT disabled",Table113,seeded
+MR20_DQ_NT_ODT,001B_110B,RZQ divided value,NT-ODT enabled,ok,always,"Non-target DQ ODT enabled",Table113,seeded
+MR20_DQ_NT_ODT,111B,RFU,do not use,illegal,always,"NT-ODT RFU",Table113,seeded
+MR20_DQ_WR_NT_ODT,111B,RFU,do not use,illegal,always,"WR NT-ODT RFU",Table113,seeded
+MR21_DVFSH_REQ,00B,Not required,no DVFSH step-up required,ok,always,"VDD2C step-up 필요 없음",Table115,seeded
+MR21_DVFSH_REQ,01B,Required above 8533Mbps,DVFSH required threshold,ok,always,"8533Mbps 초과에서 MR11 OP2=1 필요",Table115,seeded
+MR21_DVFSH_REQ,10B,Required above 9600Mbps,DVFSH required threshold,ok,always,"9600Mbps 초과에서 MR11 OP2=1 필요",Table115,seeded
+MR21_DVFSH_REQ,11B,RFU,do not use,illegal,always,"RFU read value",Table115,seeded
+MR21_DVFSB_REQ,11B,RFU,do not use,illegal,always,"RFU read value",Table115,seeded
+MR21_DVFSL_SUPPORT,11B,RFU,do not use,illegal,always,"RFU read value",Table115,seeded
+MR22_RDQS,00B,Disabled,RDQS disabled,ok,always,"RDQS off. 일부 tRPRE/tRPST timing은 0 처리 필요",Table117,seeded
+MR22_RDQS,01B,RDQS_t only,RDQS enabled,ok,always,"RDQS_t 사용 default",Table117,seeded
+MR22_RDQS,10B,RDQS_t and RDQS_c,RDQS differential,ok,always,"Differential RDQS",Table117,seeded
+MR22_RDQS,11B,RDQS_c only,RDQS enabled,ok,always,"RDQS_c 사용",Table117,seeded
+MR22_WCK_MODE,00B,Differential,WCK differential,ok,always,"기본 differential",Table117,seeded
+MR22_WCK_MODE,01B,Single-ended WCK_t,WCK_t timing,ok,wck_fm==LF,"LF에서만 single-ended 허용",Table92_Note7_Table117,seeded
+MR22_WCK_MODE,10B,Single-ended WCK_c,WCK_c timing,ok,wck_fm==LF,"LF에서만 single-ended 허용",Table92_Note7_Table117,seeded
+MR22_WCK_MODE,11B,Reserved,do not use,illegal,always,"Reserved",Table117,seeded
+MR22_WCK_PST,00B,2.5*tWCK,WCK postamble,ok,always,"sync-off deadline에 사용",Table117,seeded
+MR22_WCK_PST,01B,4.5*tWCK,WCK postamble,ok,always,"sync-off deadline에 사용",Table117,seeded
+MR22_WCK_PST,10B,6.5*tWCK,WCK postamble,ok,always,"sync-off deadline에 사용",Table117,seeded
+MR22_WCK_PST,11B,Reserved,do not use,illegal,always,"Reserved",Table117,seeded
+MR23_WECC,1B,Write Link ECC enabled,write protection,ok,MR23.OP[1]==0,"WEDC와 동시 enable 금지",Table119,seeded
+MR23_WEDC,1B,Write Link EDC enabled,write protection,ok,MR23.OP[0]==0,"WECC와 동시 enable 금지",Table119,seeded
+MR23_RECC_REDC,1B,Read Link ECC/EDC enabled,read protection,ok,always,"Read latency table selector에 사용",Table119,seeded
+MR26_CA_PARITY,1B,CA parity enabled,CA parity check,ok,MR22.OP[5]==1,"WCK Always On이 먼저 enable되어야 함",Table123_Note1,seeded
+MR26_WSOE,1B,WCK Sync-Off Extension enabled,extend sync-off timing,ok,MR22.OP[5]==0,"WCK Always On과 mutual exclusive",Table265,seeded
+MR28_ZQ_RESET,1B,ZQ reset,reset calibration values,ok,MR28.OP[1]==0,"ZQ Stop과 동시 enable 금지",Table128,seeded
+MR28_ZQ_STOP,1B,ZQ stop,halt background ZQ calibration,ok,MR28.OP[0]==0,"ZQ Reset과 동시 enable 금지",Table128,seeded
+MR41_MBIST_SELECTION,00B,Disable,no MBIST,ok,always,"MBIST disable",Table154,seeded
+MR41_MBIST_SELECTION,01B,RFU,do not use,illegal,always,"RFU",Table154,seeded
+MR41_MBIST_SELECTION,10B,MBIST-Test enabled,MBIST test,ok,MR41.OP[4]==0,"PPR와 동시 enable 금지 조건 관리 필요",Table154_Note3,seeded
+MR41_MBIST_SELECTION,11B,MBIST-mPPR enabled,MBIST mPPR,ok,after_MBIST_Test AND MR41.OP[4]==0,"MBIST-Test 이후 수행 필요",Table154_Note3,seeded
+MR70_DFEDQ0,000B,DFE disabled,no DFE for DQ0,ok,always,"DFE off",Table182,seeded
+MR70_DFEDQ0,001B_111B,Negative feedback quantity,DFE enabled,ok,always,"하나라도 nonzero면 tRTW DFEQ +1 조건",Table182_Table389_Note2,seeded

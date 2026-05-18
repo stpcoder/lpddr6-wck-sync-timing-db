@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "description": "Structured formula registry for LPDDR6 seeded command-pair timing expressions. Formula IDs are referenced by the Table263/Table264 command-pair matrix.",
+  "rounding_rules": {
+    "even_command_gap": "Apply EVEN(value): odd nCK command gap rounds up to the next even nCK per Table263 note.",
+    "none": "No rounding beyond the operations explicitly encoded in the AST."
+  },
+  "expressions": {
+    "CONST_6": {
+      "source": "Table264",
+      "formula": "6nCK",
+      "unit": "nCK",
+      "dependencies": [],
+      "ast": {"const": 6},
+      "rounding": "even_command_gap",
+      "description_ko": "Training command pair에서 쓰이는 6nCK constant"
+    },
+    "BLN": {
+      "source": "Table381_Table382",
+      "formula": "BLN",
+      "unit": "nCK",
+      "dependencies": ["BLN"],
+      "ast": {"symbol": "BLN"},
+      "rounding": "even_command_gap",
+      "description_ko": "선택된 BL/n 값을 command gap으로 사용"
+    },
+    "W_DEADLINE": {
+      "source": "Table263_Table264",
+      "formula": "WL + BLN_MIN + RD(tWCKPST/tCK)",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MIN", "tWCKPST_nCK_RD"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "WL"},
+          {"symbol": "BLN_MIN"},
+          {"symbol": "tWCKPST_nCK_RD"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Write-class command 이후 WCK auto sync-off 직전까지 WS=0 command가 들어올 수 있는 deadline"
+    },
+    "W_DEADLINE_PLUS1": {
+      "source": "Table263_Table264",
+      "formula": "WL + BLN_MIN + RD(tWCKPST/tCK) + 1",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MIN", "tWCKPST_nCK_RD"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "WL"},
+          {"symbol": "BLN_MIN"},
+          {"symbol": "tWCKPST_nCK_RD"},
+          {"const": 1}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Write-class auto sync-off deadline 다음 cycle부터 새 WS=1 sync path 허용 여부 판단용"
+    },
+    "R_DEADLINE": {
+      "source": "Table263_Table264",
+      "formula": "RL + BLN_MIN + RD(tWCKPST/tCK)",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MIN", "tWCKPST_nCK_RD"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "RL"},
+          {"symbol": "BLN_MIN"},
+          {"symbol": "tWCKPST_nCK_RD"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Read-class command 이후 WCK auto sync-off 직전까지 WS=0 command가 들어올 수 있는 deadline"
+    },
+    "R_DEADLINE_PLUS1": {
+      "source": "Table263_Table264",
+      "formula": "RL + BLN_MIN + RD(tWCKPST/tCK) + 1",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MIN", "tWCKPST_nCK_RD"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "RL"},
+          {"symbol": "BLN_MIN"},
+          {"symbol": "tWCKPST_nCK_RD"},
+          {"const": 1}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Read-class auto sync-off deadline 다음 cycle부터 새 WS=1 sync path 허용 여부 판단용"
+    },
+    "WR_TO_RD_SAME": {
+      "source": "Table263_Table383_Table384",
+      "formula": "WL + BLN_MAX + tWTR_L_nCK",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MAX", "tWTR_L_nCK"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "WL"},
+          {"symbol": "BLN_MAX"},
+          {"symbol": "tWTR_L_nCK"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Write 이후 same BG Read command를 새 WS=1 sync로 넣을 때의 minimum gap"
+    },
+    "WR_TO_RD_DIFF": {
+      "source": "Table263_Table385",
+      "formula": "WL + BLN_MIN + tWTR_S_nCK",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MIN", "tWTR_S_nCK"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "WL"},
+          {"symbol": "BLN_MIN"},
+          {"symbol": "tWTR_S_nCK"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Write 이후 different BG Read command를 새 WS=1 sync로 넣을 때의 minimum gap"
+    },
+    "WR_TO_MRR": {
+      "source": "Table263",
+      "formula": "WL + BLN_MAX + tWTR_L_nCK",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MAX", "tWTR_L_nCK"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "WL"},
+          {"symbol": "BLN_MAX"},
+          {"symbol": "tWTR_L_nCK"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Write 이후 MRR을 새 WS=1 sync로 넣을 때의 minimum gap"
+    },
+    "RD_TO_META_WR_SAME": {
+      "source": "Table263",
+      "formula": "RL + BLN_MAX - WL",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MAX", "WL"],
+      "ast": {
+        "op": "sub",
+        "args": [
+          {
+            "op": "add",
+            "args": [
+              {"symbol": "RL"},
+              {"symbol": "BLN_MAX"}
+            ]
+          },
+          {"symbol": "WL"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Read 이후 meta write same BG command gap"
+    },
+    "RD_TO_META_WR_DIFF": {
+      "source": "Table263",
+      "formula": "RL + BLN_MIN - WL",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MIN", "WL"],
+      "ast": {
+        "op": "sub",
+        "args": [
+          {
+            "op": "add",
+            "args": [
+              {"symbol": "RL"},
+              {"symbol": "BLN_MIN"}
+            ]
+          },
+          {"symbol": "WL"}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Read 이후 meta write different BG command gap"
+    },
+    "RD_TO_MRR": {
+      "source": "Table263",
+      "formula": "RL + BLN_MAX + RD(tWCKPST/tCK) + 1",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MAX", "tWCKPST_nCK_RD"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "RL"},
+          {"symbol": "BLN_MAX"},
+          {"symbol": "tWCKPST_nCK_RD"},
+          {"const": 1}
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Read 이후 MRR을 새 WS=1 sync로 넣을 때의 minimum gap"
+    },
+    "tRTW_FINAL": {
+      "source": "Table389_Table390",
+      "formula": "resolved tRTW_FINAL for current same_bg condition",
+      "unit": "nCK",
+      "dependencies": ["RL", "WL", "BLN_MIN", "BLN_MAX", "tWCK2DQO_EFFECTIVE_MAX_ps", "dq_odt_effective_enabled", "tRPST_nCK", "ODTLon", "tODTon_MIN_nCK_RD"],
+      "resolver": "tRTW_CURRENT",
+      "rounding": "even_command_gap",
+      "description_ko": "현재 bank relation 기준 tRTW final 값"
+    },
+    "tRTW_DIFF_BG": {
+      "source": "Table390",
+      "formula": "resolved tRTW_FINAL for different BG",
+      "unit": "nCK",
+      "dependencies": ["RL", "WL", "BLN_MIN", "tWCK2DQO_EFFECTIVE_MAX_ps", "dq_odt_effective_enabled", "tRPST_nCK", "ODTLon", "tODTon_MIN_nCK_RD"],
+      "resolver": "tRTW_DIFF_BG",
+      "rounding": "even_command_gap",
+      "description_ko": "Different BG 기준 tRTW final 값"
+    },
+    "MRR_TO_WR_MIN": {
+      "source": "Table263_Note5_Table389",
+      "formula": "tRTW + 2 or DQ ODT enabled override",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MAX", "tWCK2DQO_EFFECTIVE_MAX_ps", "WL", "dq_odt_effective_enabled", "ODTLon", "tODTon_MIN_nCK_RD"],
+      "resolver": "MRR_TO_WR_MIN",
+      "rounding": "even_command_gap",
+      "description_ko": "MRR 이후 write minimum. DQ ODT enabled이면 Table263 note 5 override 사용"
+    },
+    "tMRR": {
+      "source": "Table310",
+      "formula": "12nCK",
+      "unit": "nCK",
+      "dependencies": [],
+      "ast": {"const": 12},
+      "rounding": "even_command_gap",
+      "description_ko": "MRR to MRR period"
+    },
+    "tWRWTR": {
+      "source": "Table398_Note1",
+      "formula": "WL + BLN_MAX + MAX(RU(7.5ns/tCK), 6nCK)",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MAX", "tCK_ns"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "WL"},
+          {"symbol": "BLN_MAX"},
+          {
+            "op": "max",
+            "args": [
+              {
+                "op": "ru",
+                "arg": {
+                  "op": "div",
+                  "args": [
+                    {"const": 7.5},
+                    {"symbol": "tCK_ns"}
+                  ]
+                }
+              },
+              {"const": 6}
+            ]
+          }
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Write class에서 WFF로 넘어가는 training-related timing"
+    },
+    "tRTRRD": {
+      "source": "Table398_Note3",
+      "formula": "RL + BLN_MAX + MAX(RU(7.5ns/tCK), 6nCK)",
+      "unit": "nCK",
+      "dependencies": ["RL", "BLN_MAX", "tCK_ns"],
+      "ast": {
+        "op": "add",
+        "args": [
+          {"symbol": "RL"},
+          {"symbol": "BLN_MAX"},
+          {
+            "op": "max",
+            "args": [
+              {
+                "op": "ru",
+                "arg": {
+                  "op": "div",
+                  "args": [
+                    {"const": 7.5},
+                    {"symbol": "tCK_ns"}
+                  ]
+                }
+              },
+              {"const": 6}
+            ]
+          }
+        ]
+      },
+      "rounding": "even_command_gap",
+      "description_ko": "Read/training class에서 WFF/RD/RDC 등으로 넘어가는 training-related timing"
+    },
+    "WFF_TO_RFF_MIN": {
+      "source": "Table264_Note4_Table398",
+      "formula": "MAX(6nCK, WL + BLN_MAX - RL + MAX(RU(10ns/tCK), 4nCK)); NT-ODT enabled adds RU(tODToff_MAX/tCK)",
+      "unit": "nCK",
+      "dependencies": ["WL", "BLN_MAX", "RL", "tCK_ns", "dq_nt_odt_effective_enabled", "dq_wr_nt_odt_effective_enabled"],
+      "resolver": "WFF_TO_RFF_MIN",
+      "rounding": "even_command_gap",
+      "description_ko": "WFF 이후 RFF minimum. NT-ODT enabled path는 tODToff_MAX lookup 필요"
+    }
+  }
+}

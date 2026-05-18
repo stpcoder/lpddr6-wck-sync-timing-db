@@ -1,0 +1,20 @@
+field,type,required,description_ko,example
+rule_id,string,yes,rule 고유 ID,TRTW_SAME_BG_ODT_DISABLED
+target_symbol,string,yes,계산 또는 판정 결과 symbol,tRTW_BASE
+rule_type,enum,yes,decode|lookup|formula|note|override|validation|decision,formula
+priority,integer,yes,동일 target에서 높은 priority rule이 나중에 override,100
+source,string,yes,JEDEC 근거 table 또는 project rule,Table389
+conditions_all,string,no,모두 만족해야 하는 조건식 목록,same_bg==true|dq_odt_effective_enabled==false
+conditions_any,string,no,하나 이상 만족해야 하는 조건식 목록,current_cmd==RD|current_cmd==MRR
+conditions_none,string,no,만족하면 안 되는 조건식 목록,has_tbd_path==true
+inputs,string,no,필요한 input symbol 목록,RL|WL|BLN_MAX|tWCK2DQO_MAX_ps|tCK_ns
+lookup_table,string,no,lookup rule인 경우 참조 CSV,lpddr6_twtr_core_ac.csv
+lookup_key,string,no,lookup key 목록,dvfsl|link_protection|efficiency_mode
+raw_formula,string,no,계산식. evaluator가 지원하는 제한된 DSL 사용,RL+BLN_MAX+RU(tWCK2DQO_MAX_ps/1000/tCK_ns)-WL
+raw_unit,string,no,식 또는 lookup 결과 원 단위,ns_or_nCK
+normalized_unit,string,yes,최종 normalized unit,nCK
+rounding,string,no,RU|RD|EVEN|max 등 후처리,EVEN
+post_processors,string,no,note adder나 TBD warning 같은 후처리,apply_tRTW_DFE_adders|TBD_PROPAGATION
+output_status_rule,string,yes,active|warning_if_review|error_if_tbd,warning_if_review
+trace_message_template,string,yes,trace에 출력할 한국어 설명,{source}의 {rule_id} 조건을 적용
+status,enum,yes,active|partial|needed|deprecated,active

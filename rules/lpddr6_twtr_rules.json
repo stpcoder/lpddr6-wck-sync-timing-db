@@ -1,0 +1,42 @@
+{
+  "rule_set": "lpddr6_twtr_rules",
+  "sources": ["Table383", "Table384", "Table385", "Table414", "Table416", "Table417", "Table418", "Table419", "Table421", "Table422", "Table423"],
+  "lookup_key": ["dvfsl_enabled", "link_protection_enabled", "efficiency_mode_enabled"],
+  "derived": [
+    {
+      "id": "TWTR_S_NCK",
+      "target": "tWTR_S_nCK",
+      "formula": "max(RU(tWTR_S_ns_floor/tCK_ns), tWTR_S_nck_floor)",
+      "source": "Table414_423"
+    },
+    {
+      "id": "TWTR_L_NCK",
+      "target": "tWTR_L_nCK",
+      "formula": "max(RU(tWTR_L_ns_floor/tCK_ns), tWTR_L_nck_floor)",
+      "source": "Table414_423"
+    }
+  ],
+  "command_gap_rules": [
+    {
+      "id": "WR_TO_RD_SAME_BG",
+      "target": "command_min_gap",
+      "conditions": {"current_cmd": "WR", "next_cmd": "RD", "same_bg": true},
+      "formula": "EVEN(WL + BLN_MAX + tWTR_L_nCK)",
+      "source": "Table383_Table384_Table263"
+    },
+    {
+      "id": "WR_TO_RD_DIFF_BG",
+      "target": "command_min_gap",
+      "conditions": {"current_cmd": "WR", "next_cmd": "RD", "same_bg": false},
+      "formula": "EVEN(WL + BLN_MIN + tWTR_S_nCK)",
+      "source": "Table385_Table263"
+    },
+    {
+      "id": "WR_TO_MRR",
+      "target": "command_min_gap",
+      "conditions": {"current_cmd": "WR", "next_cmd": "MRR"},
+      "formula": "EVEN(WL + BLN_MAX + tWTR_L_nCK)",
+      "source": "Table263"
+    }
+  ]
+}

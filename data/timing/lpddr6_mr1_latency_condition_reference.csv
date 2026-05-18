@@ -1,0 +1,17 @@
+condition_id,source,condition_keys,meaning_ko,calculation_effect,status
+MR1_FSP_WRITE,Table47_Note1,MR13.OP[5:4]=FSP-WR,MRW로 MR1을 쓸 때 세 개 physical FSP register 중 어느 slot에 쓸지 결정,비활성 FSP 값도 미리 변경 가능,active
+MR1_FSP_OPERATE,Table47_Note2,MR13.OP[7:6]=FSP-OP,실제 동작에는 active FSP slot의 MR1 값만 사용,RL/WL/nWTP/nRTP/nACU lookup은 active_fsp 기준,active
+MR1_RL_SET0,Table47_Note3,Read_DBI=Disable|Efficiency=Disable,Read Latency Set0 사용,Table49/53/57/61/65/67/69/71 계열에서 Set0 RL column 선택,active
+MR1_RL_SET1_BY_DBI,Table47_Note3,Read_DBI=Enable|Efficiency=Disable,Read Latency Set1 사용,Table50/54/58/62 계열에서 Set1 RL column 선택,active
+MR1_RL_SET1_BY_EFF,Table47_Note3,Read_DBI=Disable|Efficiency=Enable,Read Latency Set1 사용,Table51/55/59/63/66/68/70/72 계열에서 Set1 RL column 선택,active
+MR1_RL_SET2,Table47_Note3,Read_DBI=Enable|Efficiency=Enable,Read Latency Set2 사용,Table52/56/60/64 계열에서 Set2 RL column 선택,active
+MR1_WL_INDEPENDENT,Table47_Note4,Efficiency|Write_DBI|Link_Protection|DVFSL,WL은 해당 기능 enable/disable과 무관하게 MR1.OP[5]로 SetA/SetB만 선택,WL numeric column은 모든 MR1 latency table에서 같은 SetA/SetB 구조,active
+MR1_WL_SET_A,Table47_Note5,MR1.OP[5]=0,Write Latency Set A 사용,wl_set_a_nck column 선택,active
+MR1_WL_SET_B,Table47_Note5,MR1.OP[5]=1,Write Latency Set B 사용,wl_set_b_nck column 선택,active
+MR1_NWTP,Table47_Note6,MR1.OP[4:0]|selected_Table,Write with AP 이후 internal precharge 시작점 결정,nWTP column lookup. Efficiency/DVFSL/WriteLink/ReadLink 조건에 따라 table별 값이 달라짐,active
+MR1_EFF_CTL_STATIC,Table47_Note7,MR0.OP[2]=1,Static Efficiency only device에서는 MR1.OP[6] write/read 의미가 제한됨,efficiency_mode_enabled는 MR0.OP[2] 우선 반영 필요,needed
+MR1_EFF_LATENCY_AUTO,Table47_Note8,MR1.OP[7],Efficiency Mode Latency read-only bit는 MR1.OP[6]과 package config에 따라 자동 update,검증용 status bit로 취급하고 host-programmed input으로 쓰지 않음,needed
+MR1_EFF_MULTI_RANK,Table47_Note9,MR1.OP[6] same between ranks,Multi-rank system에서 Efficiency mode control은 rank 간 동일해야 함,illegal/warning validation 필요,needed
+MR1_READ_LINK_PROTECTION,Table48,Read Link Protection=Enable,Read DBI condition이 '-'로 요약되어 DBI와 무관한 Table65~72 사용,selector에서 read_dbi=any로 처리,active
+MR1_DVFSL_LIMITED_OP_ROWS,Table53_56_Table61_64_Table67_68_Table71_72,DVFSL=Enable,해당 table은 JEDEC에 MR1.OP[4:0] 00000~00100 row만 제시됨,그 외 OP code는 evaluator에서 unresolved/illegal 후보로 경고해야 함,active
+MR1_TBD_OP_ROWS,Table49_52_Table57_60_Table65_66_Table69_70,MR1.OP[4:0]=01110|01111|10000,JEDEC 값이 TBD로 제시됨,최종 timing 계산 금지 또는 TBD warning,active

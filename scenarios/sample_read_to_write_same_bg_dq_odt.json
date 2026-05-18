@@ -1,0 +1,42 @@
+{
+  "scenario_id": "sample_rd_to_wr_same_bg_dq_odt_auto_sync_off",
+  "spec": "LPDDR6",
+  "data_rate_mbps": 9600,
+  "active_fsp": "FSP0",
+  "current_cmd": "RD",
+  "next_cmd": "WR",
+  "burst_length": "BL24",
+  "bank_relation": "different_bank_same_bg",
+  "requested_gap_nck": 52,
+  "wck_sync_state": "on",
+  "MR": {
+    "MR1.OP[4:0]": "01100",
+    "MR1.OP[5]": 0,
+    "MR1.OP[6]": 0,
+    "MR3.OP[0]": 0,
+    "MR10.OP[1]": 0,
+    "MR10.OP[5]": 0,
+    "MR10.OP[7:6]": "00",
+    "MR11.OP[4]": 0,
+    "MR11.OP[5]": 0,
+    "MR11.OP[6]": 1,
+    "MR19.OP[2:0]": "001",
+    "MR20.OP[2:0]": "000",
+    "MR20.OP[5:3]": "000",
+    "MR22.OP[1:0]": "01",
+    "MR22.OP[5]": 0,
+    "MR22.OP[7:6]": "01",
+    "MR23.OP[0]": 0,
+    "MR23.OP[1]": 0,
+    "MR23.OP[2]": 0,
+    "MR26.OP[3]": 0,
+    "MR41.OP[0]": 0
+  },
+  "expected_trace_shape": [
+    "select MR1 latency table",
+    "resolve tRPST from MR10",
+    "resolve ODTLon and tODTon min from Table319/Table320",
+    "compute ODT enabled tRTW_FINAL",
+    "check min <= requested_gap <= max"
+  ]
+}
