@@ -356,10 +356,57 @@ HTML = r"""<!doctype html>
       background-size: 24px 24px;
       overflow: auto;
     }
+    .graph-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 10px;
+      padding: 7px;
+      border: 1px solid #edf0f5;
+      border-radius: 8px;
+      background: #fbfcfe;
+    }
+    .graph-toolbar button {
+      width: auto;
+      min-height: 28px;
+      padding: 4px 9px;
+      background: #fff;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+    .graph-toolbar .graph-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 28px;
+      padding: 4px 8px;
+      border: 1px solid #dbe3ef;
+      border-radius: 6px;
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+    }
+    .graph-toggle input {
+      width: auto;
+      min-height: 0;
+      margin: 0;
+    }
+    .graph-zoom-label {
+      color: #64748b;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
     .graph-canvas {
       position: relative;
       min-width: 100%;
       min-height: 360px;
+    }
+    .graph-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: 0 0;
     }
     .graph-edges {
       position: absolute;
@@ -384,7 +431,10 @@ HTML = r"""<!doctype html>
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.96);
       box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      cursor: grab;
+      user-select: none;
     }
+    .graph-node-card.dragging { cursor: grabbing; z-index: 5; }
     .graph-node-card.root {
       border-color: #2563eb;
       background: #eff6ff;
@@ -729,6 +779,15 @@ function currentTargetInputValues() {
   });
   return values;
 }
+function scheduleTargetCalc() {
+  clearTimeout(targetCalcTimer);
+  targetCalcTimer = setTimeout(() => runTargetCalc(), 180);
+}
+function attachTargetInputAutoUpdate() {
+  document.querySelectorAll('[data-target-input]').forEach(el => {
+    el.addEventListener('change', scheduleTargetCalc);
+  });
+}
 function renderTargetInputs(specs) {
   const previous = currentTargetInputValues();
   qs('targetInputs').innerHTML = (specs || []).map(spec => {
@@ -751,6 +810,7 @@ function renderTargetInputs(specs) {
       <select data-target-input="${escapeHtml(spec.id)}">${options}</select>
     </label>`;
   }).join('');
+  attachTargetInputAutoUpdate();
 }
 function nodeValueText(node) {
   if (node.value === null || node.value === undefined || node.value === '') return '';
@@ -780,10 +840,25 @@ const GRAPH_NODE_H = 112;
 const GRAPH_GAP_X = 30;
 const GRAPH_GAP_Y = 98;
 const GRAPH_PAD = 24;
+const graphUiState = {
+  scale: 1,
+  manual: false,
+  positions: {},
+  lastGraph: null,
+};
+let targetCalcTimer = null;
 function conciseFormula(node) {
   if (!node || !node.formula) return '';
   if (node.formula === 'user selected leaf input') return 'User selected';
   return node.formula;
+}
+function currentGraphKey() {
+  return qs('targetSelect') ? qs('targetSelect').value : 'target';
+}
+function graphPositionBucket() {
+  const key = currentGraphKey();
+  if (!graphUiState.positions[key]) graphUiState.positions[key] = {};
+  return graphUiState.positions[key];
 }
 function graphNodeKind(node, isRoot=false) {
   if (isRoot) return 'root';
@@ -826,11 +901,22 @@ function layoutTargetGraph(root) {
     node.x = node.x - minX + GRAPH_PAD;
     node.y = node.y + GRAPH_PAD;
   });
+  if (graphUiState.manual) {
+    const saved = graphPositionBucket();
+    nodes.forEach(node => {
+      if (saved[node.id]) {
+        node.x = saved[node.id].x;
+        node.y = saved[node.id].y;
+      }
+    });
+  }
+  const maxFinalX = Math.max(...nodes.map(node => node.x + GRAPH_NODE_W));
+  const maxFinalY = Math.max(...nodes.map(node => node.y + GRAPH_NODE_H));
   return {
     nodes,
     edges,
-    width: Math.max(760, maxX - minX + GRAPH_PAD * 2),
-    height: (maxDepth + 1) * GRAPH_NODE_H + maxDepth * GRAPH_GAP_Y + GRAPH_PAD * 2,
+    width: Math.max(760, maxX - minX + GRAPH_PAD * 2, maxFinalX + GRAPH_PAD),
+    height: Math.max((maxDepth + 1) * GRAPH_NODE_H + maxDepth * GRAPH_GAP_Y + GRAPH_PAD * 2, maxFinalY + GRAPH_PAD),
   };
 }
 function edgePath(edge) {
@@ -847,7 +933,7 @@ function renderGraphNode(placed) {
   const formula = conciseFormula(node);
   const kind = graphNodeKind(node, placed.isRoot);
   return `
-    <div class="graph-node-card ${escapeHtml(kind)}" style="left:${placed.x}px;top:${placed.y}px">
+    <div class="graph-node-card ${escapeHtml(kind)}" data-node-id="${escapeHtml(placed.id)}" style="left:${placed.x}px;top:${placed.y}px">
       <div class="graph-node-head">
         <div class="graph-node-title" title="${escapeHtml(node.symbol || '')}">${escapeHtml(node.label || node.symbol || '')}</div>
         ${value ? `<div class="graph-node-value" title="${escapeHtml(value)}">${escapeHtml(value)}</div>` : ''}
@@ -860,23 +946,150 @@ function renderGraphNode(placed) {
 function renderTargetGraph(root) {
   if (!root) return '<div class="hint">No graph data</div>';
   const graph = layoutTargetGraph(root);
-  const paths = graph.edges.map(edge => `<path class="graph-edge" marker-end="url(#arrow)" d="${edgePath(edge)}"></path>`).join('');
+  graphUiState.lastGraph = graph;
+  const paths = graph.edges.map((edge, index) => `<path class="graph-edge" data-edge-index="${index}" marker-end="url(#arrow)" d="${edgePath(edge)}"></path>`).join('');
   const nodes = graph.nodes.map(renderGraphNode).join('');
   return `
+    <div class="graph-toolbar">
+      <button type="button" data-graph-action="zoom-out">-</button>
+      <button type="button" data-graph-action="zoom-in">+</button>
+      <button type="button" data-graph-action="fit">Fit</button>
+      <button type="button" data-graph-action="reset-view">Reset View</button>
+      <button type="button" data-graph-action="reset-layout">Reset Layout</button>
+      <label class="graph-toggle"><input id="graphManual" type="checkbox"${graphUiState.manual ? ' checked' : ''}> Manual layout</label>
+      <span class="graph-zoom-label" id="graphZoomLabel"></span>
+    </div>
     <div class="graph-shell">
-      <div class="graph-canvas" style="width:${graph.width}px;height:${graph.height}px">
-        <svg class="graph-edges" width="${graph.width}" height="${graph.height}" viewBox="0 0 ${graph.width} ${graph.height}">
-          <defs>
-            <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
-              <path d="M0,0 L8,4.5 L0,9 Z" fill="#94a3b8"></path>
-            </marker>
-          </defs>
-          ${paths}
-        </svg>
-        ${nodes}
+      <div class="graph-canvas" id="graphCanvas" style="width:${graph.width}px;height:${graph.height}px">
+        <div class="graph-content" id="graphContent" style="width:${graph.width}px;height:${graph.height}px">
+          <svg class="graph-edges" id="graphEdges" width="${graph.width}" height="${graph.height}" viewBox="0 0 ${graph.width} ${graph.height}">
+            <defs>
+              <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+                <path d="M0,0 L8,4.5 L0,9 Z" fill="#94a3b8"></path>
+              </marker>
+            </defs>
+            ${paths}
+          </svg>
+          ${nodes}
+        </div>
       </div>
     </div>
   `;
+}
+function graphBounds(graph) {
+  if (!graph || !graph.nodes.length) return { width: 760, height: 360 };
+  const width = Math.max(760, Math.max(...graph.nodes.map(node => node.x + GRAPH_NODE_W)) + GRAPH_PAD);
+  const height = Math.max(360, Math.max(...graph.nodes.map(node => node.y + GRAPH_NODE_H)) + GRAPH_PAD);
+  graph.width = width;
+  graph.height = height;
+  return { width, height };
+}
+function applyGraphTransform() {
+  const graph = graphUiState.lastGraph;
+  const content = qs('graphContent');
+  const canvas = qs('graphCanvas');
+  const edges = qs('graphEdges');
+  if (!graph || !content || !canvas || !edges) return;
+  const bounds = graphBounds(graph);
+  content.style.width = `${bounds.width}px`;
+  content.style.height = `${bounds.height}px`;
+  content.style.transform = `scale(${graphUiState.scale})`;
+  canvas.style.width = `${bounds.width * graphUiState.scale}px`;
+  canvas.style.height = `${bounds.height * graphUiState.scale}px`;
+  edges.setAttribute('width', bounds.width);
+  edges.setAttribute('height', bounds.height);
+  edges.setAttribute('viewBox', `0 0 ${bounds.width} ${bounds.height}`);
+  const label = qs('graphZoomLabel');
+  if (label) label.textContent = `${Math.round(graphUiState.scale * 100)}%`;
+}
+function refreshGraphEdges() {
+  const graph = graphUiState.lastGraph;
+  if (!graph) return;
+  graph.edges.forEach((edge, index) => {
+    const path = document.querySelector(`[data-edge-index="${index}"]`);
+    if (path) path.setAttribute('d', edgePath(edge));
+  });
+  applyGraphTransform();
+}
+function setGraphScale(nextScale) {
+  graphUiState.scale = Math.max(0.35, Math.min(1.8, nextScale));
+  applyGraphTransform();
+}
+function fitGraph() {
+  const graph = graphUiState.lastGraph;
+  const shell = document.querySelector('.graph-shell');
+  if (!graph || !shell) return;
+  const bounds = graphBounds(graph);
+  const scaleX = (shell.clientWidth - 24) / bounds.width;
+  const scaleY = (shell.clientHeight - 24 || 360) / bounds.height;
+  setGraphScale(Math.min(1, Math.max(0.35, Math.min(scaleX, scaleY))));
+}
+function resetGraphLayout() {
+  delete graphUiState.positions[currentGraphKey()];
+  graphUiState.manual = false;
+  runTargetCalc();
+}
+function setManualLayout(enabled) {
+  graphUiState.manual = enabled;
+  const checkbox = qs('graphManual');
+  if (checkbox) checkbox.checked = enabled;
+}
+function handleGraphToolbar(event) {
+  const button = event.target.closest('[data-graph-action]');
+  if (!button) return;
+  const action = button.getAttribute('data-graph-action');
+  if (action === 'zoom-in') setGraphScale(graphUiState.scale + 0.12);
+  if (action === 'zoom-out') setGraphScale(graphUiState.scale - 0.12);
+  if (action === 'fit') fitGraph();
+  if (action === 'reset-view') setGraphScale(1);
+  if (action === 'reset-layout') resetGraphLayout();
+}
+function startGraphNodeDrag(event) {
+  const card = event.target.closest('.graph-node-card');
+  const graph = graphUiState.lastGraph;
+  if (!card || !graph || event.button !== 0) return;
+  event.preventDefault();
+  setManualLayout(true);
+  const id = card.getAttribute('data-node-id');
+  const node = graph.nodes.find(item => item.id === id);
+  if (!node) return;
+  card.classList.add('dragging');
+  const startX = event.clientX;
+  const startY = event.clientY;
+  const nodeStartX = node.x;
+  const nodeStartY = node.y;
+  const saved = graphPositionBucket();
+  function move(moveEvent) {
+    const dx = (moveEvent.clientX - startX) / graphUiState.scale;
+    const dy = (moveEvent.clientY - startY) / graphUiState.scale;
+    node.x = Math.max(GRAPH_PAD, nodeStartX + dx);
+    node.y = Math.max(GRAPH_PAD, nodeStartY + dy);
+    saved[id] = { x: node.x, y: node.y };
+    card.style.left = `${node.x}px`;
+    card.style.top = `${node.y}px`;
+    refreshGraphEdges();
+  }
+  function stop() {
+    card.classList.remove('dragging');
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', stop);
+  }
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', stop);
+}
+function mountGraphInteractions() {
+  const toolbar = document.querySelector('.graph-toolbar');
+  const canvas = qs('graphCanvas');
+  if (toolbar) toolbar.addEventListener('click', handleGraphToolbar);
+  const checkbox = qs('graphManual');
+  if (checkbox) {
+    checkbox.addEventListener('change', () => {
+      graphUiState.manual = checkbox.checked;
+      if (!graphUiState.manual) runTargetCalc();
+    });
+  }
+  if (canvas) canvas.addEventListener('pointerdown', startGraphNodeDrag);
+  applyGraphTransform();
 }
 function collectCalcRows(node, rows=[], depth=0) {
   if (!node) return rows;
@@ -921,6 +1134,7 @@ function renderTargetResult(data) {
     ${renderCalculationTable(data.tree)}
     ${warnings}
   `;
+  mountGraphInteractions();
 }
 async function runTargetCalc() {
   const params = new URLSearchParams({ target: qs('targetSelect').value || 'tRTRRD' });
