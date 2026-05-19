@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
-from semantic_query import SemanticDB, USER_METRICS, run_sweep
+from semantic_query import SemanticDB, TARGET_INPUTS, USER_METRICS, evaluate_target_parameter, run_sweep, target_symbol_rows
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -89,6 +89,24 @@ HTML = r"""<!doctype html>
       background: #fbfcfe;
     }
     .controls { padding: 12px; display: grid; gap: 10px; overflow: auto; }
+    .control-group {
+      display: grid;
+      gap: 9px;
+      padding: 10px;
+      border: 1px solid #edf0f5;
+      border-radius: 7px;
+      background: #fbfcfe;
+    }
+    .group-title {
+      font-weight: 700;
+      color: #0f172a;
+      font-size: 13px;
+    }
+    .target-inputs {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
     label { display: grid; gap: 4px; color: var(--muted); font-size: 12px; }
     .label-title {
       display: inline-flex;
@@ -157,7 +175,7 @@ HTML = r"""<!doctype html>
     }
     .content {
       display: grid;
-      grid-template-rows: 300px minmax(0, 1fr);
+      grid-template-rows: minmax(380px, 1fr) minmax(220px, .8fr);
       gap: 12px;
       min-width: 0;
     }
@@ -281,6 +299,36 @@ HTML = r"""<!doctype html>
       font-size: 12px;
       padding-top: 2px;
     }
+    .tree-value {
+      justify-self: end;
+      font-weight: 700;
+      color: #0f172a;
+      background: #eef2ff;
+      border: 1px solid #dbe3ff;
+      border-radius: 999px;
+      padding: 2px 8px;
+      white-space: nowrap;
+      max-width: 260px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .target-summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border: 1px solid #bfdbfe;
+      border-radius: 7px;
+      background: #eff6ff;
+      margin-bottom: 10px;
+    }
+    .target-result {
+      font-size: 20px;
+      font-weight: 750;
+      color: #0f172a;
+      white-space: nowrap;
+    }
     .tree-children {
       margin-left: 18px;
       padding-left: 12px;
@@ -319,8 +367,18 @@ HTML = r"""<!doctype html>
   </header>
   <main>
     <aside>
-      <div class="panel-title">WCK Sync-Off Timing 계산</div>
+      <div class="panel-title">Timing Calculator</div>
       <div class="controls">
+        <div class="control-group">
+          <div class="group-title">Timing Parameter</div>
+          <label><span class="label-title">Target Parameter <span class="info" tabindex="0">i<span class="tip">알고 싶은 timing parameter를 고릅니다. 아래 leaf 조건만 입력하면 중간 parameter를 거쳐 target 값까지 계산됩니다.</span></span></span>
+            <select id="targetSelect"></select>
+          </label>
+          <div class="target-inputs" id="targetInputs"></div>
+          <button onclick="runTargetCalc()">계산 트리 업데이트</button>
+        </div>
+        <div class="control-group">
+          <div class="group-title">Command Pair Window</div>
         <div class="grid2">
           <label><span class="label-title">Current CMD <span class="info" tabindex="0">i<span class="tip">먼저 수행된 command입니다. 예: WR 다음 RD가 들어오는 조건이면 Current CMD는 WR입니다.</span></span></span>
             <select id="currentCmd">
@@ -369,19 +427,15 @@ HTML = r"""<!doctype html>
           <label><span class="label-title">MR23.OP[0] Write Link 값 <span class="info" tabindex="0">i<span class="tip">Write Link Protection enable 조건입니다. latency table selector 및 write 관련 timing path에 영향을 줍니다.</span></span></span><input id="writeLink" value="0,1" /></label>
           <label><span class="label-title">MR23.OP[2] Read Link 값 <span class="info" tabindex="0">i<span class="tip">Read Link Protection enable 조건입니다. read latency table selector에 영향을 줍니다.</span></span></span><input id="readLink" value="0" /></label>
         </div>
-        <label><span class="label-title">Timing Metrics <span class="info" tabindex="0">i<span class="tip">결과표에 표시할 값입니다. 예: RL, WL, tWTR_S, tWTR_L, tRTW, WR-&gt;RD min.</span></span></span><input id="outputs" value="RL,WL,tCK_ns,tWTR_S,tWTR_L,WR->RD min (diff BG),tRTW" /></label>
+        <label><span class="label-title">Timing Metrics <span class="info" tabindex="0">i<span class="tip">결과표에 표시할 값입니다. 예: RL, WL, tWTR_S, tWTR_L, tRTW, WR-&gt;RD min.</span></span></span><input id="outputs" value="RL,WL,tCK_ns,tWTR_S,tWTR_L,WR->RD min (diff BG),tRTW,tRTRRD,tWRWTR" /></label>
         <button onclick="runSweep()">조건 조합 표 만들기</button>
-        <hr class="divider" />
-        <label><span class="label-title">Symbol Search <span class="info" tabindex="0">i<span class="tip">계산 결과값의 근거를 추적할 때 사용합니다. 예: RL을 검색하면 MR/조건에서 RL까지의 구성 경로를 보여줍니다.</span></span></span><input id="symbolSearch" value="RL" /></label>
-        <button class="secondary" onclick="loadSymbols()">심볼 찾기</button>
-        <label><span class="label-title">Selected Symbol <span class="info" tabindex="0">i<span class="tip">구성 graph를 보고 싶은 symbol입니다. 계산표 실행과는 독립입니다.</span></span></span><select id="symbolSelect"></select></label>
-        <button class="secondary" onclick="loadDetail()">선택 Symbol 구성 보기</button>
+        </div>
       </div>
     </aside>
     <div class="content">
       <div class="top">
         <section>
-          <div class="panel-title">선택 Symbol 구성</div>
+          <div class="panel-title">Timing Parameter Tree</div>
           <div class="card-body" id="detail"></div>
         </section>
       </div>
@@ -482,10 +536,105 @@ function escapeHtml(value) {
 async function getJson(url) {
   status('loading');
   const res = await fetch(url);
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) {
+    const text = await res.text();
+    status('error');
+    throw new Error(text);
+  }
   const data = await res.json();
   status('ready');
   return data;
+}
+async function loadTargets() {
+  const data = await getJson('/api/targets');
+  const select = qs('targetSelect');
+  select.innerHTML = data.rows.map(r =>
+    `<option value="${escapeHtml(r.symbol)}">${escapeHtml(r.symbol)} · ${escapeHtml(r.label)}</option>`
+  ).join('');
+  select.value = data.rows.some(r => r.symbol === 'tRTRRD') ? 'tRTRRD' : data.rows[0].symbol;
+  select.addEventListener('change', runTargetCalc);
+}
+function currentTargetInputValues() {
+  const values = {};
+  document.querySelectorAll('[data-target-input]').forEach(el => {
+    values[el.getAttribute('data-target-input')] = el.value;
+  });
+  return values;
+}
+function renderTargetInputs(specs) {
+  const previous = currentTargetInputValues();
+  qs('targetInputs').innerHTML = (specs || []).map(spec => {
+    const value = previous[spec.id] ?? spec.value ?? spec.default ?? '';
+    const tip = escapeHtml(spec.description || '');
+    if (spec.kind === 'bool') {
+      const enabled = ['1', 'true', 'True', true].includes(value);
+      return `<label><span class="label-title">${escapeHtml(spec.label)} <span class="info" tabindex="0">i<span class="tip">${tip}</span></span></span>
+        <select data-target-input="${escapeHtml(spec.id)}">
+          <option value="0"${enabled ? '' : ' selected'}>Disabled</option>
+          <option value="1"${enabled ? ' selected' : ''}>Enabled</option>
+        </select>
+      </label>`;
+    }
+    const options = (spec.options || []).map(opt => {
+      const selected = String(opt.value) === String(value) ? ' selected' : '';
+      return `<option value="${escapeHtml(opt.value)}"${selected}>${escapeHtml(opt.label || opt.value)}</option>`;
+    }).join('');
+    return `<label><span class="label-title">${escapeHtml(spec.label)} <span class="info" tabindex="0">i<span class="tip">${tip}</span></span></span>
+      <select data-target-input="${escapeHtml(spec.id)}">${options}</select>
+    </label>`;
+  }).join('');
+}
+function nodeValueText(node) {
+  if (node.value === null || node.value === undefined || node.value === '') return '';
+  const unit = node.unit ? ` ${node.unit}` : '';
+  return `${node.value}${unit}`;
+}
+function renderTargetTreeNode(node, isRoot=false) {
+  const value = nodeValueText(node);
+  const formula = node.formula && node.formula !== 'user selected leaf input'
+    ? `<div class="tree-reason">${escapeHtml(node.formula)}</div>` : '';
+  const children = node.children && node.children.length
+    ? `<div class="tree-children">${node.children.map(child => renderTargetTreeNode(child)).join('')}</div>` : '';
+  return `
+    <div class="tree-node">
+      <div class="tree-card${isRoot ? ' root' : ''}">
+        <div class="tree-symbol">${escapeHtml(node.label || node.symbol)}</div>
+        ${value ? `<div class="tree-value" title="${escapeHtml(value)}">${escapeHtml(value)}</div>` : '<div></div>'}
+        <div class="tree-desc">${escapeHtml(node.description || '')}</div>
+        ${formula}
+      </div>
+      ${children}
+    </div>
+  `;
+}
+function renderTargetResult(data) {
+  const target = data.target || {};
+  const value = target.value === null || target.value === undefined ? 'unresolved' : `${target.value}${target.unit ? ' ' + target.unit : ''}`;
+  const warnings = data.warnings && data.warnings.length
+    ? `<p class="warn">${escapeHtml(data.warnings.slice(0, 6).join('\\n'))}</p>` : '';
+  qs('detail').innerHTML = `
+    <div class="target-summary">
+      <div>
+        <div class="pill">${escapeHtml(target.symbol || '')}</div>
+        <p>${escapeHtml(target.description || '')}</p>
+        ${target.formula ? `<div class="formula">${escapeHtml(target.formula)}</div>` : ''}
+      </div>
+      <div class="target-result">${escapeHtml(value)}</div>
+    </div>
+    <div class="tree">${renderTargetTreeNode(data.tree, true)}</div>
+    ${warnings}
+  `;
+}
+async function runTargetCalc() {
+  const params = new URLSearchParams({ target: qs('targetSelect').value || 'tRTRRD' });
+  for (const [key, value] of Object.entries(currentTargetInputValues())) params.set(key, value);
+  try {
+    const data = await getJson('/api/target_eval?' + params.toString());
+    renderTargetInputs(data.inputs);
+    renderTargetResult(data);
+  } catch (err) {
+    qs('detail').innerHTML = `<p class="warn">${escapeHtml(err.message)}</p>`;
+  }
 }
 async function loadSymbols() {
   const data = await getJson('/api/symbols?search=' + encodeURIComponent(qs('symbolSearch').value));
@@ -632,8 +781,8 @@ async function runSweep() {
   qs('viewSweep').innerHTML = table(formatSweepRows(data.rows)) + (data.errors.length ? `<p class="warn">${escapeHtml(data.errors.slice(0, 8).join('\\n'))}</p>` : '');
 }
 window.addEventListener('load', async () => {
-  await loadSymbols();
-  await loadDetail();
+  await loadTargets();
+  await runTargetCalc();
   await runSweep();
 });
 </script>
@@ -646,9 +795,9 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt: str, *args: object) -> None:
         return
 
-    def send_json(self, payload: dict) -> None:
+    def send_json(self, payload: dict, status_code: int = 200) -> None:
         body = json.dumps(payload, ensure_ascii=False, default=str).encode("utf-8")
-        self.send_response(200)
+        self.send_response(status_code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -671,6 +820,17 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path == "/api/symbols":
             rows = DB.symbols(params.get("search", [""])[0])
             self.send_json({"rows": rows})
+            return
+        if parsed.path == "/api/targets":
+            self.send_json({"rows": target_symbol_rows()})
+            return
+        if parsed.path == "/api/target_eval":
+            target = params.get("target", ["tRTRRD"])[0]
+            inputs = {key: params.get(key, [spec.get("default")])[0] for key, spec in TARGET_INPUTS.items()}
+            try:
+                self.send_json(evaluate_target_parameter(target, inputs, DB))
+            except Exception as exc:
+                self.send_json({"error": str(exc)}, status_code=400)
             return
         if parsed.path == "/api/detail":
             symbol = params.get("symbol", ["WR_TO_RD_DIFF"])[0]

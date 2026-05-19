@@ -158,6 +158,8 @@ USER_METRICS = [
     {"label": "tWCK2DQO max", "symbol": "tWCK2DQO_EFFECTIVE_MAX_ps", "description": "Selected WCK to DQ output max offset"},
     {"label": "tRPST", "symbol": "tRPST_nCK", "description": "RDQS postamble converted to nCK"},
     {"label": "tWCKPST", "symbol": "tWCKPST_nCK_RD", "description": "WCK postamble converted to nCK"},
+    {"label": "tWRWTR", "symbol": "tWRWTR", "description": "Write/training Table398 Note1 guard"},
+    {"label": "tRTRRD", "symbol": "tRTRRD", "description": "Read/training Table398 Note3 guard"},
 ]
 METRIC_BY_LABEL = {row["label"]: row for row in USER_METRICS}
 METRIC_BY_SYMBOL = {row["symbol"]: row for row in USER_METRICS}
@@ -169,6 +171,297 @@ MR1_SPEED_TO_RATE = {
 }
 MR1_SEEDED_OPS = [row["mr1_op"] for row in MR1_SPEED_BIN_ROWS if row["status"] == "seeded"]
 MR1_TBD_OPS = [row["mr1_op"] for row in MR1_SPEED_BIN_ROWS if row["status"] != "seeded"]
+
+FORMULA_REGISTRY = read_json(FORMULAS / "lpddr6_formula_registry.json")["expressions"]
+
+
+def bool_value(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, int):
+        return value != 0
+    return str(value).strip().lower() in {"1", "true", "yes", "enabled", "enable", "on", "hf"}
+
+
+def int_bool(value: Any) -> int:
+    return 1 if bool_value(value) else 0
+
+
+def speed_option(row: dict[str, str]) -> dict[str, Any]:
+    upper = int(float(row["data_rate_upper_mbps_inclusive"]))
+    lower = int(float(row["data_rate_lower_mbps_exclusive"]))
+    label = f"{upper} Mbps  ({lower} < DR <= {upper}, MR speed code {row['mr1_op']})"
+    return {
+        "value": row["mr1_op"],
+        "label": label,
+        "data_rate_mbps": upper,
+        "status": row["status"],
+    }
+
+
+SPEED_BIN_OPTIONS = [speed_option(row) for row in MR1_SPEED_BIN_ROWS if row["status"] == "seeded"]
+SPEED_BY_OP = {row["value"]: row for row in SPEED_BIN_OPTIONS}
+
+TARGET_INPUTS: dict[str, dict[str, Any]] = {
+    "speed_bin": {
+        "label": "Operating Data Rate",
+        "description": "동작 data rate를 고르면 내부적으로 MR1 speed code와 CK/WCK 주기가 함께 정해집니다.",
+        "kind": "select",
+        "default": "01100",
+        "options": SPEED_BIN_OPTIONS,
+    },
+    "bank_relation": {
+        "label": "Bank/BG Relation",
+        "description": "Same BG 여부가 BL/n_max, tWTR_L/S, tRTW 경로를 바꿉니다.",
+        "kind": "select",
+        "default": "different_bank_different_bg",
+        "options": [
+            {"value": "different_bank_different_bg", "label": "Different bank / Different BG"},
+            {"value": "different_bank_same_bg", "label": "Different bank / Same BG"},
+            {"value": "same_bank_same_bg", "label": "Same bank / Same BG"},
+        ],
+    },
+    "burst_length": {
+        "label": "Burst Length",
+        "description": "BL24/BL48에 따라 BL/n_min, BL/n_max, ODT latency path가 달라질 수 있습니다.",
+        "kind": "select",
+        "default": "BL24",
+        "options": [{"value": "BL24", "label": "BL24"}, {"value": "BL48", "label": "BL48"}],
+    },
+    "read_dbi_enabled": {
+        "label": "Read DBI",
+        "description": "Read DBI enable 여부입니다. 내부적으로 MR3.OP[0]에 매핑되고 RL table 선택에 들어갑니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR3.OP[0]",
+    },
+    "efficiency_mode_enabled": {
+        "label": "Dynamic Efficiency Mode",
+        "description": "Dynamic efficiency enable 여부입니다. 내부적으로 MR1.OP[6]에 매핑되고 latency/tWTR table 선택에 들어갑니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR1.OP[6]",
+    },
+    "dvfsl_enabled": {
+        "label": "DVFSL",
+        "description": "Low-voltage DVFS mode 여부입니다. 내부적으로 MR11.OP[4]에 매핑됩니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR11.OP[4]",
+    },
+    "write_link_protection_enabled": {
+        "label": "Write Link Protection",
+        "description": "WECC/WEDC 계열 write link protection 조건입니다. 현재 UI leaf는 WECC enable로 매핑합니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR23.OP[0]",
+    },
+    "read_link_protection_enabled": {
+        "label": "Read Link Protection",
+        "description": "Read link protection enable 여부입니다. 내부적으로 MR23.OP[2]에 매핑되고 RL table 선택에 들어갑니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR23.OP[2]",
+    },
+    "wl_set_b": {
+        "label": "Write Latency Set",
+        "description": "WL Set A/B 선택입니다. 내부적으로 MR1.OP[5]에 매핑됩니다.",
+        "kind": "select",
+        "default": "0",
+        "mr_effect": "MR1.OP[5]",
+        "options": [{"value": "0", "label": "Set A"}, {"value": "1", "label": "Set B"}],
+    },
+    "wck_frequency_mode": {
+        "label": "WCK Frequency Mode",
+        "description": "WCK LF/HF family 선택입니다. WCK2DQ 및 일부 WCK/RDQS 변환 parameter에 사용됩니다.",
+        "kind": "select",
+        "default": "HF",
+        "mr_effect": "MR11.OP[6]",
+        "options": [{"value": "HF", "label": "HF"}, {"value": "LF", "label": "LF"}],
+    },
+    "dq_odt_enabled": {
+        "label": "DQ ODT",
+        "description": "DQ ODT effective 여부입니다. enabled이면 MR19.OP[2:0]를 non-zero로 두고 tRTW ODT-on path를 사용합니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR19.OP[2:0]",
+    },
+    "dq_nt_odt_enabled": {
+        "label": "DQ NT-ODT",
+        "description": "Read non-target DQ ODT 여부입니다. WFF->RFF 같은 NT-ODT note path에 영향을 줍니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR20.OP[2:0]",
+    },
+    "dq_wr_nt_odt_enabled": {
+        "label": "DQ WR NT-ODT",
+        "description": "Write non-target DQ ODT 여부입니다. WFF->RFF 같은 NT-ODT note path에 영향을 줍니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR20.OP[5:3]",
+    },
+    "rdqs_enabled": {
+        "label": "RDQS",
+        "description": "RDQS output enable 여부입니다. disabled이면 RDQS pre/post timing은 0으로 처리됩니다.",
+        "kind": "bool",
+        "default": True,
+        "mr_effect": "MR22.OP[1:0]",
+    },
+    "rdqs_ratio": {
+        "label": "RDQS Ratio",
+        "description": "RDQS 1:1 또는 2:1 ratio 선택입니다. RDQS postamble nCK 변환에 들어갑니다.",
+        "kind": "select",
+        "default": "1to1",
+        "mr_effect": "MR10.OP[1]",
+        "options": [{"value": "1to1", "label": "1:1"}, {"value": "2to1", "label": "2:1"}],
+    },
+    "rdqs_postamble_mode": {
+        "label": "RDQS Postamble Mode",
+        "description": "RDQS postamble static/toggle 선택입니다.",
+        "kind": "select",
+        "default": "static",
+        "mr_effect": "MR10.OP[5]",
+        "options": [{"value": "static", "label": "Static"}, {"value": "toggle", "label": "Toggle"}],
+    },
+    "rdqs_postamble_length": {
+        "label": "RDQS Postamble Length",
+        "description": "RDQS postamble length code입니다.",
+        "kind": "select",
+        "default": "00",
+        "mr_effect": "MR10.OP[7:6]",
+        "options": [
+            {"value": "00", "label": "Code 00"},
+            {"value": "01", "label": "Code 01"},
+            {"value": "10", "label": "Code 10"},
+        ],
+    },
+    "wck_postamble_length": {
+        "label": "WCK Postamble Length",
+        "description": "WCK postamble length code입니다. 내부적으로 MR22.OP[7:6]에 매핑됩니다.",
+        "kind": "select",
+        "default": "01",
+        "mr_effect": "MR22.OP[7:6]",
+        "options": [
+            {"value": "00", "label": "Code 00"},
+            {"value": "01", "label": "Code 01"},
+            {"value": "10", "label": "Code 10"},
+        ],
+    },
+    "per_pin_dfe_enabled": {
+        "label": "Per-pin DFE",
+        "description": "Per-pin DFE enable note 조건입니다. tRTW final에 +1 및 even rounding 영향을 줄 수 있습니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR41.OP[0]",
+    },
+}
+
+
+FRIENDLY_SYMBOL_META: dict[str, dict[str, str]] = {
+    "data_rate_mbps": {
+        "label": "Data Rate",
+        "description": "Operating data rate. leaf에서 선택한 speed bin의 upper rate를 사용합니다.",
+        "formula": "selected Operating Data Rate",
+    },
+    "ck_mhz": {
+        "label": "CK Frequency",
+        "description": "LPDDR6 CK frequency",
+        "formula": "data_rate_mbps / 4",
+    },
+    "wck_mhz": {
+        "label": "WCK Frequency",
+        "description": "LPDDR6 WCK frequency",
+        "formula": "data_rate_mbps / 2",
+    },
+    "tCK_ns": {"label": "tCK", "description": "CK 1 cycle time", "formula": "1000 / CK(MHz)"},
+    "tWCK_ns": {"label": "tWCK", "description": "WCK 1 cycle time", "formula": "1000 / WCK(MHz)"},
+    "same_bg": {"label": "Same BG", "description": "Bank/BG relation에서 decode한 same BG 여부", "formula": "bank_relation"},
+    "same_bank": {"label": "Same Bank", "description": "Bank/BG relation에서 decode한 same bank 여부", "formula": "bank_relation"},
+    "RL": {"label": "RL", "description": "Read Latency", "formula": "latency table lookup"},
+    "WL": {"label": "WL", "description": "Write Latency", "formula": "latency table lookup + WL Set"},
+    "BLN": {"label": "BL/n", "description": "Effective burst command spacing", "formula": "BL/n table lookup"},
+    "BLN_MIN": {"label": "BL/n min", "description": "Minimum burst data transfer time", "formula": "BL/n table lookup"},
+    "BLN_MAX": {"label": "BL/n max", "description": "Column array cycle limit", "formula": "BL/n table lookup"},
+    "tWTR_S_nCK": {"label": "tWTR_S", "description": "Write-to-read different BG timing", "formula": "max(ceil(ns_floor/tCK), nCK_floor)"},
+    "tWTR_L_nCK": {"label": "tWTR_L", "description": "Write-to-read same BG timing", "formula": "max(ceil(ns_floor/tCK), nCK_floor)"},
+    "tWCK2DQO_EFFECTIVE_MAX_ps": {"label": "tWCK2DQO max", "description": "WCK to DQ output maximum offset", "formula": "WCK2DQ table lookup"},
+    "tRPST_nCK": {"label": "tRPST", "description": "RDQS postamble converted to nCK", "formula": "floor(tRPST/tCK)"},
+    "tWCKPST_nCK_RD": {"label": "tWCKPST", "description": "WCK postamble converted to nCK", "formula": "floor(tWCKPST/tCK)"},
+    "ODTLon": {"label": "ODTLon", "description": "ODT on latency", "formula": "ODT table lookup, often WL based"},
+    "tODTon_MIN_nCK_RD": {"label": "tODTon min", "description": "ODT turn-on minimum converted to nCK", "formula": "floor(tODTon_min/tCK)"},
+    "dq_odt_effective_enabled": {"label": "DQ ODT Effective", "description": "DQ ODT가 timing path에 실제 적용되는 조건", "formula": "DQ ODT enabled and DVFSQ off"},
+    "dq_nt_odt_effective_enabled": {"label": "DQ NT-ODT Effective", "description": "Read non-target ODT가 실제 적용되는 조건", "formula": "DQ NT-ODT enabled and DVFSQ off"},
+    "dq_wr_nt_odt_effective_enabled": {"label": "DQ WR NT-ODT Effective", "description": "Write non-target ODT가 실제 적용되는 조건", "formula": "DQ WR NT-ODT enabled and DVFSQ off"},
+    "tRTW_BASE": {"label": "tRTW base", "description": "Read-to-write base command gap", "formula": "selected Table389/390 path"},
+    "tRTW_FINAL": {"label": "tRTW", "description": "Read-to-write final command gap after note adders and even rounding", "formula": "even(tRTW_base + note adders)"},
+}
+
+
+SYMBOL_DEPENDENCIES: dict[str, list[str]] = {
+    "data_rate_mbps": ["speed_bin"],
+    "ck_mhz": ["data_rate_mbps"],
+    "wck_mhz": ["data_rate_mbps"],
+    "tCK_ns": ["ck_mhz"],
+    "tWCK_ns": ["wck_mhz"],
+    "same_bg": ["bank_relation"],
+    "same_bank": ["bank_relation"],
+    "RL": [
+        "speed_bin",
+        "read_dbi_enabled",
+        "efficiency_mode_enabled",
+        "dvfsl_enabled",
+        "write_link_protection_enabled",
+        "read_link_protection_enabled",
+    ],
+    "WL": [
+        "speed_bin",
+        "wl_set_b",
+        "read_dbi_enabled",
+        "efficiency_mode_enabled",
+        "dvfsl_enabled",
+        "write_link_protection_enabled",
+        "read_link_protection_enabled",
+    ],
+    "BLN": ["data_rate_mbps", "bank_relation", "burst_length"],
+    "BLN_MIN": ["data_rate_mbps", "burst_length"],
+    "BLN_MAX": ["data_rate_mbps", "same_bg", "burst_length"],
+    "tWTR_S_nCK": ["dvfsl_enabled", "write_link_protection_enabled", "efficiency_mode_enabled", "tCK_ns"],
+    "tWTR_L_nCK": ["dvfsl_enabled", "write_link_protection_enabled", "efficiency_mode_enabled", "tCK_ns"],
+    "tWCK2DQO_EFFECTIVE_MAX_ps": ["wck_frequency_mode", "dvfsl_enabled", "data_rate_mbps"],
+    "tRPST_nCK": ["rdqs_enabled", "rdqs_ratio", "rdqs_postamble_mode", "rdqs_postamble_length", "tCK_ns", "tWCK_ns"],
+    "tWCKPST_nCK_RD": ["wck_postamble_length", "tCK_ns", "tWCK_ns"],
+    "ODTLon": ["dq_odt_enabled", "WL", "data_rate_mbps"],
+    "tODTon_MIN_nCK_RD": ["dq_odt_enabled", "tCK_ns", "data_rate_mbps"],
+    "dq_odt_effective_enabled": ["dq_odt_enabled"],
+    "dq_nt_odt_effective_enabled": ["dq_nt_odt_enabled"],
+    "dq_wr_nt_odt_effective_enabled": ["dq_wr_nt_odt_enabled"],
+    "tRTW_BASE": ["RL", "WL", "BLN_MIN", "BLN_MAX", "tWCK2DQO_EFFECTIVE_MAX_ps", "tCK_ns", "dq_odt_enabled", "tRPST_nCK", "ODTLon", "tODTon_MIN_nCK_RD"],
+    "tRTW_FINAL": ["tRTW_BASE", "per_pin_dfe_enabled"],
+}
+
+
+TARGET_SYMBOLS = [
+    "tRTRRD",
+    "tWRWTR",
+    "WR_TO_RD_DIFF",
+    "WR_TO_RD_SAME",
+    "tRTW_FINAL",
+    "RL",
+    "WL",
+    "BLN_MAX",
+    "BLN_MIN",
+    "tWTR_S_nCK",
+    "tWTR_L_nCK",
+    "tWCK2DQO_EFFECTIVE_MAX_ps",
+    "tWCKPST_nCK_RD",
+    "R_DEADLINE",
+    "W_DEADLINE",
+    "WFF_TO_RFF_MIN",
+]
+
+
+def default_target_inputs() -> dict[str, Any]:
+    return {key: copy.deepcopy(value["default"]) for key, value in TARGET_INPUTS.items()}
 
 
 def resolve_metric(name: str) -> dict[str, str]:
@@ -225,6 +518,59 @@ def scenario_from_inputs(
     return scenario
 
 
+def target_scenario_from_inputs(inputs: dict[str, Any] | None = None) -> tuple[dict[str, Any], dict[str, Any], list[str]]:
+    values = default_target_inputs()
+    if inputs:
+        for key, value in inputs.items():
+            if key in values and value not in (None, ""):
+                values[key] = value
+
+    warnings: list[str] = []
+    speed_bin = str(values["speed_bin"])
+    if speed_bin not in SPEED_BY_OP:
+        raise ValueError(f"Unsupported or unseeded operating speed selection: {speed_bin}")
+    data_rate = SPEED_BY_OP[speed_bin]["data_rate_mbps"]
+
+    scenario = copy.deepcopy(base_scenario())
+    scenario.update(
+        {
+            "scenario_id": "target_parameter_query",
+            "current_cmd": "WR",
+            "next_cmd": "RD",
+            "bank_relation": str(values["bank_relation"]),
+            "burst_length": str(values["burst_length"]),
+            "requested_gap_nck": 0,
+            "ws_operand": 1,
+            "data_rate_mbps": float(data_rate),
+        }
+    )
+    mr = scenario["MR"]
+    mr["MR1.OP[4:0]"] = speed_bin
+    mr["MR1.OP[5]"] = int(str(values["wl_set_b"]))
+    mr["MR1.OP[6]"] = int_bool(values["efficiency_mode_enabled"])
+    mr["MR3.OP[0]"] = int_bool(values["read_dbi_enabled"])
+    mr["MR11.OP[4]"] = int_bool(values["dvfsl_enabled"])
+    mr["MR11.OP[5]"] = 0
+    mr["MR11.OP[6]"] = 1 if str(values["wck_frequency_mode"]).upper() == "HF" else 0
+    if int_bool(values["dvfsl_enabled"]) and mr["MR11.OP[6]"]:
+        warnings.append("DVFSL enabled path uses LF_L timing family in the current seed; WCK Frequency Mode was forced to LF.")
+        mr["MR11.OP[6]"] = 0
+        values["wck_frequency_mode"] = "LF"
+    mr["MR19.OP[2:0]"] = "001" if int_bool(values["dq_odt_enabled"]) else "000"
+    mr["MR20.OP[2:0]"] = "001" if int_bool(values["dq_nt_odt_enabled"]) else "000"
+    mr["MR20.OP[5:3]"] = "001" if int_bool(values["dq_wr_nt_odt_enabled"]) else "000"
+    mr["MR22.OP[1:0]"] = "01" if int_bool(values["rdqs_enabled"]) else "00"
+    mr["MR22.OP[7:6]"] = str(values["wck_postamble_length"])
+    mr["MR23.OP[0]"] = int_bool(values["write_link_protection_enabled"])
+    mr["MR23.OP[1]"] = 0
+    mr["MR23.OP[2]"] = int_bool(values["read_link_protection_enabled"])
+    mr["MR41.OP[0]"] = int_bool(values["per_pin_dfe_enabled"])
+    mr["MR10.OP[1]"] = 0 if str(values["rdqs_ratio"]) == "1to1" else 1
+    mr["MR10.OP[5]"] = 0 if str(values["rdqs_postamble_mode"]) == "static" else 1
+    mr["MR10.OP[7:6]"] = str(values["rdqs_postamble_length"])
+    return scenario, values, warnings
+
+
 def evaluate_scenario(scenario: dict[str, Any], columns: list[str] | None = None) -> dict[str, Any]:
     out = Evaluator(scenario).run()
     values = out["resolved_values"]
@@ -256,6 +602,214 @@ def evaluate_scenario(scenario: dict[str, Any], columns: list[str] | None = None
     row["_trace"] = out["trace"]
     row["_warnings"] = out["warnings"]
     return row
+
+
+def target_symbol_rows() -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+    node_rows = {row["symbol_id"]: row for row in read_csv(GRAPH / "lpddr6_symbol_nodes.csv")}
+    for symbol in TARGET_SYMBOLS:
+        formula = FORMULA_REGISTRY.get(symbol, {})
+        node = node_rows.get(symbol, {})
+        meta = FRIENDLY_SYMBOL_META.get(symbol, {})
+        rows.append(
+            {
+                "symbol": symbol,
+                "label": meta.get("label") or symbol,
+                "unit": formula.get("unit") or node.get("unit", ""),
+                "description": formula.get("description_ko") or meta.get("description") or node.get("description_ko", ""),
+                "formula": meta.get("formula") or formula.get("formula", ""),
+                "source": formula.get("source") or node.get("source_ref", ""),
+            }
+        )
+    return rows
+
+
+def symbol_meta(symbol: str, db: SemanticDB | None = None) -> dict[str, str]:
+    formula = FORMULA_REGISTRY.get(symbol, {})
+    meta = FRIENDLY_SYMBOL_META.get(symbol, {})
+    node = db.node_by_id.get(symbol, {}) if db is not None else {}
+    return {
+        "label": meta.get("label") or symbol,
+        "description": formula.get("description_ko") or meta.get("description") or node.get("description_ko", ""),
+        "formula": meta.get("formula") or formula.get("formula", ""),
+        "unit": formula.get("unit") or node.get("unit", ""),
+        "source": formula.get("source") or node.get("source_ref", ""),
+    }
+
+
+def direct_dependencies(symbol: str, values: dict[str, Any]) -> list[str]:
+    if symbol == "tRTW_BASE":
+        same_bg = bool(values.get("same_bg"))
+        odt = bool(values.get("dq_odt_effective_enabled"))
+        deps = ["RL", "BLN_MAX" if same_bg else "BLN_MIN", "tWCK2DQO_EFFECTIVE_MAX_ps", "tCK_ns", "dq_odt_enabled"]
+        if odt:
+            deps.extend(["tRPST_nCK", "ODTLon", "tODTon_MIN_nCK_RD"])
+        else:
+            deps.append("WL")
+        return deps
+    if symbol == "tRTW_FINAL":
+        return ["tRTW_BASE", "per_pin_dfe_enabled"]
+    if symbol in FORMULA_REGISTRY:
+        return list(FORMULA_REGISTRY[symbol].get("dependencies", []))
+    return list(SYMBOL_DEPENDENCIES.get(symbol, []))
+
+
+def format_leaf_value(key: str, inputs: dict[str, Any]) -> str:
+    raw = inputs.get(key, TARGET_INPUTS.get(key, {}).get("default"))
+    if key == "speed_bin":
+        option = SPEED_BY_OP.get(str(raw))
+        if option:
+            return f"{option['data_rate_mbps']} Mbps"
+    if key == "bank_relation":
+        labels = {row["value"]: row["label"] for row in TARGET_INPUTS[key]["options"]}
+        return labels.get(str(raw), str(raw))
+    if key in TARGET_INPUTS and TARGET_INPUTS[key]["kind"] == "bool":
+        return "Enabled" if int_bool(raw) else "Disabled"
+    if key in TARGET_INPUTS and "options" in TARGET_INPUTS[key]:
+        labels = {str(row["value"]): row["label"] for row in TARGET_INPUTS[key]["options"]}
+        return labels.get(str(raw), str(raw))
+    return str(raw)
+
+
+def display_value(symbol: str, values: dict[str, Any], inputs: dict[str, Any]) -> Any:
+    if symbol in TARGET_INPUTS:
+        return format_leaf_value(symbol, inputs)
+    if symbol == "dq_odt_enabled":
+        return "Enabled" if values.get("dq_odt_effective_enabled") else "Disabled"
+    if symbol == "dq_nt_odt_enabled":
+        return "Enabled" if values.get("dq_nt_odt_effective_enabled") else "Disabled"
+    if symbol == "dq_wr_nt_odt_enabled":
+        return "Enabled" if values.get("dq_wr_nt_odt_effective_enabled") else "Disabled"
+    value = values.get(symbol)
+    if isinstance(value, float):
+        return round(value, 6)
+    return value
+
+
+def dependency_tree(
+    symbol: str,
+    values: dict[str, Any],
+    inputs: dict[str, Any],
+    db: SemanticDB | None = None,
+    path: tuple[str, ...] = (),
+) -> dict[str, Any]:
+    if symbol in TARGET_INPUTS:
+        entry = TARGET_INPUTS[symbol]
+        return {
+            "symbol": symbol,
+            "label": entry["label"],
+            "description": entry.get("description", ""),
+            "formula": "user selected leaf input",
+            "unit": "",
+            "value": display_value(symbol, values, inputs),
+            "kind": "leaf",
+            "leaf": True,
+            "mr_effect": entry.get("mr_effect", ""),
+            "children": [],
+        }
+    if symbol in path:
+        return {
+            "symbol": symbol,
+            "label": symbol,
+            "description": "cycle reference",
+            "formula": "",
+            "unit": "",
+            "value": display_value(symbol, values, inputs),
+            "kind": "cycle",
+            "leaf": False,
+            "children": [],
+        }
+
+    meta = symbol_meta(symbol, db)
+    deps = direct_dependencies(symbol, values)
+    return {
+        "symbol": symbol,
+        "label": meta["label"],
+        "description": meta["description"],
+        "formula": meta["formula"],
+        "unit": meta["unit"],
+        "value": display_value(symbol, values, inputs),
+        "kind": "parameter",
+        "leaf": False,
+        "source": meta["source"],
+        "children": [dependency_tree(dep, values, inputs, db, path + (symbol,)) for dep in deps],
+    }
+
+
+def collect_required_inputs(node: dict[str, Any]) -> list[str]:
+    out: list[str] = []
+
+    def walk(current: dict[str, Any]) -> None:
+        if current.get("leaf"):
+            out.append(current["symbol"])
+        for child in current.get("children", []):
+            walk(child)
+
+    walk(node)
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for key in out:
+        if key not in seen:
+            seen.add(key)
+            ordered.append(key)
+    return ordered
+
+
+def input_specs(input_keys: list[str], values: dict[str, Any]) -> list[dict[str, Any]]:
+    specs: list[dict[str, Any]] = []
+    for key in input_keys:
+        spec = copy.deepcopy(TARGET_INPUTS[key])
+        spec["id"] = key
+        spec["value"] = values.get(key, spec.get("default"))
+        specs.append(spec)
+    return specs
+
+
+def evaluate_target_parameter(
+    target: str,
+    inputs: dict[str, Any] | None = None,
+    db: SemanticDB | None = None,
+) -> dict[str, Any]:
+    if target not in TARGET_SYMBOLS and target not in FORMULA_REGISTRY and target not in FRIENDLY_SYMBOL_META:
+        raise ValueError(f"Unsupported target symbol: {target}")
+    scenario, leaf_values, leaf_warnings = target_scenario_from_inputs(inputs)
+    evaluator = Evaluator(scenario)
+    out = evaluator.run()
+    values = out["resolved_values"]
+    formula_result: dict[str, Any] | None = None
+    if target in FORMULA_REGISTRY and target not in values:
+        formula_result = evaluator.resolve_registered_formula(target)
+        values = evaluator.values
+    elif target in FORMULA_REGISTRY:
+        formula_result = {
+            "state": "numeric",
+            "value": values.get(target),
+            "formula": FORMULA_REGISTRY[target].get("formula", ""),
+            "inputs": evaluator.formula_inputs(FORMULA_REGISTRY[target].get("dependencies", [])),
+            "rounding": "already resolved",
+        }
+
+    root = dependency_tree(target, values, leaf_values, db)
+    required = collect_required_inputs(root)
+    meta = symbol_meta(target, db)
+    return {
+        "target": {
+            "symbol": target,
+            "label": meta["label"],
+            "description": meta["description"],
+            "formula": meta["formula"],
+            "unit": meta["unit"],
+            "source": meta["source"],
+            "value": display_value(target, values, leaf_values),
+        },
+        "inputs": input_specs(required, leaf_values),
+        "input_values": leaf_values,
+        "tree": root,
+        "formula_result": formula_result,
+        "scenario_mr": scenario["MR"],
+        "warnings": leaf_warnings + out["warnings"],
+        "trace": out["trace"],
+    }
 
 
 def run_sweep(

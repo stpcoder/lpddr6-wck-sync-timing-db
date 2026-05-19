@@ -73,6 +73,9 @@ tRPST_nCK,lookup,nCK,rdqs,lookup_convert,Table90,active,RDQS postamble converted
 tWCKPST_nCK_RD,lookup,nCK,wck_sync,lookup_convert,Table117,active,WCK postamble floor conversion to CK
 ODTLon,lookup,nCK,odt,lookup,Table319_329,active,ODT on latency
 tODTon_MIN_nCK_RD,lookup,nCK,odt,lookup_convert,Table320_330,active,ODT turn-on minimum converted to CK
+tWRWTR,formula,nCK,training_gap,formula,Table398_Note1,active,Write/training class to WFF timing guard
+tRTRRD,formula,nCK,training_gap,formula,Table398_Note3,active,Read/training class to WFF/RD/RDC timing guard
+WFF_TO_RFF_MIN,formula,nCK,training_gap,formula,Table264_Note4_Table398,active_with_ntodt_unresolved,WFF to RFF timing guard
 tRTW_BASE,formula,nCK,command_gap,formula,Table389_390,active,Read-to-write base command gap
 tRTW_FINAL,formula,nCK,command_gap,formula,Table389_390_notes,active,Read-to-write final command gap
 WR_TO_RD_SAME,formula,nCK,command_gap,formula,lpddr6_formula_registry.json,active,Write-to-read same BG min gap

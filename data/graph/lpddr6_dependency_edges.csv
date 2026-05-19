@@ -69,6 +69,18 @@ tCK_ns,tWCKPST_nCK_RD,convert,TWCKPST_TO_NCK,unit_conversion,Table117,active,tWC
 WL,ODTLon,formula,ODT_LATENCY_FORMULA,input,Table319_329,active,ODTLon formula에 WL 사용
 dq_odt_effective_enabled,ODTLon,guard,ODT_LATENCY_FORMULA,condition,Table319_329,active,DQ ODT enabled path에서만 ODTLon 사용
 tCK_ns,tODTon_MIN_nCK_RD,convert,ODT_ASYNC_TO_NCK,unit_conversion,Table320_330,active,tODTon min ns를 nCK로 변환
+WL,tWRWTR,formula,tWRWTR,input,Table398_Note1,active,tWRWTR 구성 요소
+BLN_MAX,tWRWTR,formula,tWRWTR,input,Table398_Note1,active,tWRWTR 구성 요소
+tCK_ns,tWRWTR,formula,tWRWTR,input,Table398_Note1,active,7.5ns guard를 nCK로 변환
+RL,tRTRRD,formula,tRTRRD,input,Table398_Note3,active,tRTRRD 구성 요소
+BLN_MAX,tRTRRD,formula,tRTRRD,input,Table398_Note3,active,tRTRRD 구성 요소
+tCK_ns,tRTRRD,formula,tRTRRD,input,Table398_Note3,active,7.5ns guard를 nCK로 변환
+WL,WFF_TO_RFF_MIN,formula,WFF_TO_RFF_MIN,input,Table264_Note4_Table398,active,WFF_TO_RFF 구성 요소
+BLN_MAX,WFF_TO_RFF_MIN,formula,WFF_TO_RFF_MIN,input,Table264_Note4_Table398,active,WFF_TO_RFF 구성 요소
+RL,WFF_TO_RFF_MIN,formula,WFF_TO_RFF_MIN,input,Table264_Note4_Table398,active,WFF_TO_RFF 구성 요소
+tCK_ns,WFF_TO_RFF_MIN,formula,WFF_TO_RFF_MIN,input,Table264_Note4_Table398,active,10ns guard를 nCK로 변환
+dq_nt_odt_effective_enabled,WFF_TO_RFF_MIN,guard,WFF_TO_RFF_MIN,nt_odt_note,Table264_Note4_Table398,active,NT-ODT note path selector
+dq_wr_nt_odt_effective_enabled,WFF_TO_RFF_MIN,guard,WFF_TO_RFF_MIN,nt_odt_note,Table264_Note4_Table398,active,Write NT-ODT note path selector
 RL,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,tRTW base 구성 요소
 WL,tRTW_BASE,formula,TRTW_BASE,input,Table389_390,active,tRTW base 구성 요소
 BLN_MIN,tRTW_BASE,formula,TRTW_BASE,input,Table390,active,Different BG tRTW 구성 요소

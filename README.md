@@ -43,6 +43,21 @@ Run CLI examples:
 ./scripts/query_examples.sh
 ```
 
+Calculate one timing parameter from semantic leaf inputs:
+
+```bash
+python3 tools/query_lpddr6_semantic_db.py target tRTRRD \
+  --input speed_bin=01100 \
+  --input bank_relation=different_bank_different_bg \
+  --input burst_length=BL24
+```
+
+The target calculator exposes user-facing leaf inputs such as operating data
+rate, burst length, Read DBI, Dynamic Efficiency Mode, DVFSL, and link
+protection. It maps those leaves to MR/scenario fields internally, then builds
+the dependency tree upward through intermediate values such as `RL`,
+`BL/n_max`, and `tCK_ns`.
+
 Optional Streamlit UI dependency:
 
 ```bash
@@ -88,6 +103,14 @@ database separates:
 - formula rules
 - note/adder/override rules
 - illegal/not-allowed constraints
+
+The browser UI has two query surfaces:
+
+- Timing Parameter Tree: choose a target such as `tRTRRD` or `WR_TO_RD_DIFF`,
+  edit only the required leaf conditions, and inspect the calculated dependency
+  tree from leaf inputs to final timing value.
+- Command Pair Window: sweep WCK Sync-Off command pairs and compare a requested
+  command gap against the computed min/max window.
 
 ## Initial Scope
 

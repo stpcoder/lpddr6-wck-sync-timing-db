@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from semantic_query import SemanticDB, USER_METRICS, run_sweep, write_csv
+from semantic_query import SemanticDB, TARGET_INPUTS, USER_METRICS, evaluate_target_parameter, run_sweep, write_csv
 
 
 def parse_csv_list(text: str) -> list[str]:
@@ -35,6 +35,11 @@ def main() -> None:
     detail.add_argument("symbol")
     detail.add_argument("--depth", type=int, default=4)
     detail.add_argument("--json", action="store_true")
+
+    target = sub.add_parser("target")
+    target.add_argument("symbol", nargs="?", default="tRTRRD")
+    target.add_argument("--input", action="append", default=[], help="Leaf input as key=value, for example speed_bin=01100")
+    target.add_argument("--json", action="store_true")
 
     sweep = sub.add_parser("sweep")
     sweep.add_argument("--current-cmd", default="WR")
@@ -89,6 +94,31 @@ def main() -> None:
             print("upstream:")
             for edge in payload["upstream_edges"]:
                 print(f"  {edge['from_symbol']} -> {edge['to_symbol']} [{edge['edge_type']}:{edge['rule_id']}]")
+        return
+
+    if args.cmd == "target":
+        inputs = {}
+        for item in args.input:
+            if "=" not in item:
+                raise SystemExit(f"Invalid --input {item!r}; use key=value")
+            key, value = item.split("=", 1)
+            if key not in TARGET_INPUTS:
+                raise SystemExit(f"Unknown target input {key!r}. Valid keys: {', '.join(TARGET_INPUTS)}")
+            inputs[key] = value
+        payload = evaluate_target_parameter(args.symbol, inputs, db)
+        if args.json:
+            print(json.dumps(payload, indent=2, ensure_ascii=False))
+        else:
+            target_row = payload["target"]
+            print(f"{target_row['symbol']} = {target_row['value']} {target_row['unit']}".rstrip())
+            print(f"formula: {target_row['formula']}")
+            print("required leaf inputs:")
+            for spec in payload["inputs"]:
+                print(f"  - {spec['id']}: {spec['value']} ({spec['label']})")
+            if payload["warnings"]:
+                print("warnings:")
+                for warning in payload["warnings"]:
+                    print(f"  - {warning}")
         return
 
     rows, errors = run_sweep(
