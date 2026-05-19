@@ -62,6 +62,7 @@ def audit_shared_speed_leaf() -> list[str]:
         "tWTR_L_nCK",
         "tWCK2DQO_EFFECTIVE_MAX_ps",
         "tWCKPST_nCK_RD",
+        "BLN",
         "tRTW_FINAL",
         "tRTRRD",
     ]

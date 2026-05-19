@@ -492,6 +492,7 @@ TARGET_SYMBOLS = [
     "tRTW_FINAL",
     "RL",
     "WL",
+    "BLN",
     "BLN_MAX",
     "BLN_MIN",
     "tWTR_S_nCK",
@@ -691,6 +692,8 @@ def symbol_meta(symbol: str, db: SemanticDB | None = None) -> dict[str, str]:
 
 
 def direct_dependencies(symbol: str, values: dict[str, Any]) -> list[str]:
+    if symbol == "BLN":
+        return list(SYMBOL_DEPENDENCIES["BLN"])
     if symbol == "tRTW_BASE":
         same_bg = bool(values.get("same_bg"))
         odt = bool(values.get("dq_odt_effective_enabled"))
