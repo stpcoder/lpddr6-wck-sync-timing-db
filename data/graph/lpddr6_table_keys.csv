@@ -13,6 +13,7 @@ WCK_SYNC_AC_READ,data/timing/lpddr6_wck_sync_ac_read_t256_t259.csv,lookup,curren
 WCK_SYNC_AC_WRITE,data/timing/lpddr6_wck_sync_ac_write_t260.csv,lookup,current_cmd|MR1.OP[4:0]|wl_set,tWCKENL_CURRENT|tWCKPRE_CURRENT,Table260,active,Write-class WCK Sync AC lookup
 WCK_SYNC_AC_CAS,data/timing/lpddr6_wck_sync_ac_cas_t261.csv,lookup,current_cmd|MR1.OP[4:0],tWCKENL_FS|tWCKPRE_STATIC,Table261,active,CAS WCK Sync AC lookup
 ODT_WRITE_TABLE,data/timing/lpddr6_write_odt_t319_t320_t329_t330.csv,lookup_convert,dq_odt_effective_enabled|data_rate_mbps|WL|tCK_ns,ODTLon|tODTon_MIN_nCK_RD,Table319_320_329_330,active,DQ ODT timing lookup
+NT_ODT_READ_TABLE,data/timing/lpddr6_nt_odt_read_t331_t336.csv,lookup_convert,dq_nt_odt_effective_enabled|read_nt_odt_target|rdqs_enabled|MR10.OP[0]|MR10.OP[4:2]|data_rate_mbps|tCK_ns,tODT_RDon_MAX_ns|tODT_RDon_MAX_nCK_RU,Table331_336,active,Read NT-ODT async-on max lookup
 TRTW_RULES,rules/lpddr6_trtw_rules.json,formula,same_bg|dq_odt_effective_enabled|RL|WL|BLN_MIN|BLN_MAX|tWCK2DQO|tRPST|ODTLon|tODTon,tRTW_BASE|tRTW_FINAL,Table389_390,active,tRTW base/final formula
 PAIR_FORMULAS,data/formulas/lpddr6_formula_registry.json,formula,formula_id|resolved_symbols,command_min_gap|command_max_gap,Table263_264_Table398,active,Command pair expression formula registry
 CMD_PAIR_MATRIX,data/timing/lpddr6_wck_sync_cmd_pair_matrix_t263_t264.csv,decision,current_cmd|next_cmd|bank_scope|ws_operand,min_expr|max_expr,Table263_264,active,WCK Sync-Off pair matrix

@@ -58,6 +58,11 @@ protection. It maps those leaves to MR/scenario fields internally, then builds
 the dependency tree upward through intermediate values such as `RL`,
 `BL/n_max`, and `tCK_ns`.
 
+Shared leaves are single keys, not per-formula copies. For example,
+`speed_bin` produces one `data_rate_mbps`, which produces one `tCK_ns`.
+That same `data_rate_mbps`/`tCK_ns` path is referenced by `RL`, `WL`, `tWTR`,
+`tWCK2DQO`, `tRTW`, `tRTRRD`, and WCK Sync-Off deadline formulas.
+
 Optional Streamlit UI dependency:
 
 ```bash
@@ -211,6 +216,10 @@ Timing structure starts under `data/timing/`.
 - `lpddr6_parse_backlog.csv`: remaining JEDEC parsing backlog by priority.
 - `lpddr6_condition_dictionary.csv`: normalized condition keys such as BG relation, DVFS, ODT, WCK FM, WS, RDQS, and DFE.
 - `lpddr6_rule_packet_schema.csv`: standard columns for adding lookup/formula/decision rules.
+- `lpddr6_target_parameter_element_map.csv`: human-readable target map for
+  `tRTRRD`, `RL`, `WL`, `tRTW`, `tWTR`, `tWCK2DQO`, `ODTLon`, `tODTon`, and
+  `tODT_RDon` showing leaf keys, shared intermediate symbols, formulas, and
+  condition selectors.
 - `lpddr6_mr1_speed_bins.csv`: central MR1.OP[4:0] speed-bin map used to validate `data_rate_mbps`.
 - `lpddr6_command_gap_rule_packets_seed.csv`: seed command-window rules for RD/WR and WCK Sync-Off decisions.
 - `lpddr6_mr1_latency_condition_reference.csv`: MR1 Table47/Table48 condition notes for RL/WL/nWTP/nRTP/nACU lookup.

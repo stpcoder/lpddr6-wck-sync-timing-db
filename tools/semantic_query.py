@@ -12,6 +12,7 @@ from __future__ import annotations
 import copy
 import csv
 import json
+import math
 from collections import defaultdict
 from itertools import product
 from pathlib import Path
@@ -173,6 +174,7 @@ MR1_SEEDED_OPS = [row["mr1_op"] for row in MR1_SPEED_BIN_ROWS if row["status"] =
 MR1_TBD_OPS = [row["mr1_op"] for row in MR1_SPEED_BIN_ROWS if row["status"] != "seeded"]
 
 FORMULA_REGISTRY = read_json(FORMULAS / "lpddr6_formula_registry.json")["expressions"]
+NT_ODT_READ_ROWS = read_csv(DATA / "timing" / "lpddr6_nt_odt_read_t331_t336.csv")
 
 
 def bool_value(value: Any) -> bool:
@@ -354,6 +356,31 @@ TARGET_INPUTS: dict[str, dict[str, Any]] = {
         "default": False,
         "mr_effect": "MR41.OP[0]",
     },
+    "read_nt_odt_target": {
+        "label": "Read NT-ODT Target",
+        "description": "Read NT-ODT async-on max를 DQ path로 볼지 RDQS path로 볼지 선택합니다.",
+        "kind": "select",
+        "default": "DQ",
+        "options": [{"value": "DQ", "label": "DQ"}, {"value": "RDQS", "label": "RDQS"}],
+    },
+    "rdqs_preshift_enabled": {
+        "label": "RDQS Pre-shift",
+        "description": "RDQS NT-ODT read table selector에 들어가는 RDQS pre-shift 조건입니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR10.OP[0]",
+    },
+    "rdqs_preamble_group": {
+        "label": "RDQS Preamble Group",
+        "description": "RDQS NT-ODT read table selector에 들어가는 MR10.OP[4:2] group입니다.",
+        "kind": "select",
+        "default": "000_or_001",
+        "mr_effect": "MR10.OP[4:2]",
+        "options": [
+            {"value": "000_or_001", "label": "MR10.OP[4:2] = 000 or 001"},
+            {"value": "010_or_011", "label": "MR10.OP[4:2] = 010 or 011"},
+        ],
+    },
 }
 
 
@@ -389,6 +416,10 @@ FRIENDLY_SYMBOL_META: dict[str, dict[str, str]] = {
     "tWCKPST_nCK_RD": {"label": "tWCKPST", "description": "WCK postamble converted to nCK", "formula": "floor(tWCKPST/tCK)"},
     "ODTLon": {"label": "ODTLon", "description": "ODT on latency", "formula": "ODT table lookup, often WL based"},
     "tODTon_MIN_nCK_RD": {"label": "tODTon min", "description": "ODT turn-on minimum converted to nCK", "formula": "floor(tODTon_min/tCK)"},
+    "tODTon_MAX_ns": {"label": "tODTon max", "description": "DQ ODT turn-on maximum async time", "formula": "ODT async table lookup"},
+    "tODTon_MAX_nCK_RU": {"label": "tODTon max", "description": "DQ ODT turn-on maximum converted to nCK guard", "formula": "ceil(tODTon_MAX_ns / tCK)"},
+    "tODT_RDon_MAX_ns": {"label": "tODT_RDon max", "description": "Read NT-ODT turn-on maximum async time", "formula": "Read NT-ODT async table lookup"},
+    "tODT_RDon_MAX_nCK_RU": {"label": "tODT_RDon max", "description": "Read NT-ODT turn-on maximum converted to nCK guard", "formula": "ceil(tODT_RDon_MAX_ns / tCK)"},
     "dq_odt_effective_enabled": {"label": "DQ ODT Effective", "description": "DQ ODT가 timing path에 실제 적용되는 조건", "formula": "DQ ODT enabled and DVFSQ off"},
     "dq_nt_odt_effective_enabled": {"label": "DQ NT-ODT Effective", "description": "Read non-target ODT가 실제 적용되는 조건", "formula": "DQ NT-ODT enabled and DVFSQ off"},
     "dq_wr_nt_odt_effective_enabled": {"label": "DQ WR NT-ODT Effective", "description": "Write non-target ODT가 실제 적용되는 조건", "formula": "DQ WR NT-ODT enabled and DVFSQ off"},
@@ -432,6 +463,10 @@ SYMBOL_DEPENDENCIES: dict[str, list[str]] = {
     "tWCKPST_nCK_RD": ["wck_postamble_length", "tCK_ns", "tWCK_ns"],
     "ODTLon": ["dq_odt_enabled", "WL", "data_rate_mbps"],
     "tODTon_MIN_nCK_RD": ["dq_odt_enabled", "tCK_ns", "data_rate_mbps"],
+    "tODTon_MAX_ns": ["dq_odt_enabled", "data_rate_mbps"],
+    "tODTon_MAX_nCK_RU": ["tODTon_MAX_ns", "tCK_ns"],
+    "tODT_RDon_MAX_ns": ["dq_nt_odt_enabled", "read_nt_odt_target", "rdqs_enabled", "rdqs_preshift_enabled", "rdqs_preamble_group", "data_rate_mbps"],
+    "tODT_RDon_MAX_nCK_RU": ["tODT_RDon_MAX_ns", "tCK_ns"],
     "dq_odt_effective_enabled": ["dq_odt_enabled"],
     "dq_nt_odt_effective_enabled": ["dq_nt_odt_enabled"],
     "dq_wr_nt_odt_effective_enabled": ["dq_wr_nt_odt_enabled"],
@@ -453,6 +488,12 @@ TARGET_SYMBOLS = [
     "tWTR_S_nCK",
     "tWTR_L_nCK",
     "tWCK2DQO_EFFECTIVE_MAX_ps",
+    "ODTLon",
+    "tODTon_MIN_nCK_RD",
+    "tODTon_MAX_ns",
+    "tODTon_MAX_nCK_RU",
+    "tODT_RDon_MAX_ns",
+    "tODT_RDon_MAX_nCK_RU",
     "tWCKPST_nCK_RD",
     "R_DEADLINE",
     "W_DEADLINE",
@@ -566,6 +607,8 @@ def target_scenario_from_inputs(inputs: dict[str, Any] | None = None) -> tuple[d
     mr["MR23.OP[2]"] = int_bool(values["read_link_protection_enabled"])
     mr["MR41.OP[0]"] = int_bool(values["per_pin_dfe_enabled"])
     mr["MR10.OP[1]"] = 0 if str(values["rdqs_ratio"]) == "1to1" else 1
+    mr["MR10.OP[0]"] = int_bool(values["rdqs_preshift_enabled"])
+    mr["MR10.OP[4:2]"] = "010" if str(values["rdqs_preamble_group"]) == "010_or_011" else "000"
     mr["MR10.OP[5]"] = 0 if str(values["rdqs_postamble_mode"]) == "static" else 1
     mr["MR10.OP[7:6]"] = str(values["rdqs_postamble_length"])
     return scenario, values, warnings
@@ -649,6 +692,11 @@ def direct_dependencies(symbol: str, values: dict[str, Any]) -> list[str]:
         return deps
     if symbol == "tRTW_FINAL":
         return ["tRTW_BASE", "per_pin_dfe_enabled"]
+    if symbol == "tODT_RDon_MAX_ns":
+        deps = ["dq_nt_odt_enabled", "read_nt_odt_target", "data_rate_mbps"]
+        if values.get("_read_nt_odt_target") == "RDQS":
+            deps.extend(["rdqs_enabled", "rdqs_preshift_enabled", "rdqs_preamble_group"])
+        return deps
     if symbol in FORMULA_REGISTRY:
         return list(FORMULA_REGISTRY[symbol].get("dependencies", []))
     return list(SYMBOL_DEPENDENCIES.get(symbol, []))
@@ -765,6 +813,53 @@ def input_specs(input_keys: list[str], values: dict[str, Any]) -> list[dict[str,
     return specs
 
 
+def enrich_target_values(values: dict[str, Any], inputs: dict[str, Any], warnings: list[str]) -> None:
+    tck = values.get("tCK_ns")
+    if tck and "tODTon_MAX_ns" in values:
+        values["tODTon_MAX_nCK_RU"] = math.ceil(float(values["tODTon_MAX_ns"]) / float(tck))
+
+    target = str(inputs.get("read_nt_odt_target", "DQ"))
+    values["_read_nt_odt_target"] = target
+    if not values.get("dq_nt_odt_effective_enabled"):
+        return
+
+    data_rate = float(values["data_rate_mbps"])
+    ck_mhz = float(values["ck_mhz"])
+    rdqs_ps = "1" if int_bool(inputs.get("rdqs_preshift_enabled")) else "0"
+    pre_group = str(inputs.get("rdqs_preamble_group", "000_or_001"))
+    rows = []
+    for row in NT_ODT_READ_ROWS:
+        if row["target"] != target:
+            continue
+        if not (float(row["ck_lower_mhz_exclusive"]) < ck_mhz <= float(row["ck_upper_mhz_inclusive"])):
+            continue
+        if data_rate > float(row["data_rate_upper_mbps"]):
+            continue
+        if target == "RDQS":
+            if not values.get("rdqs_enabled"):
+                continue
+            if row["rdqs_ps"] != rdqs_ps:
+                continue
+            if row["rdqs_pre_group"] != pre_group:
+                continue
+        rows.append(row)
+    if not rows:
+        warnings.append(
+            "No seeded Read NT-ODT async-on row for "
+            f"target={target}, data_rate={data_rate:g}, ck={ck_mhz:g}, rdqs_ps={rdqs_ps}, pre_group={pre_group}."
+        )
+        return
+    row = rows[0]
+    if row["status"] != "seeded":
+        warnings.append(f"Read NT-ODT async-on row is {row['status']} for {target} at {data_rate:g} Mbps.")
+        return
+    values["tODT_RDon_MIN_ns"] = float(row["async_on_min_ns"])
+    values["tODT_RDon_MAX_ns"] = float(row["async_on_max_ns"])
+    if tck:
+        values["tODT_RDon_MAX_nCK_RU"] = math.ceil(float(row["async_on_max_ns"]) / float(tck))
+    values["tODT_RDon_source"] = row["source_table"]
+
+
 def evaluate_target_parameter(
     target: str,
     inputs: dict[str, Any] | None = None,
@@ -776,6 +871,8 @@ def evaluate_target_parameter(
     evaluator = Evaluator(scenario)
     out = evaluator.run()
     values = out["resolved_values"]
+    warnings = leaf_warnings + out["warnings"]
+    enrich_target_values(values, leaf_values, warnings)
     formula_result: dict[str, Any] | None = None
     if target in FORMULA_REGISTRY and target not in values:
         formula_result = evaluator.resolve_registered_formula(target)
@@ -807,7 +904,7 @@ def evaluate_target_parameter(
         "tree": root,
         "formula_result": formula_result,
         "scenario_mr": scenario["MR"],
-        "warnings": leaf_warnings + out["warnings"],
+        "warnings": warnings,
         "trace": out["trace"],
     }
 

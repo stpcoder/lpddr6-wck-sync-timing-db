@@ -73,6 +73,10 @@ tRPST_nCK,lookup,nCK,rdqs,lookup_convert,Table90,active,RDQS postamble converted
 tWCKPST_nCK_RD,lookup,nCK,wck_sync,lookup_convert,Table117,active,WCK postamble floor conversion to CK
 ODTLon,lookup,nCK,odt,lookup,Table319_329,active,ODT on latency
 tODTon_MIN_nCK_RD,lookup,nCK,odt,lookup_convert,Table320_330,active,ODT turn-on minimum converted to CK
+tODTon_MAX_ns,lookup,ns,odt,lookup,Table320_330,active,DQ ODT turn-on maximum async time
+tODTon_MAX_nCK_RU,derived,nCK,odt,convert,Table320_330,active,DQ ODT turn-on maximum converted to CK
+tODT_RDon_MAX_ns,lookup,ns,odt,lookup,Table331_336,active,Read NT-ODT turn-on maximum async time
+tODT_RDon_MAX_nCK_RU,derived,nCK,odt,convert,Table331_336,active,Read NT-ODT turn-on maximum converted to CK
 tWRWTR,formula,nCK,training_gap,formula,Table398_Note1,active,Write/training class to WFF timing guard
 tRTRRD,formula,nCK,training_gap,formula,Table398_Note3,active,Read/training class to WFF/RD/RDC timing guard
 WFF_TO_RFF_MIN,formula,nCK,training_gap,formula,Table264_Note4_Table398,active_with_ntodt_unresolved,WFF to RFF timing guard

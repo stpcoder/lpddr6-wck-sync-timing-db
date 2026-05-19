@@ -69,6 +69,17 @@ tCK_ns,tWCKPST_nCK_RD,convert,TWCKPST_TO_NCK,unit_conversion,Table117,active,tWC
 WL,ODTLon,formula,ODT_LATENCY_FORMULA,input,Table319_329,active,ODTLon formula에 WL 사용
 dq_odt_effective_enabled,ODTLon,guard,ODT_LATENCY_FORMULA,condition,Table319_329,active,DQ ODT enabled path에서만 ODTLon 사용
 tCK_ns,tODTon_MIN_nCK_RD,convert,ODT_ASYNC_TO_NCK,unit_conversion,Table320_330,active,tODTon min ns를 nCK로 변환
+dq_odt_effective_enabled,tODTon_MAX_ns,guard,ODT_ASYNC_TABLE,condition,Table320_330,active,DQ ODT enabled path에서만 tODTon max 사용
+data_rate_mbps,tODTon_MAX_ns,lookup,ODT_ASYNC_TABLE,speed_key,Table320_330,active,Speed bin에 따른 tODTon max row 선택
+tODTon_MAX_ns,tODTon_MAX_nCK_RU,convert,ODT_ASYNC_MAX_TO_NCK,input,Table320_330,active,tODTon max ns를 nCK로 변환
+tCK_ns,tODTon_MAX_nCK_RU,convert,ODT_ASYNC_MAX_TO_NCK,unit_conversion,Table320_330,active,tODTon max ns를 nCK로 변환
+dq_nt_odt_effective_enabled,tODT_RDon_MAX_ns,guard,NT_ODT_READ_TABLE,condition,Table331_336,active,Read NT-ODT enabled path에서만 async-on max 사용
+data_rate_mbps,tODT_RDon_MAX_ns,lookup,NT_ODT_READ_TABLE,speed_key,Table331_336,active,Speed bin에 따른 Read NT-ODT async row 선택
+rdqs_enabled,tODT_RDon_MAX_ns,selector,NT_ODT_READ_TABLE,rdqs_selector,Table332_335,active,RDQS target path selector
+MR10.OP[0],tODT_RDon_MAX_ns,selector,NT_ODT_READ_TABLE,rdqs_ps,Table332_335,active,RDQS pre-shift selector
+MR10.OP[4:2],tODT_RDon_MAX_ns,selector,NT_ODT_READ_TABLE,rdqs_pre_group,Table332_335,active,RDQS preamble group selector
+tODT_RDon_MAX_ns,tODT_RDon_MAX_nCK_RU,convert,NT_ODT_RDON_MAX_TO_NCK,input,Table331_336,active,Read NT-ODT async-on max ns를 nCK로 변환
+tCK_ns,tODT_RDon_MAX_nCK_RU,convert,NT_ODT_RDON_MAX_TO_NCK,unit_conversion,Table331_336,active,Read NT-ODT async-on max ns를 nCK로 변환
 WL,tWRWTR,formula,tWRWTR,input,Table398_Note1,active,tWRWTR 구성 요소
 BLN_MAX,tWRWTR,formula,tWRWTR,input,Table398_Note1,active,tWRWTR 구성 요소
 tCK_ns,tWRWTR,formula,tWRWTR,input,Table398_Note1,active,7.5ns guard를 nCK로 변환
