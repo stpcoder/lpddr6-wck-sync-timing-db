@@ -345,6 +345,106 @@ HTML = r"""<!doctype html>
       font-size: 12px;
       padding: 5px 0 0 2px;
     }
+    .graph-shell {
+      margin-top: 10px;
+      border: 1px solid #dbe3ef;
+      border-radius: 8px;
+      background:
+        linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+        #fbfdff;
+      background-size: 24px 24px;
+      overflow: auto;
+    }
+    .graph-canvas {
+      position: relative;
+      min-width: 100%;
+      min-height: 360px;
+    }
+    .graph-edges {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .graph-edge {
+      fill: none;
+      stroke: #94a3b8;
+      stroke-width: 1.7;
+    }
+    .graph-node-card {
+      position: absolute;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 5px;
+      width: 260px;
+      height: 112px;
+      padding: 9px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+    .graph-node-card.root {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.16);
+    }
+    .graph-node-card.leaf {
+      border-color: #99f6e4;
+      background: #f0fdfa;
+    }
+    .graph-node-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: start;
+    }
+    .graph-node-title {
+      min-width: 0;
+      color: #0f172a;
+      font-weight: 760;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+    .graph-node-value {
+      max-width: 112px;
+      padding: 2px 7px;
+      border: 1px solid #dbe3ff;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #1e293b;
+      font-size: 12px;
+      font-weight: 750;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .graph-node-kind {
+      color: #64748b;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .graph-node-formula {
+      max-height: 44px;
+      overflow: hidden;
+      color: #334155;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+    .calc-table-wrap {
+      margin-top: 10px;
+      border: 1px solid #edf0f5;
+      border-radius: 8px;
+      overflow: auto;
+    }
+    .calc-depth {
+      color: #64748b;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
     .tabs {
       display: flex;
       gap: 6px;
@@ -675,6 +775,133 @@ function renderTargetTreeNode(node, isRoot=false) {
     </div>
   `;
 }
+const GRAPH_NODE_W = 260;
+const GRAPH_NODE_H = 112;
+const GRAPH_GAP_X = 30;
+const GRAPH_GAP_Y = 98;
+const GRAPH_PAD = 24;
+function conciseFormula(node) {
+  if (!node || !node.formula) return '';
+  if (node.formula === 'user selected leaf input') return 'User selected';
+  return node.formula;
+}
+function graphNodeKind(node, isRoot=false) {
+  if (isRoot) return 'root';
+  if (node.leaf) return 'leaf';
+  return 'parameter';
+}
+function graphNodeKindLabel(node, isRoot=false) {
+  if (isRoot) return 'target';
+  if (node.leaf) return 'leaf input';
+  return 'computed';
+}
+function layoutTargetGraph(root) {
+  let cursor = 0;
+  let maxDepth = 0;
+  const nodes = [];
+  const edges = [];
+  function place(node, depth, path) {
+    maxDepth = Math.max(maxDepth, depth);
+    const id = path.length ? `n-${path.join('-')}` : 'n-root';
+    const children = node.children || [];
+    if (!children.length) {
+      const placed = { id, node, x: cursor, y: depth * (GRAPH_NODE_H + GRAPH_GAP_Y), depth, isRoot: depth === 0 };
+      cursor += GRAPH_NODE_W + GRAPH_GAP_X;
+      nodes.push(placed);
+      return placed;
+    }
+    const placedChildren = children.map((child, index) => place(child, depth + 1, path.concat(index)));
+    const minX = Math.min(...placedChildren.map(child => child.x));
+    const maxX = Math.max(...placedChildren.map(child => child.x + GRAPH_NODE_W));
+    const x = minX + ((maxX - minX - GRAPH_NODE_W) / 2);
+    const placed = { id, node, x, y: depth * (GRAPH_NODE_H + GRAPH_GAP_Y), depth, isRoot: depth === 0 };
+    nodes.push(placed);
+    placedChildren.forEach(child => edges.push({ from: placed, to: child }));
+    return placed;
+  }
+  place(root, 0, []);
+  const minX = Math.min(...nodes.map(node => node.x));
+  const maxX = Math.max(...nodes.map(node => node.x + GRAPH_NODE_W));
+  nodes.forEach(node => {
+    node.x = node.x - minX + GRAPH_PAD;
+    node.y = node.y + GRAPH_PAD;
+  });
+  return {
+    nodes,
+    edges,
+    width: Math.max(760, maxX - minX + GRAPH_PAD * 2),
+    height: (maxDepth + 1) * GRAPH_NODE_H + maxDepth * GRAPH_GAP_Y + GRAPH_PAD * 2,
+  };
+}
+function edgePath(edge) {
+  const x1 = edge.from.x + GRAPH_NODE_W / 2;
+  const y1 = edge.from.y + GRAPH_NODE_H;
+  const x2 = edge.to.x + GRAPH_NODE_W / 2;
+  const y2 = edge.to.y;
+  const mid = y1 + Math.max(28, (y2 - y1) / 2);
+  return `M ${x1} ${y1} C ${x1} ${mid}, ${x2} ${mid}, ${x2} ${y2}`;
+}
+function renderGraphNode(placed) {
+  const node = placed.node;
+  const value = nodeValueText(node);
+  const formula = conciseFormula(node);
+  const kind = graphNodeKind(node, placed.isRoot);
+  return `
+    <div class="graph-node-card ${escapeHtml(kind)}" style="left:${placed.x}px;top:${placed.y}px">
+      <div class="graph-node-head">
+        <div class="graph-node-title" title="${escapeHtml(node.symbol || '')}">${escapeHtml(node.label || node.symbol || '')}</div>
+        ${value ? `<div class="graph-node-value" title="${escapeHtml(value)}">${escapeHtml(value)}</div>` : ''}
+      </div>
+      <div class="graph-node-kind">${escapeHtml(graphNodeKindLabel(node, placed.isRoot))}</div>
+      <div class="graph-node-formula" title="${escapeHtml(formula)}">${escapeHtml(formula)}</div>
+    </div>
+  `;
+}
+function renderTargetGraph(root) {
+  if (!root) return '<div class="hint">No graph data</div>';
+  const graph = layoutTargetGraph(root);
+  const paths = graph.edges.map(edge => `<path class="graph-edge" marker-end="url(#arrow)" d="${edgePath(edge)}"></path>`).join('');
+  const nodes = graph.nodes.map(renderGraphNode).join('');
+  return `
+    <div class="graph-shell">
+      <div class="graph-canvas" style="width:${graph.width}px;height:${graph.height}px">
+        <svg class="graph-edges" width="${graph.width}" height="${graph.height}" viewBox="0 0 ${graph.width} ${graph.height}">
+          <defs>
+            <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+              <path d="M0,0 L8,4.5 L0,9 Z" fill="#94a3b8"></path>
+            </marker>
+          </defs>
+          ${paths}
+        </svg>
+        ${nodes}
+      </div>
+    </div>
+  `;
+}
+function collectCalcRows(node, rows=[], depth=0) {
+  if (!node) return rows;
+  rows.push({
+    Level: depth,
+    Symbol: node.symbol || '',
+    Name: node.label || node.symbol || '',
+    Value: nodeValueText(node),
+    Formula: conciseFormula(node),
+    Source: node.source || '',
+  });
+  (node.children || []).forEach(child => collectCalcRows(child, rows, depth + 1));
+  return rows;
+}
+function renderCalculationTable(root) {
+  const rows = collectCalcRows(root).map(row => ({
+    Level: `${'· '.repeat(row.Level)}${row.Level}`,
+    Symbol: row.Symbol,
+    Name: row.Name,
+    Value: row.Value,
+    Formula: row.Formula,
+    Source: row.Source,
+  }));
+  return `<div class="calc-table-wrap">${table(rows)}</div>`;
+}
 function renderTargetResult(data) {
   const target = data.target || {};
   const value = target.value === null || target.value === undefined ? 'unresolved' : `${target.value}${target.unit ? ' ' + target.unit : ''}`;
@@ -689,7 +916,9 @@ function renderTargetResult(data) {
       </div>
       <div class="target-result">${escapeHtml(value)}</div>
     </div>
-    <div class="tree">${renderTargetTreeNode(data.tree, true)}</div>
+    ${renderTargetGraph(data.tree)}
+    <div class="subhead">Calculation References</div>
+    ${renderCalculationTable(data.tree)}
     ${warnings}
   `;
 }
