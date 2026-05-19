@@ -220,6 +220,9 @@ Timing structure starts under `data/timing/`.
   `tRTRRD`, `RL`, `WL`, `tRTW`, `tWTR`, `tWCK2DQO`, `ODTLon`, `tODTon`, and
   `tODT_RDon` showing leaf keys, shared intermediate symbols, formulas, and
   condition selectors.
+- `lpddr6_timing_note_condition_map.csv`: note/adder/override conditions such
+  as DFE equalization +1, per-pin DFE +1, final EVEN rounding, DVFSQ forcing
+  ODT off, and WCK/RDQS postamble constraints.
 - `lpddr6_mr1_speed_bins.csv`: central MR1.OP[4:0] speed-bin map used to validate `data_rate_mbps`.
 - `lpddr6_command_gap_rule_packets_seed.csv`: seed command-window rules for RD/WR and WCK Sync-Off decisions.
 - `lpddr6_mr1_latency_condition_reference.csv`: MR1 Table47/Table48 condition notes for RL/WL/nWTP/nRTP/nACU lookup.
@@ -250,6 +253,11 @@ The evaluator should reject or warn on any final path that includes `TBD`,
 `tools/evaluate_lpddr6_timing_seed.py` is a proof-of-structure evaluator.
 It now dispatches the seeded Table263/Table264 command-pair matrix and returns
 numeric, open, not-allowed, or unresolved states with trace output.
+
+`tools/audit_target_leaf_model.py` checks that target-calculator leaves remain
+semantic in the UI, that target maps do not reference unknown leaf keys, that
+shared speed/data-rate/tCK leaves are reused, and that tRTW note leaves are
+present.
 
 Example:
 

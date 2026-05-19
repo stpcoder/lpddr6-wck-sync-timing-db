@@ -161,6 +161,10 @@ HTML = r"""<!doctype html>
       color: var(--text);
       font: inherit;
     }
+    select[multiple] {
+      min-height: 94px;
+      padding: 5px;
+    }
     button {
       cursor: pointer;
       background: var(--accent);
@@ -411,21 +415,48 @@ HTML = r"""<!doctype html>
         </div>
         <input id="maxRows" type="hidden" value="500" />
         <hr class="divider" />
-        <label><span class="label-title">MR1.OP[4:0] 값 <span class="info" tabindex="0">i<span class="tip">JEDEC MR1의 speed bin field입니다. 기본 모드에서는 이 값으로 data rate와 tCK를 자동 선택합니다. 여러 값 비교는 쉼표로 입력합니다.</span></span></span><input id="mr1" value="00001" /></label>
+        <label><span class="label-title">Operating Data Rate Rows <span class="info" tabindex="0">i<span class="tip">비교할 operating data-rate 범위를 고릅니다. 선택한 범위는 내부 latency row와 tCK/WCK 계산에 공통으로 사용됩니다.</span></span></span>
+          <select id="mr1" multiple size="6">
+            <option value="00000">Up to 1067 Mbps</option>
+            <option value="00001" selected>Up to 1600 Mbps</option>
+            <option value="00010">Up to 2133 Mbps</option>
+            <option value="00011">Up to 2750 Mbps</option>
+            <option value="00100">Up to 3200 Mbps</option>
+            <option value="00101">Up to 3750 Mbps</option>
+            <option value="00110">Up to 4267 Mbps</option>
+            <option value="00111">Up to 4800 Mbps</option>
+            <option value="01000">Up to 5500 Mbps</option>
+            <option value="01001">Up to 6400 Mbps</option>
+            <option value="01010">Up to 7500 Mbps</option>
+            <option value="01011">Up to 8533 Mbps</option>
+            <option value="01100">Up to 9600 Mbps</option>
+            <option value="01101">Up to 10667 Mbps</option>
+          </select>
+        </label>
         <div class="grid2">
-          <label><span class="label-title">Data Rate 결정 방식 <span class="info" tabindex="0">i<span class="tip">일반 계산은 MR1.OP[4:0] 기준을 사용합니다. 직접 입력은 table 검증이나 임시 분석용입니다.</span></span></span>
-            <select id="matchSpeed"><option value="1">MR1.OP[4:0] 기준</option><option value="0">직접 입력</option></select>
+          <label><span class="label-title">Data Rate Source <span class="info" tabindex="0">i<span class="tip">기본값은 위에서 고른 operating data-rate row의 upper rate를 사용합니다. 직접 입력은 table 검증용 예외 모드입니다.</span></span></span>
+            <select id="matchSpeed"><option value="1">Use selected rows</option><option value="0">Use direct Mbps input</option></select>
           </label>
-          <label><span class="label-title">Data Rate 직접 입력 (Mbps) <span class="info" tabindex="0">i<span class="tip">Data Rate 결정 방식을 직접 입력으로 바꾼 경우에만 사용합니다. MR1 기준 모드에서는 무시됩니다.</span></span></span><input id="dataRate" value="9600" /></label>
+          <label><span class="label-title">Direct Data Rate (Mbps) <span class="info" tabindex="0">i<span class="tip">Data Rate Source를 직접 입력으로 바꾼 경우에만 사용합니다. 기본 모드에서는 선택 row 값이 사용됩니다.</span></span></span><input id="dataRate" value="9600" /></label>
         </div>
         <div class="grid2">
-          <label><span class="label-title">MR1.OP[5] WLS 값 <span class="info" tabindex="0">i<span class="tip">Write Latency Set 선택 bit입니다. WL lookup table 선택에 영향을 줍니다.</span></span></span><input id="wlSetB" value="0" /></label>
-          <label><span class="label-title">MR1.OP[6] DEFF 값 <span class="info" tabindex="0">i<span class="tip">Dynamic Efficiency Mode control입니다. latency table 및 일부 AC parameter selector에 영향을 줄 수 있습니다.</span></span></span><input id="efficiency" value="0,1" /></label>
+          <label><span class="label-title">Write Latency Set <span class="info" tabindex="0">i<span class="tip">WL lookup에서 Set A 또는 Set B 중 어떤 column을 사용할지 선택합니다.</span></span></span>
+            <select id="wlSetB"><option value="0" selected>Set A</option><option value="1">Set B</option></select>
+          </label>
+          <label><span class="label-title">Dynamic Efficiency Mode <span class="info" tabindex="0">i<span class="tip">Latency table 및 일부 AC parameter selector에 들어가는 efficiency 조건입니다. 여러 조건을 동시에 선택하면 조합 표로 sweep합니다.</span></span></span>
+            <select id="efficiency" multiple size="2"><option value="0" selected>Disabled</option><option value="1" selected>Enabled</option></select>
+          </label>
         </div>
         <div class="grid3">
-          <label><span class="label-title">MR11.OP[4] DVFSL 값 <span class="info" tabindex="0">i<span class="tip">DVFSL enable 조건입니다. selected latency table과 tRTW/tWTR 관련 조건에 영향을 줍니다.</span></span></span><input id="dvfsl" value="0,1" /></label>
-          <label><span class="label-title">MR23.OP[0] Write Link 값 <span class="info" tabindex="0">i<span class="tip">Write Link Protection enable 조건입니다. latency table selector 및 write 관련 timing path에 영향을 줍니다.</span></span></span><input id="writeLink" value="0,1" /></label>
-          <label><span class="label-title">MR23.OP[2] Read Link 값 <span class="info" tabindex="0">i<span class="tip">Read Link Protection enable 조건입니다. read latency table selector에 영향을 줍니다.</span></span></span><input id="readLink" value="0" /></label>
+          <label><span class="label-title">DVFSL <span class="info" tabindex="0">i<span class="tip">Low-voltage DVFS timing family 선택 조건입니다. 여러 조건을 동시에 선택하면 조합 표로 sweep합니다.</span></span></span>
+            <select id="dvfsl" multiple size="2"><option value="0" selected>Disabled</option><option value="1" selected>Enabled</option></select>
+          </label>
+          <label><span class="label-title">Write Link Protection <span class="info" tabindex="0">i<span class="tip">Write link protection enable 조건입니다. Latency selector와 write 관련 timing path에 영향을 줍니다.</span></span></span>
+            <select id="writeLink" multiple size="2"><option value="0" selected>Disabled</option><option value="1" selected>Enabled</option></select>
+          </label>
+          <label><span class="label-title">Read Link Protection <span class="info" tabindex="0">i<span class="tip">Read link protection enable 조건입니다. Read latency selector에 영향을 줍니다.</span></span></span>
+            <select id="readLink" multiple size="2"><option value="0" selected>Disabled</option><option value="1">Enabled</option></select>
+          </label>
         </div>
         <label><span class="label-title">Timing Metrics <span class="info" tabindex="0">i<span class="tip">결과표에 표시할 값입니다. 예: RL, WL, tWTR_S, tWTR_L, tRTW, WR-&gt;RD min.</span></span></span><input id="outputs" value="RL,WL,tCK_ns,tWTR_S,tWTR_L,WR->RD min (diff BG),tRTW,tRTRRD,tWRWTR" /></label>
         <button onclick="runSweep()">조건 조합 표 만들기</button>
@@ -451,6 +482,43 @@ const status = (text) => { qs("status").textContent = text; };
 const SEEDED_MR1_OPS = new Set(['00000','00001','00010','00011','00100','00101','00110','00111','01000','01001','01010','01011','01100','01101']);
 const TBD_MR1_OPS = new Set(['01110','01111','10000']);
 const DVFSL_NUMERIC_MR1_OPS = new Set(['00000','00001']);
+const SPEED_LABELS = {
+  '00000': 'Up to 1067 Mbps',
+  '00001': 'Up to 1600 Mbps',
+  '00010': 'Up to 2133 Mbps',
+  '00011': 'Up to 2750 Mbps',
+  '00100': 'Up to 3200 Mbps',
+  '00101': 'Up to 3750 Mbps',
+  '00110': 'Up to 4267 Mbps',
+  '00111': 'Up to 4800 Mbps',
+  '01000': 'Up to 5500 Mbps',
+  '01001': 'Up to 6400 Mbps',
+  '01010': 'Up to 7500 Mbps',
+  '01011': 'Up to 8533 Mbps',
+  '01100': 'Up to 9600 Mbps',
+  '01101': 'Up to 10667 Mbps',
+  '01110': 'Up to 11733 Mbps (TBD row)',
+  '01111': 'Up to 12800 Mbps (TBD row)',
+  '10000': 'Up to 14400 Mbps (TBD row)',
+};
+function selectedValues(id) {
+  const el = qs(id);
+  if (!el) return '';
+  if (el.tagName === 'SELECT' && el.multiple) {
+    const values = Array.from(el.selectedOptions).map(opt => opt.value);
+    return values.length ? values.join(',') : el.value;
+  }
+  return el.value;
+}
+function speedLabel(code) {
+  return SPEED_LABELS[code] || 'Unknown speed row';
+}
+function enabledText(value) {
+  return String(value) === '1' ? 'Enabled' : 'Disabled';
+}
+function wlSetText(value) {
+  return String(value) === '1' ? 'Set B' : 'Set A';
+}
 
 function table(rows) {
   if (!rows || rows.length === 0) return '<div class="muted">No rows</div>';
@@ -508,13 +576,13 @@ function formatSweepRows(rows) {
       'CMD': `${row.current_cmd || ''} -> ${row.next_cmd || ''}`,
       'Bank/BG': formatBank(row.bank_relation),
       'BL': row.burst_length,
-      'MR1[4:0]': row['MR1.OP[4:0]'],
-      'DR(Mbps)': row.data_rate_mbps,
-      'WLS': row['MR1.OP[5]'],
-      'DEFF': row['MR1.OP[6]'],
-      'DVFSL': row['MR11.OP[4]'],
-      'WR Link': row['MR23.OP[0]'],
-      'RD Link': row['MR23.OP[2]'],
+      'Operating Rate': speedLabel(row['MR1.OP[4:0]']),
+      'Data Rate(Mbps)': row.data_rate_mbps,
+      'WL Set': wlSetText(row['MR1.OP[5]']),
+      'Efficiency': enabledText(row['MR1.OP[6]']),
+      'DVFSL': enabledText(row['MR11.OP[4]']),
+      'WR Link': enabledText(row['MR23.OP[0]']),
+      'RD Link': enabledText(row['MR23.OP[2]']),
       '입력 Gap': row.requested_gap_nck,
       '필요 Min': row.min_nck,
       '판정': formatState(row.result_state),
@@ -743,20 +811,20 @@ async function loadDetail() {
   `;
 }
 async function runSweep() {
-  const mr1Ops = qs('mr1').value.split(',').map(v => v.trim()).filter(Boolean);
-  const dvfslOps = qs('dvfsl').value.split(',').map(v => v.trim()).filter(Boolean);
+  const mr1Ops = selectedValues('mr1').split(',').map(v => v.trim()).filter(Boolean);
+  const dvfslOps = selectedValues('dvfsl').split(',').map(v => v.trim()).filter(Boolean);
   const tbdOps = mr1Ops.filter(v => TBD_MR1_OPS.has(v));
   const unknownOps = mr1Ops.filter(v => !SEEDED_MR1_OPS.has(v) && !TBD_MR1_OPS.has(v));
   const dvfslHighOps = dvfslOps.includes('1') ? mr1Ops.filter(v => !DVFSL_NUMERIC_MR1_OPS.has(v)) : [];
   if (tbdOps.length || unknownOps.length) {
     const messages = [];
-    if (tbdOps.length) messages.push(`현재 DB에서 JEDEC TBD row라 계산 확정 불가: ${tbdOps.join(', ')}`);
-    if (unknownOps.length) messages.push(`MR1.OP[4:0] speed-bin 목록에 없음: ${unknownOps.join(', ')}`);
+    if (tbdOps.length) messages.push(`현재 DB에서 JEDEC TBD row라 계산 확정 불가: ${tbdOps.map(speedLabel).join(', ')}`);
+    if (unknownOps.length) messages.push(`지원하지 않는 operating data-rate row가 선택되었습니다.`);
     qs('viewSweep').innerHTML = `<p class="warn">${escapeHtml(messages.join('\\n'))}</p>`;
     return;
   }
   if (dvfslHighOps.length) {
-    qs('viewSweep').innerHTML = `<p class="warn">${escapeHtml(`DVFSL=1의 현재 numeric WCK2DQ LF_L 범위는 MR1.OP[4:0] 00000/00001입니다. 고속 MR1(${dvfslHighOps.join(', ')})은 DVFSL=0으로 계산하거나 MR1 값을 00000/00001로 제한하세요.`)}</p>`;
+    qs('viewSweep').innerHTML = `<p class="warn">${escapeHtml(`현재 seed에서 DVFSL enabled numeric WCK2DQ LF_L 값은 1600 Mbps 이하 row만 확정되어 있습니다. ${dvfslHighOps.map(speedLabel).join(', ')} 조건은 DVFSL disabled로 계산하거나 operating row를 낮춰야 합니다.`)}</p>`;
     return;
   }
   const params = new URLSearchParams({
@@ -766,15 +834,15 @@ async function runSweep() {
     burst_length: qs('burstLength').value,
     gap: qs('gap').value,
     ws: qs('ws').value,
-    mr1: qs('mr1').value,
+    mr1: selectedValues('mr1'),
     data_rate: qs('dataRate').value,
     match_mr1_speed_bin: qs('matchSpeed').value,
-    wl_set_b: qs('wlSetB').value,
+    wl_set_b: selectedValues('wlSetB'),
     outputs: qs('outputs').value,
-    efficiency: qs('efficiency').value,
-    dvfsl: qs('dvfsl').value,
-    write_link: qs('writeLink').value,
-    read_link: qs('readLink').value,
+    efficiency: selectedValues('efficiency'),
+    dvfsl: selectedValues('dvfsl'),
+    write_link: selectedValues('writeLink'),
+    read_link: selectedValues('readLink'),
     max_rows: qs('maxRows').value,
   });
   const data = await getJson('/api/sweep?' + params.toString());

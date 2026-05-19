@@ -161,6 +161,11 @@ class Evaluator:
         dq_nt_odt_effective = dq_nt_odt_mr and not dvfsq
         dq_wr_nt_odt_effective = dq_wr_nt_odt_mr and not dvfsq
         per_pin_dfe = enabled(self.mr.get("MR41.OP[0]", 0))
+        dfeq = any(
+            str(value).strip().upper().rstrip("B") not in {"0", "00", "000", "0000", ""}
+            for key, value in self.mr.items()
+            if key.startswith(("MR70.", "MR71.", "MR72.", "MR73.", "MR74.", "MR75."))
+        )
         wck_fm = "HF" if enabled(self.mr.get("MR11.OP[6]", 0)) else "LF"
         rdqs_enabled = self.mr.get("MR22.OP[1:0]", "00") != "00"
 
@@ -180,7 +185,7 @@ class Evaluator:
                 "dq_nt_odt_effective_enabled": dq_nt_odt_effective,
                 "dq_wr_nt_odt_effective_enabled": dq_wr_nt_odt_effective,
                 "per_pin_dfe_enabled": per_pin_dfe,
-                "dfeq_enabled": False,
+                "dfeq_enabled": dfeq,
                 "wck_fm": wck_fm,
                 "rdqs_enabled": rdqs_enabled,
             }

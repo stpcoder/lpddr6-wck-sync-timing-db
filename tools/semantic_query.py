@@ -192,7 +192,7 @@ def int_bool(value: Any) -> int:
 def speed_option(row: dict[str, str]) -> dict[str, Any]:
     upper = int(float(row["data_rate_upper_mbps_inclusive"]))
     lower = int(float(row["data_rate_lower_mbps_exclusive"]))
-    label = f"{upper} Mbps  ({lower} < DR <= {upper}, MR speed code {row['mr1_op']})"
+    label = f"Up to {upper} Mbps  ({lower} < data rate <= {upper})"
     return {
         "value": row["mr1_op"],
         "label": label,
@@ -207,7 +207,7 @@ SPEED_BY_OP = {row["value"]: row for row in SPEED_BIN_OPTIONS}
 TARGET_INPUTS: dict[str, dict[str, Any]] = {
     "speed_bin": {
         "label": "Operating Data Rate",
-        "description": "동작 data rate를 고르면 내부적으로 MR1 speed code와 CK/WCK 주기가 함께 정해집니다.",
+        "description": "동작 data-rate 범위를 고르면 내부적으로 latency speed row와 CK/WCK 주기가 함께 정해집니다.",
         "kind": "select",
         "default": "01100",
         "options": SPEED_BIN_OPTIONS,
@@ -232,42 +232,42 @@ TARGET_INPUTS: dict[str, dict[str, Any]] = {
     },
     "read_dbi_enabled": {
         "label": "Read DBI",
-        "description": "Read DBI enable 여부입니다. 내부적으로 MR3.OP[0]에 매핑되고 RL table 선택에 들어갑니다.",
+        "description": "Read DBI enable 여부입니다. RL table 선택에 들어갑니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR3.OP[0]",
     },
     "efficiency_mode_enabled": {
         "label": "Dynamic Efficiency Mode",
-        "description": "Dynamic efficiency enable 여부입니다. 내부적으로 MR1.OP[6]에 매핑되고 latency/tWTR table 선택에 들어갑니다.",
+        "description": "Dynamic Efficiency Mode enable 여부입니다. Latency/tWTR table 선택에 들어갑니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR1.OP[6]",
     },
     "dvfsl_enabled": {
         "label": "DVFSL",
-        "description": "Low-voltage DVFS mode 여부입니다. 내부적으로 MR11.OP[4]에 매핑됩니다.",
+        "description": "Low-voltage DVFS mode enable 여부입니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR11.OP[4]",
     },
     "write_link_protection_enabled": {
         "label": "Write Link Protection",
-        "description": "WECC/WEDC 계열 write link protection 조건입니다. 현재 UI leaf는 WECC enable로 매핑합니다.",
+        "description": "Write link protection enable 여부입니다. Latency/tWTR selector에 들어갑니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR23.OP[0]",
     },
     "read_link_protection_enabled": {
         "label": "Read Link Protection",
-        "description": "Read link protection enable 여부입니다. 내부적으로 MR23.OP[2]에 매핑되고 RL table 선택에 들어갑니다.",
+        "description": "Read link protection enable 여부입니다. RL table 선택에 들어갑니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR23.OP[2]",
     },
     "wl_set_b": {
         "label": "Write Latency Set",
-        "description": "WL Set A/B 선택입니다. 내부적으로 MR1.OP[5]에 매핑됩니다.",
+        "description": "Write Latency Set A/B 선택입니다. WL lookup column을 바꿉니다.",
         "kind": "select",
         "default": "0",
         "mr_effect": "MR1.OP[5]",
@@ -283,28 +283,28 @@ TARGET_INPUTS: dict[str, dict[str, Any]] = {
     },
     "dq_odt_enabled": {
         "label": "DQ ODT",
-        "description": "DQ ODT effective 여부입니다. enabled이면 MR19.OP[2:0]를 non-zero로 두고 tRTW ODT-on path를 사용합니다.",
+        "description": "Target DQ ODT enable 여부입니다. Enabled이면 tRTW ODT-on path를 사용합니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR19.OP[2:0]",
     },
     "dq_nt_odt_enabled": {
         "label": "DQ NT-ODT",
-        "description": "Read non-target DQ ODT 여부입니다. WFF->RFF 같은 NT-ODT note path에 영향을 줍니다.",
+        "description": "Read non-target DQ ODT enable 여부입니다. NT-ODT note path에 영향을 줍니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR20.OP[2:0]",
     },
     "dq_wr_nt_odt_enabled": {
         "label": "DQ WR NT-ODT",
-        "description": "Write non-target DQ ODT 여부입니다. WFF->RFF 같은 NT-ODT note path에 영향을 줍니다.",
+        "description": "Write non-target DQ ODT enable 여부입니다. NT-ODT note path에 영향을 줍니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR20.OP[5:3]",
     },
     "rdqs_enabled": {
         "label": "RDQS",
-        "description": "RDQS output enable 여부입니다. disabled이면 RDQS pre/post timing은 0으로 처리됩니다.",
+        "description": "RDQS output enable 여부입니다. Disabled이면 RDQS pre/post timing은 0으로 처리됩니다.",
         "kind": "bool",
         "default": True,
         "mr_effect": "MR22.OP[1:0]",
@@ -327,31 +327,38 @@ TARGET_INPUTS: dict[str, dict[str, Any]] = {
     },
     "rdqs_postamble_length": {
         "label": "RDQS Postamble Length",
-        "description": "RDQS postamble length code입니다.",
+        "description": "RDQS postamble 길이입니다.",
         "kind": "select",
         "default": "00",
         "mr_effect": "MR10.OP[7:6]",
         "options": [
-            {"value": "00", "label": "Code 00"},
-            {"value": "01", "label": "Code 01"},
-            {"value": "10", "label": "Code 10"},
+            {"value": "00", "label": "0.5 Unit"},
+            {"value": "01", "label": "2.5 Unit"},
+            {"value": "10", "label": "4.5 Unit"},
         ],
     },
     "wck_postamble_length": {
         "label": "WCK Postamble Length",
-        "description": "WCK postamble length code입니다. 내부적으로 MR22.OP[7:6]에 매핑됩니다.",
+        "description": "WCK postamble 길이입니다. WCK Sync-Off deadline에 들어갑니다.",
         "kind": "select",
         "default": "01",
         "mr_effect": "MR22.OP[7:6]",
         "options": [
-            {"value": "00", "label": "Code 00"},
-            {"value": "01", "label": "Code 01"},
-            {"value": "10", "label": "Code 10"},
+            {"value": "00", "label": "2.5 tWCK"},
+            {"value": "01", "label": "4.5 tWCK"},
+            {"value": "10", "label": "6.5 tWCK"},
         ],
+    },
+    "dfeq_enabled": {
+        "label": "DFE Equalization",
+        "description": "DFE equalization quantity가 non-zero인 조건입니다. tRTW note +1 조건으로 들어갑니다.",
+        "kind": "bool",
+        "default": False,
+        "mr_effect": "MR70..MR75 DFE quantity",
     },
     "per_pin_dfe_enabled": {
         "label": "Per-pin DFE",
-        "description": "Per-pin DFE enable note 조건입니다. tRTW final에 +1 및 even rounding 영향을 줄 수 있습니다.",
+        "description": "Per-pin DFE enable note 조건입니다. tRTW note +1 조건으로 들어갑니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR41.OP[0]",
@@ -365,20 +372,20 @@ TARGET_INPUTS: dict[str, dict[str, Any]] = {
     },
     "rdqs_preshift_enabled": {
         "label": "RDQS Pre-shift",
-        "description": "RDQS NT-ODT read table selector에 들어가는 RDQS pre-shift 조건입니다.",
+        "description": "RDQS를 2 tWCK만큼 early drive하는 pre-shift 조건입니다. 8533 Mbps 초과 고속 영역에서만 허용됩니다.",
         "kind": "bool",
         "default": False,
         "mr_effect": "MR10.OP[0]",
     },
     "rdqs_preamble_group": {
         "label": "RDQS Preamble Group",
-        "description": "RDQS NT-ODT read table selector에 들어가는 MR10.OP[4:2] group입니다.",
+        "description": "RDQS preamble 길이 그룹입니다. Read NT-ODT RDQS path selector에 들어갑니다.",
         "kind": "select",
         "default": "000_or_001",
         "mr_effect": "MR10.OP[4:2]",
         "options": [
-            {"value": "000_or_001", "label": "MR10.OP[4:2] = 000 or 001"},
-            {"value": "010_or_011", "label": "MR10.OP[4:2] = 010 or 011"},
+            {"value": "000_or_001", "label": "4 tWCK total group"},
+            {"value": "010_or_011", "label": "8 tWCK total group, >8533 Mbps only"},
         ],
     },
 }
@@ -424,6 +431,8 @@ FRIENDLY_SYMBOL_META: dict[str, dict[str, str]] = {
     "dq_nt_odt_effective_enabled": {"label": "DQ NT-ODT Effective", "description": "Read non-target ODT가 실제 적용되는 조건", "formula": "DQ NT-ODT enabled and DVFSQ off"},
     "dq_wr_nt_odt_effective_enabled": {"label": "DQ WR NT-ODT Effective", "description": "Write non-target ODT가 실제 적용되는 조건", "formula": "DQ WR NT-ODT enabled and DVFSQ off"},
     "tRTW_BASE": {"label": "tRTW base", "description": "Read-to-write base command gap", "formula": "selected Table389/390 path"},
+    "dfeq_enabled": {"label": "DFE Equalization", "description": "DFE equalization quantity non-zero note condition", "formula": "DFE quantity enabled"},
+    "per_pin_dfe_enabled": {"label": "Per-pin DFE", "description": "Per-pin DFE note condition", "formula": "per-pin DFE enabled"},
     "tRTW_FINAL": {"label": "tRTW", "description": "Read-to-write final command gap after note adders and even rounding", "formula": "even(tRTW_base + note adders)"},
 }
 
@@ -471,7 +480,7 @@ SYMBOL_DEPENDENCIES: dict[str, list[str]] = {
     "dq_nt_odt_effective_enabled": ["dq_nt_odt_enabled"],
     "dq_wr_nt_odt_effective_enabled": ["dq_wr_nt_odt_enabled"],
     "tRTW_BASE": ["RL", "WL", "BLN_MIN", "BLN_MAX", "tWCK2DQO_EFFECTIVE_MAX_ps", "tCK_ns", "dq_odt_enabled", "tRPST_nCK", "ODTLon", "tODTon_MIN_nCK_RD"],
-    "tRTW_FINAL": ["tRTW_BASE", "per_pin_dfe_enabled"],
+    "tRTW_FINAL": ["tRTW_BASE", "dfeq_enabled", "per_pin_dfe_enabled"],
 }
 
 
@@ -606,6 +615,7 @@ def target_scenario_from_inputs(inputs: dict[str, Any] | None = None) -> tuple[d
     mr["MR23.OP[1]"] = 0
     mr["MR23.OP[2]"] = int_bool(values["read_link_protection_enabled"])
     mr["MR41.OP[0]"] = int_bool(values["per_pin_dfe_enabled"])
+    mr["MR70.OP[2:0]"] = "001" if int_bool(values["dfeq_enabled"]) else "000"
     mr["MR10.OP[1]"] = 0 if str(values["rdqs_ratio"]) == "1to1" else 1
     mr["MR10.OP[0]"] = int_bool(values["rdqs_preshift_enabled"])
     mr["MR10.OP[4:2]"] = "010" if str(values["rdqs_preamble_group"]) == "010_or_011" else "000"
@@ -684,14 +694,14 @@ def direct_dependencies(symbol: str, values: dict[str, Any]) -> list[str]:
     if symbol == "tRTW_BASE":
         same_bg = bool(values.get("same_bg"))
         odt = bool(values.get("dq_odt_effective_enabled"))
-        deps = ["RL", "BLN_MAX" if same_bg else "BLN_MIN", "tWCK2DQO_EFFECTIVE_MAX_ps", "tCK_ns", "dq_odt_enabled"]
+        deps = ["same_bg", "RL", "BLN_MAX" if same_bg else "BLN_MIN", "tWCK2DQO_EFFECTIVE_MAX_ps", "tCK_ns", "dq_odt_enabled"]
         if odt:
             deps.extend(["tRPST_nCK", "ODTLon", "tODTon_MIN_nCK_RD"])
         else:
             deps.append("WL")
         return deps
     if symbol == "tRTW_FINAL":
-        return ["tRTW_BASE", "per_pin_dfe_enabled"]
+        return ["tRTW_BASE", "dfeq_enabled", "per_pin_dfe_enabled"]
     if symbol == "tODT_RDon_MAX_ns":
         deps = ["dq_nt_odt_enabled", "read_nt_odt_target", "data_rate_mbps"]
         if values.get("_read_nt_odt_target") == "RDQS":
@@ -809,6 +819,7 @@ def input_specs(input_keys: list[str], values: dict[str, Any]) -> list[dict[str,
         spec = copy.deepcopy(TARGET_INPUTS[key])
         spec["id"] = key
         spec["value"] = values.get(key, spec.get("default"))
+        spec["display_value"] = format_leaf_value(key, values)
         specs.append(spec)
     return specs
 

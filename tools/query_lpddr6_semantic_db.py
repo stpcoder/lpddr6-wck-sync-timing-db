@@ -22,6 +22,18 @@ def parse_int_list(text: str) -> list[int]:
     return [int(item.strip()) for item in text.split(",") if item.strip()]
 
 
+def input_display_value(spec: dict) -> str:
+    if "display_value" in spec:
+        return str(spec["display_value"])
+    value = str(spec.get("value", ""))
+    for option in spec.get("options", []) or []:
+        if str(option.get("value")) == value:
+            return str(option.get("label", value))
+    if spec.get("kind") == "bool":
+        return "Enabled" if value.lower() in {"1", "true", "enabled"} else "Disabled"
+    return value
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -114,7 +126,7 @@ def main() -> None:
             print(f"formula: {target_row['formula']}")
             print("required leaf inputs:")
             for spec in payload["inputs"]:
-                print(f"  - {spec['id']}: {spec['value']} ({spec['label']})")
+                print(f"  - {spec['id']}: {input_display_value(spec)} ({spec['label']})")
             if payload["warnings"]:
                 print("warnings:")
                 for warning in payload["warnings"]:

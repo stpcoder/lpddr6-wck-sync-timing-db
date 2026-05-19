@@ -11,9 +11,11 @@ PYTHONDONTWRITEBYTECODE=1 "$PYTHON" -m py_compile \
   tools/query_lpddr6_semantic_db.py \
   tools/semantic_query.py \
   tools/semantic_ui_server.py \
+  tools/audit_target_leaf_model.py \
   tools/validate_wck_sync_timing_cases.py \
   ui/streamlit_app.py
 
+PYTHONDONTWRITEBYTECODE=1 "$PYTHON" tools/audit_target_leaf_model.py
 PYTHONDONTWRITEBYTECODE=1 "$PYTHON" tools/validate_wck_sync_timing_cases.py --scope wr_rd_full
 PYTHONDONTWRITEBYTECODE=1 "$PYTHON" tools/validate_wck_sync_timing_cases.py --scope matrix_baseline
 PYTHONDONTWRITEBYTECODE=1 "$PYTHON" tools/query_lpddr6_semantic_db.py target tRTRRD \

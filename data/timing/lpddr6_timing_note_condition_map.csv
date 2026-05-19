@@ -1,0 +1,10 @@
+note_id,target_symbol,semantic_leaf_or_condition,internal_mr_mapping,formula_effect,source,status,notes_ko
+TRTW_DFEQ_ADD_1,tRTW_FINAL,dfeq_enabled,MR70..MR75 DFE quantity fields,+1 nCK before final EVEN,Table389_Note2_Table390_Note2,active,DFE equalization quantity가 하나라도 non-zero이면 tRTW note adder가 붙는다.
+TRTW_PER_PIN_DFE_ADD_1,tRTW_FINAL,per_pin_dfe_enabled,MR41.OP[0],+1 nCK before final EVEN,Table389_Note3_Table390_Note3,active,Per-pin DFE enable이면 tRTW note adder가 붙는다.
+TRTW_FINAL_EVEN,tRTW_FINAL,internal_even_rounding,NA,EVEN(tRTW_BASE + adders),Table389_Note4_Table390_Note4,active,최종 command gap은 odd nCK이면 다음 even nCK로 올린다.
+TRTW_RDQS_DISABLED_RPST_ZERO,tRTW_BASE,rdqs_enabled,MR22.OP[1:0],tRPST=0 when RDQS disabled,rank_to_rank_notes_for_RDQS_disabled_apply_as_guard,active,RDQS disabled 조건에서는 RDQS postamble component가 0으로 처리된다.
+DVFSQ_FORCES_ODT_OFF,dq_odt_effective_enabled,dvfsq_enabled,MR11.OP[5],ODT and NT-ODT effective states forced off,Table92_Note6,evaluator_active_target_leaf_pending,DVFSQ leaf는 아직 target UI에는 직접 노출하지 않았지만 evaluator condition에는 반영되어 있다.
+WCKPST_GT_RPST,tWCKPST_nCK_RD,wck_postamble_length|rdqs_postamble_length,MR22.OP[7:6]|MR10.OP[7:6],warning if tWCKPST <= tRPST,Table117_Note11,active,WCK postamble은 RDQS postamble보다 길어야 하는 constraint를 warning으로 trace한다.
+WFF_TO_RFF_NT_ODT,WFF_TO_RFF_MIN,dq_nt_odt_enabled|dq_wr_nt_odt_enabled,MR20.OP[2:0]|MR20.OP[5:3],NT-ODT path requires tODToff_MAX lookup,Table264_Note4_Table398,partial,NT-ODT enabled path는 tODToff_MAX까지 추가되어야 하며 현재 unresolved guard로 남긴다.
+tRTRRD_EVEN,tRTRRD,internal_even_rounding,NA,EVEN(RL + BLN_MAX + MAX(RU(7.5ns/tCK), 6nCK)),Table398_Note3,active,tRTRRD formula registry의 even_command_gap rounding으로 처리한다.
+tWRWTR_EVEN,tWRWTR,internal_even_rounding,NA,EVEN(WL + BLN_MAX + MAX(RU(7.5ns/tCK), 6nCK)),Table398_Note1,active,tWRWTR formula registry의 even_command_gap rounding으로 처리한다.
